@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Image from "next/image"
+import Gallery from "@/components/gallery"
 import type { GalleryData, GalleryImage } from "@/lib/gallery-types"
 import type { MenuCategory, MenuData, MenuItem, MenuTabKey, MenuTabs } from "@/lib/menu-types"
 
@@ -33,6 +34,9 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState<boolean | null>(null)
   const [password, setPassword] = useState("")
   const [status, setStatus] = useState<string>("")
+  const [isUploading, setIsUploading] = useState<Record<string, boolean>>({})
+  const dragIndexRef = useRef<number | null>(null)
+  const [dragOverId, setDragOverId] = useState<string | null>(null)
 
   const [menuData, setMenuData] = useState<MenuData | null>(null)
   const [galleryData, setGalleryData] = useState<GalleryData | null>(null)
@@ -237,6 +241,54 @@ export default function AdminPage() {
     })
   }
 
+  const moveGalleryItemTo = (fromIndex: number, toIndex: number) => {
+    updateGallery((images) => {
+      if (fromIndex === toIndex) return images
+      if (fromIndex < 0 || fromIndex >= images.length) return images
+      if (toIndex < 0 || toIndex >= images.length) return images
+      const next = [...images]
+      const [moved] = next.splice(fromIndex, 1)
+      next.splice(toIndex, 0, moved)
+      return next
+    })
+  }
+
+  const uploadGalleryFile = async (galleryId: string, file: File) => {
+    setIsUploading((prev) => ({ ...prev, [galleryId]: true }))
+    try {
+      const form = new FormData()
+      form.append("file", file)
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        credentials: "include",
+        body: form,
+      })
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "")
+        throw new Error(txt || "Upload failed")
+      }
+      const data = (await res.json()) as { url: string; name: string }
+      const cleanedName = data.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim()
+      updateGallery((images) =>
+        images.map((img) =>
+          img.id === galleryId
+            ? {
+                ...img,
+                src: data.url,
+                alt: img.alt || cleanedName,
+                description: img.description || cleanedName,
+              }
+            : img,
+        ),
+      )
+      setStatus("Upload complete.")
+    } catch (e) {
+      setStatus(e instanceof Error ? e.message : "Upload failed")
+    } finally {
+      setIsUploading((prev) => ({ ...prev, [galleryId]: false }))
+    }
+  }
+
   return (
     <main className="min-h-screen bg-background text-foreground px-4 py-12">
       <div className="max-w-7xl mx-auto">
@@ -383,9 +435,33 @@ export default function AdminPage() {
               </div>
 
               {galleryData && (
-                <div className="grid lg:grid-cols-2 gap-5">
+                <div className="grid xl:grid-cols-2 gap-5">
                   {galleryData.images.map((image, index) => (
-                    <div key={image.id} className="rounded-2xl border border-[#E8D5C4] bg-[#FFFCF8] p-4 shadow-sm">
+                    <div
+                      key={image.id}
+                      className={`rounded-2xl border bg-[#FFFCF8] p-4 shadow-sm transition-colors ${
+                        dragOverId === image.id ? "border-[#E8A4B8] ring-2 ring-[#E8A4B8]/30" : "border-[#E8D5C4]"
+                      }`}
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.effectAllowed = "move"
+                        dragIndexRef.current = index
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault()
+                        if (dragOverId !== image.id) setDragOverId(image.id)
+                      }}
+                      onDrop={() => {
+                        const from = dragIndexRef.current
+                        if (typeof from === "number") moveGalleryItemTo(from, index)
+                        dragIndexRef.current = null
+                        setDragOverId(null)
+                      }}
+                      onDragEnd={() => {
+                        dragIndexRef.current = null
+                        setDragOverId(null)
+                      }}
+                    >
                       <div className="flex items-center justify-between gap-3 mb-4">
                         <p className="text-sm font-medium text-muted-foreground">Image #{index + 1}</p>
                         <div className="flex gap-2">
@@ -407,6 +483,31 @@ export default function AdminPage() {
 
                       <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-3">
+                          <div className="rounded-xl border border-dashed border-[#E8D5C4] bg-white/70 px-4 py-3">
+                            <p className="text-sm font-semibold">Drag to reorder</p>
+                            <p className="text-xs text-muted-foreground">
+                              Grab this card and drag it up/down to rearrange the gallery.
+                            </p>
+                          </div>
+                          <div className="flex items-center justify-between gap-3 rounded-xl border border-[#E8D5C4] bg-white px-4 py-3">
+                            <div>
+                              <p className="text-sm font-semibold">Upload image</p>
+                              <p className="text-xs text-muted-foreground">No compression. Saved to this website.</p>
+                            </div>
+                            <label className={`btn-creme px-4 py-2 rounded-xl font-semibold cursor-pointer ${isUploading[image.id] ? "opacity-70 pointer-events-none" : ""}`}>
+                              {isUploading[image.id] ? "Uploading..." : "Choose file"}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0]
+                                  e.target.value = ""
+                                  if (file) uploadGalleryFile(image.id, file)
+                                }}
+                              />
+                            </label>
+                          </div>
                           <input
                             value={image.src}
                             onChange={(e) => updateGalleryItem(index, "src", e.target.value)}
@@ -449,6 +550,18 @@ export default function AdminPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {galleryData && (
+                <div className="mt-8 rounded-3xl border border-[#E8D5C4] bg-[#F5EDE6]/60 p-5">
+                  <div className="flex items-center justify-between gap-4 mb-4">
+                    <h3 className="menu-font text-xl font-semibold">Live Gallery Preview</h3>
+                    <p className="text-sm text-muted-foreground">Updates instantly as you edit (including drag & drop order).</p>
+                  </div>
+                  <div className="rounded-2xl overflow-hidden bg-[#F5EDE6]">
+                    <Gallery images={galleryData.images} />
+                  </div>
                 </div>
               )}
             </section>
