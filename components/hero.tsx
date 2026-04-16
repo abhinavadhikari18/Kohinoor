@@ -41,7 +41,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section id="home" className="relative h-screen w-full overflow-hidden">
+    <section id="home" className="relative min-h-[100svh] w-full overflow-hidden">
       {/* Background Images */}
       {heroImages.map((image, index) => (
         <div

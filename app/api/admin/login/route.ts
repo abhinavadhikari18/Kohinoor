@@ -1,12 +1,22 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
-import { getAdminCookieName, signAdminSession, verifyPassword } from "@/lib/admin-auth"
+import { getAdminCookieName, getAdminPasswordVerified, signAdminSession, verifyPassword } from "@/lib/admin-auth"
 
 const LoginBodySchema = z.object({
   password: z.string().min(1),
 })
 
 export async function POST(req: Request) {
+  if (!getAdminPasswordVerified()) {
+    return NextResponse.json(
+      {
+        error:
+          "Admin password is not configured on the server. Set ADMIN_PASSWORD in your Vercel Environment Variables and redeploy.",
+      },
+      { status: 500 },
+    )
+  }
+
   const body = await req.json().catch(() => null)
   const parsed = LoginBodySchema.safeParse(body)
   if (!parsed.success) {

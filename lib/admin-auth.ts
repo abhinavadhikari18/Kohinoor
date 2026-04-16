@@ -4,11 +4,11 @@ const COOKIE_NAME = "kohinoor_admin"
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 7 // 7 days
 
 function getAdminPassword(): string {
-  return process.env.ADMIN_PASSWORD ?? ""
+  return (process.env.ADMIN_PASSWORD ?? "").trim()
 }
 
 function getSessionSecret(): string {
-  return process.env.ADMIN_SESSION_SECRET ?? getAdminPassword()
+  return (process.env.ADMIN_SESSION_SECRET ?? getAdminPassword()).trim()
 }
 
 function base64UrlEncode(input: string | Buffer): string {
@@ -41,7 +41,7 @@ export function getAdminPasswordVerified(): string | null {
 export function verifyPassword(password: string): boolean {
   const adminPassword = getAdminPasswordVerified()
   if (!adminPassword) return false
-  return timingSafeEqual(password, adminPassword)
+  return timingSafeEqual(password.trim(), adminPassword)
 }
 
 export function signAdminSession(nonce?: string): string {
