@@ -41,7 +41,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section id="home" className="relative min-h-[100svh] w-full overflow-hidden">
+    <section id="home" className="relative h-screen w-full overflow-hidden">
       {/* Background Images */}
       {heroImages.map((image, index) => (
         <div
@@ -63,7 +63,7 @@ export default function Hero() {
       ))}
 
       {/* Elegant Gradient Overlay */}
-      <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
       
       {/* Diamond sparkle overlay effect */}
       <div className="absolute inset-0 opacity-30">
@@ -77,7 +77,7 @@ export default function Hero() {
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
         {/* Logo */}
         <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 animate-float">
-          <div className="absolute inset-0 rounded-full bg-linear-to-br from-amber-400/30 to-transparent blur-xl" />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-400/30 to-transparent blur-xl" />
           <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-amber-400/50 shadow-2xl shadow-amber-500/20">
             <Image
               src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo.PNG-RflDppQJdLrSmpnp64Ad8P8rG1e8KP.jpeg"
@@ -91,7 +91,7 @@ export default function Hero() {
 
         {/* Restaurant Name */}
         <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-4 tracking-wider">
-          <span className="bg-linear-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
             KOHINOOR
           </span>
         </h1>
@@ -101,7 +101,7 @@ export default function Hero() {
 
         {/* Tagline */}
         <div className="relative">
-          <div className="absolute inset-0 bg-linear-to-r from-transparent via-amber-400/20 to-transparent blur-sm" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/20 to-transparent blur-sm" />
           <p className="relative text-lg md:text-xl lg:text-2xl text-white/90 font-light italic tracking-wide">
             &quot;Where Peace, Nature & Love Meet&quot;
           </p>
@@ -109,9 +109,9 @@ export default function Hero() {
 
         {/* Decorative Diamond Line */}
         <div className="flex items-center gap-4 mt-8">
-          <div className="w-16 md:w-24 h-px bg-linear-to-r from-transparent to-amber-400/70" />
+          <div className="w-16 md:w-24 h-px bg-gradient-to-r from-transparent to-amber-400/70" />
           <div className="w-3 h-3 rotate-45 bg-amber-400/80" />
-          <div className="w-16 md:w-24 h-px bg-linear-to-l from-transparent to-amber-400/70" />
+          <div className="w-16 md:w-24 h-px bg-gradient-to-l from-transparent to-amber-400/70" />
         </div>
 
         {/* Scroll Indicator */}
