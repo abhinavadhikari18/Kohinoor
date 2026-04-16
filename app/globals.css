@@ -1,0 +1,282 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Creme Theme - Warm, Elegant */
+  --background: #FDF8F3;
+  --foreground: #3D2E24;
+  --card: #FFFAF5;
+  --card-foreground: #3D2E24;
+  --popover: #FFFAF5;
+  --popover-foreground: #3D2E24;
+  --primary: #3D2E24;
+  --primary-foreground: #FDF8F3;
+  --secondary: #F5EDE6;
+  --secondary-foreground: #3D2E24;
+  --muted: #F0E6DC;
+  --muted-foreground: #6B5D52;
+  --accent: #E8D5C4;
+  --accent-foreground: #3D2E24;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: #E8DED4;
+  --input: #F5EDE6;
+  --ring: #D4B896;
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: #FFFAF5;
+  --sidebar-foreground: #3D2E24;
+  --sidebar-primary: #3D2E24;
+  --sidebar-primary-foreground: #FDF8F3;
+  --sidebar-accent: #F5EDE6;
+  --sidebar-accent-foreground: #3D2E24;
+  --sidebar-border: #E8DED4;
+  --sidebar-ring: #D4B896;
+  
+  /* Custom Kohinoor theme colors */
+  --creme: #FDF8F3;
+  --creme-dark: #F5EDE6;
+  --rose-pink: #E8A4B8;
+  --rose-pink-hover: #D4869E;
+  --gold: #D4B896;
+  --gold-light: #E8D5C4;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+  --font-sans: 'Geist', 'Geist Fallback';
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Premium Kohinoor Animations */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.6s ease-out forwards;
+}
+
+/* Diamond gradient effect */
+.diamond-gradient {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 25%, #f8f9fa 50%, #dee2e6 75%, #f8f9fa 100%);
+}
+
+/* Premium hover effects */
+.premium-hover {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Elegant underline animation */
+.underline-animation {
+  position: relative;
+}
+
+.underline-animation::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #c9a962, #e8d5a3);
+  transition: width 0.3s ease;
+}
+
+.underline-animation:hover::after {
+  width: 100%;
+}
+
+/* Lightbox styles */
+.lightbox-overlay {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(8px);
+}
+
+/* Sparkling diamond animation */
+@keyframes diamondSparkle {
+  0%, 100% {
+    opacity: 0.04;
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    opacity: 0.12;
+    transform: scale(1.1) rotate(5deg);
+  }
+  50% {
+    opacity: 0.06;
+    transform: scale(1) rotate(-5deg);
+  }
+  75% {
+    opacity: 0.1;
+    transform: scale(1.05) rotate(3deg);
+  }
+}
+
+.animate-diamond-sparkle {
+  animation: diamondSparkle 4s ease-in-out infinite;
+}
+
+/* Contact section romantic theme */
+.romantic-gradient {
+  background: linear-gradient(135deg, 
+    rgba(248, 244, 232, 0.95) 0%, 
+    rgba(252, 231, 243, 0.9) 50%, 
+    rgba(248, 244, 232, 0.95) 100%
+  );
+}
+
+/* Soft Creme Button with Rose-Pink Hover */
+.btn-creme {
+  background-color: #F5EDE6;
+  color: #3D2E24;
+  border: 2px solid #E8D5C4;
+  transition: all 0.3s ease;
+}
+
+.btn-creme:hover {
+  background-color: #E8A4B8;
+  border-color: #E8A4B8;
+  color: #FFFFFF;
+  box-shadow: 0 8px 25px rgba(232, 164, 184, 0.35);
+  transform: translateY(-2px);
+}
+
+/* Menu elegant font styling */
+.menu-font {
+  font-family: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  letter-spacing: 0.02em;
+}
+
+/* Descriptions / prices modern sans-serif */
+.desc-font {
+  font-family: var(--font-lato), var(--font-raleway), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing: 0.01em;
+}
