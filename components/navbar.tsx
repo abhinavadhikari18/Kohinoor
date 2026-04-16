@@ -80,7 +80,7 @@ export default function Navbar() {
           {/* Call Now Button - Creme Base with Rose-Pink Hover */}
           <div className="hidden md:block">
             <a
-              href="tel:+9779845628519"
+              href="tel:+9779709671703"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F5EDE6] text-[#3D2E24] border-2 border-[#E8D5C4] font-semibold rounded-full shadow-md hover:bg-[#E8A4B8] hover:border-[#E8A4B8] hover:text-white hover:shadow-[#E8A4B8]/30 hover:scale-105 transition-all duration-300"
             >
               <Phone className="w-4 h-4" />
@@ -117,8 +117,8 @@ export default function Navbar() {
             </button>
           ))}
           <a
-            href="tel:+9779845628519"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F5EDE6] text-[#3D2E24] border-2 border-[#E8D5C4] font-semibold rounded-full shadow-md hover:bg-[#E8A4B8] hover:border-[#E8A4B8] hover:text-white transition-all duration-300"
+            href="tel:+9779709671703"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F5EDE6] text-[#3D2E24] border-2 border-[#E8D5C4] font-semibold rounded-full shadow-md hover:bg-[#E8A4B8] hover:border-[#E8A4B8] hover:text-white transition-all duration-300"
           >
             <Phone className="w-4 h-4" />
             Call Now
