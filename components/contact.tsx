@@ -27,8 +27,8 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "kohinoor.restaurant@gmail.com",
-    href: "mailto:kohinoor.restaurant@gmail.com",
+    value: "restaurantkohinoor11@gmail.com",
+    href: "mailto:restaurantkohinoor11@gmail.com",
   },
   {
     icon: MapPin,
@@ -51,7 +51,7 @@ const socialLinks = [
     icon: Instagram,
     label: "Instagram",
     handle: "@kohinoor_restaurant",
-    href: "https://instagram.com/kohinoor_restaurant",
+    href: "https://www.instagram.com/kohinoorrestaurant2024?igsh=bWh6NGptN2pvMnN6",
     color: "hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500",
     bgColor: "bg-pink-500/10",
   },
