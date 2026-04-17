@@ -21,7 +21,7 @@ const quickLinks = [
 
 const socialLinks = [
   { icon: Facebook, href: "https://www.facebook.com/people/Kohinoor-Restaurant/61570447280338/", label: "Facebook" },
-  { icon: Instagram, href: "https://instagram.com/kohinoorrestaurant", label: "Instagram" },
+  { icon: Instagram, href: "https://www.instagram.com/kohinoorrestaurant2024?igsh=bWh6NGptN2pvMnN6", label: "Instagram" },
   { icon: TikTokIcon, href: "https://www.tiktok.com/discover/kohinoor-restaurant-butwal", label: "TikTok" },
 ]
 
