@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { getMenuData, saveMenuData } from "@/lib/content"
 import { MenuDataSchema } from "@/lib/menu-types"
 import { readAdminSessionFromRequest, verifyAdminSession } from "@/lib/admin-auth"
+import { triggerVercelDeploy } from "@/lib/vercel-deploy"
 
 function requireAdmin(req: Request): boolean {
   const token = readAdminSessionFromRequest(req)
@@ -23,6 +24,7 @@ export async function PUT(req: Request) {
   const body = await req.json().catch(() => null)
   const parsed = MenuDataSchema.parse(body)
   const saved = await saveMenuData(parsed)
-  return NextResponse.json(saved)
+  const deploy = await triggerVercelDeploy("menu-updated")
+  return NextResponse.json({ data: saved, deploy })
 }
 

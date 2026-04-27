@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { getGalleryData, saveGalleryData } from "@/lib/content"
 import { GalleryDataSchema } from "@/lib/gallery-types"
 import { readAdminSessionFromRequest, verifyAdminSession } from "@/lib/admin-auth"
+import { triggerVercelDeploy } from "@/lib/vercel-deploy"
 
 function requireAdmin(req: Request): boolean {
   const token = readAdminSessionFromRequest(req)
@@ -23,6 +24,7 @@ export async function PUT(req: Request) {
   const body = await req.json().catch(() => null)
   const parsed = GalleryDataSchema.parse(body)
   const saved = await saveGalleryData(parsed)
-  return NextResponse.json(saved)
+  const deploy = await triggerVercelDeploy("gallery-updated")
+  return NextResponse.json({ data: saved, deploy })
 }
 

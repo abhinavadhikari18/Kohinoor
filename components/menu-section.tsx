@@ -87,7 +87,12 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
               <div className="space-y-3">
                 {category.items.map((item) => (
                   <div key={item.name} className="flex justify-between items-start gap-2">
-                    <span className="menu-font text-foreground/80 flex-1">{item.name}</span>
+                    <span className="flex-1">
+                      <span className="menu-font text-foreground/80 block">{item.name}</span>
+                      {item.description ? (
+                        <span className="text-xs text-muted-foreground block mt-0.5">{item.description}</span>
+                      ) : null}
+                    </span>
                     <span className="text-[#D4869E] font-semibold whitespace-nowrap desc-font">
                       {item.vegPrice && item.nonVegPrice ? (
                         <span className="text-sm">

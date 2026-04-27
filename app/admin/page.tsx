@@ -14,6 +14,7 @@ const TAB_LABELS: Record<MenuTabKey, string> = {
 
 const emptyMenuItem = (): MenuItem => ({
   name: "",
+  description: "",
   price: "",
 })
 
@@ -35,11 +36,17 @@ export default function AdminPage() {
   const [password, setPassword] = useState("")
   const [status, setStatus] = useState<string>("")
   const [isUploading, setIsUploading] = useState<Record<string, boolean>>({})
+  const [menuSearch, setMenuSearch] = useState("")
+  const [dirtyMenuItems, setDirtyMenuItems] = useState<Record<string, boolean>>({})
+  const [dirtyGalleryItems, setDirtyGalleryItems] = useState<Record<string, boolean>>({})
   const dragIndexRef = useRef<number | null>(null)
+  const quickUploadRef = useRef<HTMLInputElement | null>(null)
   const [dragOverId, setDragOverId] = useState<string | null>(null)
 
   const [menuData, setMenuData] = useState<MenuData | null>(null)
   const [galleryData, setGalleryData] = useState<GalleryData | null>(null)
+
+  const menuItemKey = (tab: MenuTabKey, categoryIndex: number, itemIndex: number) => `${tab}-${categoryIndex}-${itemIndex}`
 
   const canUseEditor = useMemo(() => authed === true, [authed])
 
@@ -104,47 +111,59 @@ export default function AdminPage() {
     await loadEditors()
   }
 
-  const handleSaveMenu = async () => {
-    if (!menuData) return
+  const handleSaveMenu = async (nextMenuData?: MenuData) => {
+    const payload = nextMenuData ?? menuData
+    if (!payload) return false
     setStatus("Saving menu...")
     try {
       const res = await fetch("/api/admin/menu", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(menuData),
+        body: JSON.stringify(payload),
       })
       if (!res.ok) {
         const errText = await res.text().catch(() => "")
         throw new Error(errText || "Failed to save menu")
       }
-      const saved = (await res.json()) as MenuData
-      setMenuData(saved)
-      setStatus("Menu saved.")
+      const json = (await res.json()) as { data?: MenuData; deploy?: { message?: string } } | MenuData
+      const savedData = "data" in json && json.data ? json.data : (json as MenuData)
+      const deployMessage = "deploy" in json && json.deploy?.message ? json.deploy.message : "Changes saved successfully."
+      setMenuData(savedData)
+      setDirtyMenuItems({})
+      setStatus(deployMessage)
+      return true
     } catch (e) {
       setStatus(e instanceof Error ? e.message : "Failed to save menu")
+      return false
     }
   }
 
-  const handleSaveGallery = async () => {
-    if (!galleryData) return
+  const handleSaveGallery = async (nextGalleryData?: GalleryData) => {
+    const payload = nextGalleryData ?? galleryData
+    if (!payload) return false
     setStatus("Saving gallery...")
     try {
       const res = await fetch("/api/admin/gallery", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(galleryData),
+        body: JSON.stringify(payload),
       })
       if (!res.ok) {
         const errText = await res.text().catch(() => "")
         throw new Error(errText || "Failed to save gallery")
       }
-      const saved = (await res.json()) as GalleryData
-      setGalleryData(saved)
-      setStatus("Gallery saved.")
+      const json = (await res.json()) as { data?: GalleryData; deploy?: { message?: string } } | GalleryData
+      const savedData = "data" in json && json.data ? json.data : (json as GalleryData)
+      const deployMessage = "deploy" in json && json.deploy?.message ? json.deploy.message : "Changes saved successfully."
+      setGalleryData(savedData)
+      setDirtyGalleryItems({})
+      setStatus(deployMessage)
+      return true
     } catch (e) {
       setStatus(e instanceof Error ? e.message : "Failed to save gallery")
+      return false
     }
   }
 
@@ -202,6 +221,7 @@ export default function AdminPage() {
     field: keyof MenuItem,
     value: string,
   ) => {
+    setDirtyMenuItems((prev) => ({ ...prev, [menuItemKey(tab, categoryIndex, itemIndex)]: true }))
     updateMenuTabs((tabs) => ({
       ...tabs,
       [tab]: tabs[tab].map((category, index) =>
@@ -220,6 +240,10 @@ export default function AdminPage() {
   }
 
   const updateGalleryItem = (index: number, field: keyof GalleryImage, value: string) => {
+    const currentId = galleryData?.images[index]?.id
+    if (currentId) {
+      setDirtyGalleryItems((prev) => ({ ...prev, [currentId]: true }))
+    }
     updateGallery((images) => images.map((image, idx) => (idx === index ? { ...image, [field]: value } : image)))
   }
 
@@ -229,6 +253,16 @@ export default function AdminPage() {
 
   const removeGalleryItem = (index: number) => {
     updateGallery((images) => images.filter((_, idx) => idx !== index))
+  }
+
+  const removeGalleryItemAndSave = async (index: number) => {
+    if (!galleryData) return
+    const nextGalleryData = {
+      ...galleryData,
+      images: galleryData.images.filter((_, idx) => idx !== index),
+    }
+    setGalleryData(nextGalleryData)
+    await handleSaveGallery(nextGalleryData)
   }
 
   const moveGalleryItem = (index: number, direction: -1 | 1) => {
@@ -269,24 +303,63 @@ export default function AdminPage() {
       }
       const data = (await res.json()) as { url: string; name: string }
       const cleanedName = data.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim()
-      updateGallery((images) =>
-        images.map((img) =>
-          img.id === galleryId
-            ? {
-                ...img,
-                src: data.url,
-                alt: img.alt || cleanedName,
-                description: img.description || cleanedName,
-              }
-            : img,
-        ),
-      )
-      setStatus("Upload complete.")
+      if (galleryData) {
+        const nextGalleryData: GalleryData = {
+          ...galleryData,
+          images: galleryData.images.map((img) =>
+            img.id === galleryId
+              ? {
+                  ...img,
+                  src: data.url,
+                  alt: img.alt || cleanedName,
+                  description: img.description || cleanedName,
+                }
+              : img,
+          ),
+        }
+        setGalleryData(nextGalleryData)
+        setDirtyGalleryItems((prev) => ({ ...prev, [galleryId]: true }))
+        await handleSaveGallery(nextGalleryData)
+      } else {
+        setStatus("Upload complete.")
+      }
     } catch (e) {
       setStatus(e instanceof Error ? e.message : "Upload failed")
     } finally {
       setIsUploading((prev) => ({ ...prev, [galleryId]: false }))
     }
+  }
+
+  const addGalleryFromUpload = async (file: File) => {
+    if (!galleryData) return
+    const fresh = emptyGalleryImage()
+    const nextGalleryData = {
+      ...galleryData,
+      images: [...galleryData.images, fresh],
+    }
+    setGalleryData(nextGalleryData)
+    await uploadGalleryFile(fresh.id, file)
+  }
+
+  const saveMenuItem = async (tab: MenuTabKey, categoryIndex: number, itemIndex: number) => {
+    const ok = await handleSaveMenu()
+    if (!ok) return
+    const key = menuItemKey(tab, categoryIndex, itemIndex)
+    setDirtyMenuItems((prev) => {
+      const next = { ...prev }
+      delete next[key]
+      return next
+    })
+  }
+
+  const saveGalleryItem = async (imageId: string) => {
+    const ok = await handleSaveGallery()
+    if (!ok) return
+    setDirtyGalleryItems((prev) => {
+      const next = { ...prev }
+      delete next[imageId]
+      return next
+    })
   }
 
   return (
@@ -331,6 +404,12 @@ export default function AdminPage() {
                   Save Menu
                 </button>
               </div>
+              <input
+                value={menuSearch}
+                onChange={(e) => setMenuSearch(e.target.value)}
+                placeholder="Search menu item by name..."
+                className="w-full mb-4 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white"
+              />
 
               {menuData && (
                 <div className="space-y-8">
@@ -363,27 +442,40 @@ export default function AdminPage() {
                             </div>
 
                             <div className="space-y-3">
-                              {category.items.map((item, itemIndex) => (
-                                <div key={`${tab}-${categoryIndex}-${itemIndex}`} className="grid md:grid-cols-5 gap-3 rounded-2xl border border-[#EFE2D7] bg-white p-4">
+                              {category.items
+                                .map((item, itemIndex) => ({ item, itemIndex }))
+                                .filter(({ item }) =>
+                                  menuSearch.trim()
+                                    ? item.name.toLowerCase().includes(menuSearch.trim().toLowerCase())
+                                    : true,
+                                )
+                                .map(({ item, itemIndex }) => (
+                                <div key={`${tab}-${categoryIndex}-${itemIndex}`} className="grid md:grid-cols-12 gap-3 rounded-2xl border border-[#EFE2D7] bg-white p-4">
                                   <input
                                     value={item.name}
                                     onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "name", e.target.value)}
                                     placeholder="Dish name"
-                                    className="md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
+                                    className="md:col-span-3 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
+                                  />
+                                  <input
+                                    value={item.description ?? ""}
+                                    onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "description", e.target.value)}
+                                    placeholder="Description"
+                                    className="md:col-span-4 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
                                   />
                                   <input
                                     value={item.price ?? ""}
                                     onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "price", e.target.value)}
                                     placeholder="Price"
-                                    className="px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
+                                    className="md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
                                   />
                                   <input
                                     value={item.vegPrice ?? ""}
                                     onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "vegPrice", e.target.value)}
                                     placeholder="Veg price"
-                                    className="px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
+                                    className="md:col-span-1 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
                                   />
-                                  <div className="flex gap-3">
+                                  <div className="md:col-span-2 flex gap-2">
                                     <input
                                       value={item.nonVegPrice ?? ""}
                                       onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "nonVegPrice", e.target.value)}
@@ -396,6 +488,13 @@ export default function AdminPage() {
                                       onClick={() => removeMenuItem(tab, categoryIndex, itemIndex)}
                                     >
                                       Remove
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="btn-creme px-3 py-2 rounded-xl font-semibold whitespace-nowrap"
+                                      onClick={() => saveMenuItem(tab, categoryIndex, itemIndex)}
+                                    >
+                                      {dirtyMenuItems[menuItemKey(tab, categoryIndex, itemIndex)] ? "Save" : "Saved"}
                                     </button>
                                   </div>
                                 </div>
@@ -428,6 +527,20 @@ export default function AdminPage() {
                   <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold" onClick={addGalleryItem}>
                     Add Image
                   </button>
+                  <label className="btn-creme px-4 py-2 rounded-xl font-semibold cursor-pointer">
+                    Upload New Photo
+                    <input
+                      ref={quickUploadRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        e.target.value = ""
+                        if (file) addGalleryFromUpload(file)
+                      }}
+                    />
+                  </label>
                   <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold" onClick={handleSaveGallery}>
                   Save Gallery
                   </button>
@@ -474,9 +587,16 @@ export default function AdminPage() {
                           <button
                             type="button"
                             className="px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 text-sm"
-                            onClick={() => removeGalleryItem(index)}
+                            onClick={() => removeGalleryItemAndSave(index)}
                           >
                             Remove
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-creme px-3 py-2 rounded-xl text-sm font-semibold"
+                            onClick={() => saveGalleryItem(image.id)}
+                          >
+                            {dirtyGalleryItems[image.id] ? "Update" : "Saved"}
                           </button>
                         </div>
                       </div>
