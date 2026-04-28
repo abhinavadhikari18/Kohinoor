@@ -1,1 +1,18 @@
-{"images": []}
+{
+  "images": [
+    {
+      "id": "1",
+      "src": "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/exterior%20entry-D2HBq4n2aW39dW8YEXYz5jkfr2Ijj6.jpg",
+      "alt": "Illuminated Entrance",
+      "description": "Our beautifully lit entrance welcomes you",
+      "size": "large"
+    },
+    {
+      "id": "2",
+      "src": "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/boat%20scene-QgqqN8CTMX9ompWDEEQZblUFaCFjx9.jpg",
+      "alt": "Lake with Boat",
+      "description": "Serene lake with pedal boating available",
+      "size": "medium"
+    }
+  ]
+}

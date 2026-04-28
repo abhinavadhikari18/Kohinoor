@@ -1,1 +1,31 @@
-{}
+{
+  "tabs": {
+    "food": [
+      {
+        "name": "Kathi Roll",
+        "items": [
+          { "name": "Egg Kathi Roll", "price": "230" },
+          { "name": "Chicken Kathi Roll", "price": "280" }
+        ]
+      }
+    ],
+    "bar": [
+      {
+        "name": "Beer",
+        "items": [
+          { "name": "Gorkha 330ML", "price": "250" },
+          { "name": "Gorkha 500ML", "price": "480" }
+        ]
+      }
+    ],
+    "beverages": [
+      {
+        "name": "Tea / Coffee",
+        "items": [
+          { "name": "Black Tea", "price": "40" },
+          { "name": "Milk Tea", "price": "60" }
+        ]
+      }
+    ]
+  }
+}
