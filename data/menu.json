@@ -7,6 +7,112 @@
           { "name": "Egg Kathi Roll", "price": "230" },
           { "name": "Chicken Kathi Roll", "price": "280" }
         ]
+      },
+      {
+        "name": "Pasta / Spaghetti",
+        "items": [
+          { "name": "Penne With Alfredo Sauce", "vegPrice": "240", "nonVegPrice": "320", "price": "240" },
+          { "name": "Penne with Arrabbiata Sauce", "vegPrice": "240", "nonVegPrice": "320", "price": "240" },
+          { "name": "Spaghetti with Arrabiata Sauce", "vegPrice": "240", "nonVegPrice": "320", "price": "240" }
+        ]
+      },
+      {
+        "name": "Thukpa",
+        "items": [
+          { "name": "Veg Thukpa", "price": "150" },
+          { "name": "Chicken Thukpa", "price": "200" }
+        ]
+      },
+      {
+        "name": "Choila",
+        "items": [
+          { "name": "Mushroom Choila", "price": "320" },
+          { "name": "Chicken Choila", "price": "325" },
+          { "name": "Hash Ko Choila", "price": "450" }
+        ]
+      },
+      {
+        "name": "MoMo",
+        "items": [
+          { "name": "Steam MoMo", "vegPrice": "140", "nonVegPrice": "170", "price": "140" },
+          { "name": "Fried MoMo", "vegPrice": "150", "nonVegPrice": "180", "price": "150" },
+          { "name": "Kurkure MoMo", "vegPrice": "180", "nonVegPrice": "200", "price": "180" },
+          { "name": "Chilly MoMo", "vegPrice": "200", "nonVegPrice": "230", "price": "200" },
+          { "name": "Jhol MoMo", "vegPrice": "200", "nonVegPrice": "230", "price": "200" },
+          { "name": "Kothey MoMo", "vegPrice": "180", "nonVegPrice": "200", "price": "180" }
+        ]
+      },
+      {
+        "name": "Chowmein",
+        "items": [
+          { "name": "Veg Chowmein", "price": "140" },
+          { "name": "Egg Chowmein", "price": "180" },
+          { "name": "Chicken Chowmein", "price": "190" },
+          { "name": "Mixed Chowmein", "price": "250" }
+        ]
+      },
+      {
+        "name": "Burger",
+        "items": [
+          { "name": "Veg Burger", "price": "180" },
+          { "name": "Chicken Burger", "price": "250" }
+        ]
+      },
+      {
+        "name": "Pizza",
+        "items": [
+          { "name": "Veg Pizza", "price": "350" },
+          { "name": "Chicken Pizza", "price": "450" },
+          { "name": "Cheese Pizza", "price": "380" }
+        ]
+      },
+      {
+        "name": "Sandwich",
+        "items": [
+          { "name": "Chicken Sandwich", "price": "200" },
+          { "name": "Club Sandwich", "price": "250" },
+          { "name": "Cheese Sandwich", "price": "280" }
+        ]
+      },
+      {
+        "name": "Non Veg Snacks",
+        "items": [
+          { "name": "Hot Garlic Chicken", "price": "325" },
+          { "name": "Chicken Sausage Fried", "price": "250" },
+          { "name": "Chicken Manchurian", "price": "300" },
+          { "name": "Chicken Nugget", "price": "300" },
+          { "name": "Chicken Konjinaro", "price": "350" },
+          { "name": "Chicken Lolipop", "price": "300" },
+          { "name": "Hot Wings", "price": "350" },
+          { "name": "Peri Peri Wings", "price": "350" },
+          { "name": "Chicken Taas", "price": "320" },
+          { "name": "Pangra Fried Masala", "price": "325" },
+          { "name": "Dragon Chicken", "price": "350" }
+        ]
+      },
+      {
+        "name": "Briyani",
+        "items": [
+          { "name": "Veg Briyani", "price": "280" },
+          { "name": "Chicken Briyani", "price": "350" }
+        ]
+      },
+      {
+        "name": "Fried Rice",
+        "items": [
+          { "name": "Plain Rice", "price": "100" },
+          { "name": "Veg Fried Rice", "price": "180" },
+          { "name": "Egg Fried Rice", "price": "250" },
+          { "name": "Chicken Rice", "price": "270" },
+          { "name": "Mixed Fried Rice", "price": "330" }
+        ]
+      },
+      {
+        "name": "Signature Items",
+        "items": [
+          { "name": "Chicken Sekuwa 250gm/1kg", "price": "250/900" },
+          { "name": "Self Barbeque Chicken (Min 1kg)", "price": "900" }
+        ]
       }
     ],
     "bar": [
@@ -14,7 +120,71 @@
         "name": "Beer",
         "items": [
           { "name": "Gorkha 330ML", "price": "250" },
-          { "name": "Gorkha 500ML", "price": "480" }
+          { "name": "Gorkha 500ML", "price": "480" },
+          { "name": "Arna 330ML", "price": "240" },
+          { "name": "Barahsinghe 330ML", "price": "290" },
+          { "name": "Barahsinghe 650ML", "price": "580" },
+          { "name": "Carlsberg 650ML", "price": "590" },
+          { "name": "Tuborg Gold 650ML", "price": "570" },
+          { "name": "Tuborg Strong 330ML", "price": "250" },
+          { "name": "Tuborg Strong 650ML", "price": "550" }
+        ]
+      },
+      {
+        "name": "Domestic Rum",
+        "items": [
+          { "name": "Old Monk", "price": "130 / 750 / 1475 / 2950" },
+          { "name": "Khukuri", "price": "130 / 750 / 1475 / 2950" },
+          { "name": "Karda", "price": "100 / 525 / 950 / 1900" }
+        ]
+      },
+      {
+        "name": "Domestic Whisky",
+        "items": [
+          { "name": "Old Durbar", "price": "160 / 900 / 1775 / 3550" },
+          { "name": "Signature", "price": "145 / 850 / 1650 / 3300" },
+          { "name": "Black Chimney", "price": "200 / 1150 / 2200 / 4400" },
+          { "name": "Gorkhas & Gun's", "price": "170 / 1000 / 1960 / 3920" },
+          { "name": "Royal Blue", "price": "95 / 525 / 950 / 1900" },
+          { "name": "Black Oak", "price": "100 / 570 / 1125 / 2250" }
+        ]
+      },
+      {
+        "name": "Imported Whisky",
+        "items": [
+          { "name": "Chivas Regal 12 Years", "price": "400 / 2380 / 4750 / 9500" },
+          { "name": "Jack Daniel", "price": "400 / 2380 / 4750 / 9500" },
+          { "name": "Black Label", "price": "400 / 2380 / 4750 / 9500" },
+          { "name": "Double Black", "price": "475 / 2700 / 5300 / 10600" },
+          { "name": "Red Label", "price": "320 / 1950 / 3800 / 7600" },
+          { "name": "Jameson", "price": "375 / 2150 / 4250 / 8500" }
+        ]
+      },
+      {
+        "name": "Mocktails",
+        "items": [
+          { "name": "Sunrise Mocktail", "price": "195" },
+          { "name": "Mint Lemonade", "price": "195" },
+          { "name": "Virgin Mojito", "price": "195" },
+          { "name": "Peach Ice Tea", "price": "195" },
+          { "name": "Blue Lagon", "price": "195" }
+        ]
+      },
+      {
+        "name": "Cocktails",
+        "items": [
+          { "name": "Hot Rum Punch", "price": "350" },
+          { "name": "Blue Lady", "price": "350" },
+          { "name": "Sunrise Cocktail", "price": "350" },
+          { "name": "Strawberry Fiz", "price": "350" },
+          { "name": "Cosmopolitan", "price": "450" }
+        ]
+      },
+      {
+        "name": "Hookah",
+        "items": [
+          { "name": "Cloud (1 Coal Free)", "price": "350" },
+          { "name": "Special (1 Coal Free)", "price": "500" }
         ]
       }
     ],
@@ -23,7 +193,22 @@
         "name": "Tea / Coffee",
         "items": [
           { "name": "Black Tea", "price": "40" },
-          { "name": "Milk Tea", "price": "60" }
+          { "name": "Milk Tea", "price": "60" },
+          { "name": "Black Coffee", "price": "50" },
+          { "name": "Milk Coffee", "price": "100" },
+          { "name": "Lemon Tea", "price": "50" }
+        ]
+      },
+      {
+        "name": "Cold Drinks",
+        "items": [
+          { "name": "Water", "price": "40" },
+          { "name": "Real Juice", "price": "120" },
+          { "name": "Redbull Blue", "price": "290" },
+          { "name": "Redbull Yellow", "price": "180" },
+          { "name": "Apple Cider", "price": "250" },
+          { "name": "Lemon Sprite", "price": "115" },
+          { "name": "Coke / Sprite / Fanta 250ML", "price": "95" }
         ]
       }
     ]

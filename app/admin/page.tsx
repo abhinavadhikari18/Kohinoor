@@ -1,14 +1,13 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
-import Gallery from "@/components/gallery"
 import type { GalleryData, GalleryImage } from "@/lib/gallery-types"
 import type { MenuCategory, MenuData, MenuItem, MenuTabKey, MenuTabs } from "@/lib/menu-types"
 
 const TAB_LABELS: Record<MenuTabKey, string> = {
   food: "Food Menu",
-  bar: "Bar Menu",
+  bar: "Bar Menu", 
   beverages: "Beverages",
 }
 
@@ -35,20 +34,19 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState<boolean | null>(null)
   const [password, setPassword] = useState("")
   const [status, setStatus] = useState<string>("")
+  const [activeSection, setActiveSection] = useState<"menu" | "gallery" | null>(null)
   const [isUploading, setIsUploading] = useState<Record<string, boolean>>({})
   const [menuSearch, setMenuSearch] = useState("")
+  const [dragOverId, setDragOverId] = useState<string | null>(null)
   const [dirtyMenuItems, setDirtyMenuItems] = useState<Record<string, boolean>>({})
   const [dirtyGalleryItems, setDirtyGalleryItems] = useState<Record<string, boolean>>({})
   const dragIndexRef = useRef<number | null>(null)
   const quickUploadRef = useRef<HTMLInputElement | null>(null)
-  const [dragOverId, setDragOverId] = useState<string | null>(null)
 
   const [menuData, setMenuData] = useState<MenuData | null>(null)
   const [galleryData, setGalleryData] = useState<GalleryData | null>(null)
 
-  const menuItemKey = (tab: MenuTabKey, categoryIndex: number, itemIndex: number) => `${tab}-${categoryIndex}-${itemIndex}`
-
-  const canUseEditor = useMemo(() => authed === true, [authed])
+  const canUseEditor = authed === true
 
   const fetchSession = async () => {
     const res = await fetch("/api/admin/session", { credentials: "include" })
@@ -59,7 +57,7 @@ export default function AdminPage() {
   }
 
   const loadEditors = async () => {
-    setStatus("Loading current menu/gallery...")
+    setStatus("Loading data...")
 
     const [menuRes, galleryRes] = await Promise.all([
       fetch("/api/admin/menu", { credentials: "include" }),
@@ -87,7 +85,6 @@ export default function AdminPage() {
         setStatus(e instanceof Error ? e.message : "Failed to load admin page")
       }
     })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -111,16 +108,15 @@ export default function AdminPage() {
     await loadEditors()
   }
 
-  const handleSaveMenu = async (nextMenuData?: MenuData) => {
-    const payload = nextMenuData ?? menuData
-    if (!payload) return false
+  const handleSaveMenu = async () => {
+    if (!menuData) return false
     setStatus("Saving menu...")
     try {
       const res = await fetch("/api/admin/menu", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(payload),
+        body: JSON.stringify(menuData),
       })
       if (!res.ok) {
         const errText = await res.text().catch(() => "")
@@ -139,16 +135,15 @@ export default function AdminPage() {
     }
   }
 
-  const handleSaveGallery = async (nextGalleryData?: GalleryData) => {
-    const payload = nextGalleryData ?? galleryData
-    if (!payload) return false
+  const handleSaveGallery = async () => {
+    if (!galleryData) return false
     setStatus("Saving gallery...")
     try {
       const res = await fetch("/api/admin/gallery", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(payload),
+        body: JSON.stringify(galleryData),
       })
       if (!res.ok) {
         const errText = await res.text().catch(() => "")
@@ -166,6 +161,8 @@ export default function AdminPage() {
       return false
     }
   }
+
+  const menuItemKey = (tab: MenuTabKey, categoryIndex: number, itemIndex: number) => `${tab}-${categoryIndex}-${itemIndex}`
 
   const updateMenuTabs = (updater: (tabs: MenuTabs) => MenuTabs) => {
     setMenuData((current) => (current ? { ...current, tabs: updater(current.tabs) } : current))
@@ -251,10 +248,6 @@ export default function AdminPage() {
     updateGallery((images) => [...images, emptyGalleryImage()])
   }
 
-  const removeGalleryItem = (index: number) => {
-    updateGallery((images) => images.filter((_, idx) => idx !== index))
-  }
-
   const removeGalleryItemAndSave = async (index: number) => {
     if (!galleryData) return
     const nextGalleryData = {
@@ -263,28 +256,6 @@ export default function AdminPage() {
     }
     setGalleryData(nextGalleryData)
     await handleSaveGallery(nextGalleryData)
-  }
-
-  const moveGalleryItem = (index: number, direction: -1 | 1) => {
-    updateGallery((images) => {
-      const nextIndex = index + direction
-      if (nextIndex < 0 || nextIndex >= images.length) return images
-      const next = [...images]
-      ;[next[index], next[nextIndex]] = [next[nextIndex], next[index]]
-      return next
-    })
-  }
-
-  const moveGalleryItemTo = (fromIndex: number, toIndex: number) => {
-    updateGallery((images) => {
-      if (fromIndex === toIndex) return images
-      if (fromIndex < 0 || fromIndex >= images.length) return images
-      if (toIndex < 0 || toIndex >= images.length) return images
-      const next = [...images]
-      const [moved] = next.splice(fromIndex, 1)
-      next.splice(toIndex, 0, moved)
-      return next
-    })
   }
 
   const uploadGalleryFile = async (galleryId: string, file: File) => {
@@ -341,37 +312,13 @@ export default function AdminPage() {
     await uploadGalleryFile(fresh.id, file)
   }
 
-  const saveMenuItem = async (tab: MenuTabKey, categoryIndex: number, itemIndex: number) => {
-    const ok = await handleSaveMenu()
-    if (!ok) return
-    const key = menuItemKey(tab, categoryIndex, itemIndex)
-    setDirtyMenuItems((prev) => {
-      const next = { ...prev }
-      delete next[key]
-      return next
-    })
-  }
-
-  const saveGalleryItem = async (imageId: string) => {
-    const ok = await handleSaveGallery()
-    if (!ok) return
-    setDirtyGalleryItems((prev) => {
-      const next = { ...prev }
-      delete next[imageId]
-      return next
-    })
-  }
-
   return (
     <main className="min-h-screen bg-background text-foreground px-4 py-12">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="menu-font text-3xl md:text-4xl font-semibold mb-2">Admin Dashboard</h1>
-        <p className="text-muted-foreground mb-6">
-          Update the menu and gallery directly without editing code.
-        </p>
+      <div className="max-w-4xl mx-auto">
+        <h1 className="menu-font text-3xl md:text-4xl font-semibold mb-8 text-center">Admin Panel</h1>
 
         {authed === false && (
-          <form onSubmit={handleLogin} className="max-w-md bg-white/80 border border-[#E8D5C4] rounded-3xl p-6 shadow-lg">
+          <form onSubmit={handleLogin} className="max-w-md mx-auto bg-white/80 border border-[#E8D5C4] rounded-3xl p-6 shadow-lg">
             <label className="block text-sm font-medium mb-2" htmlFor="password">
               Admin password
             </label>
@@ -392,15 +339,59 @@ export default function AdminPage() {
           </form>
         )}
 
-        {canUseEditor && (
-          <div className="space-y-10">
+        {canUseEditor && !activeSection && (
+          <div className="grid md:grid-cols-2 gap-8">
+            <button
+              onClick={() => setActiveSection("menu")}
+              className="bg-white/75 border border-[#E8D5C4] rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow text-left group"
+            >
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mr-4">
+                  <svg className="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <h2 className="menu-font text-2xl font-semibold">Edit Menu</h2>
+              </div>
+              <p className="text-muted-foreground">Add, edit, and delete menu items with categories</p>
+            </button>
+
+            <button
+              onClick={() => setActiveSection("gallery")}
+              className="bg-white/75 border border-[#E8D5C4] rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow text-left group"
+            >
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h2 className="menu-font text-2xl font-semibold">Edit Gallery</h2>
+              </div>
+              <p className="text-muted-foreground">Upload photos and manage gallery content</p>
+            </button>
+          </div>
+        )}
+
+        {canUseEditor && activeSection === "menu" && (
+          <div className="space-y-6">
+            <button
+              onClick={() => setActiveSection(null)}
+              className="mb-4 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Admin Panel
+            </button>
+            
             <section className="bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 shadow-lg">
               <div className="flex items-center justify-between gap-4 mb-3">
                 <div>
                   <h2 className="menu-font text-2xl font-semibold">Menu Editor</h2>
-                  <p className="text-sm text-muted-foreground">Edit categories and menu items like a content dashboard.</p>
+                  <p className="text-sm text-muted-foreground">Edit categories and menu items.</p>
                 </div>
-                <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold" onClick={handleSaveMenu}>
+                <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold" onClick={() => handleSaveMenu()}>
                   Save Menu
                 </button>
               </div>
@@ -489,13 +480,6 @@ export default function AdminPage() {
                                     >
                                       Remove
                                     </button>
-                                    <button
-                                      type="button"
-                                      className="btn-creme px-3 py-2 rounded-xl font-semibold whitespace-nowrap"
-                                      onClick={() => saveMenuItem(tab, categoryIndex, itemIndex)}
-                                    >
-                                      {dirtyMenuItems[menuItemKey(tab, categoryIndex, itemIndex)] ? "Save" : "Saved"}
-                                    </button>
                                   </div>
                                 </div>
                               ))}
@@ -516,12 +500,26 @@ export default function AdminPage() {
                 </div>
               )}
             </section>
+          </div>
+        )}
+
+        {canUseEditor && activeSection === "gallery" && (
+          <div className="space-y-6">
+            <button
+              onClick={() => setActiveSection(null)}
+              className="mb-4 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Admin Panel
+            </button>
 
             <section className="bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 shadow-lg">
               <div className="flex items-center justify-between gap-4 mb-3">
                 <div>
                   <h2 className="menu-font text-2xl font-semibold">Gallery Manager</h2>
-                  <p className="text-sm text-muted-foreground">Edit images, captions, sizes, and order for the gallery grid.</p>
+                  <p className="text-sm text-muted-foreground">Upload photos and manage gallery content.</p>
                 </div>
                 <div className="flex gap-3">
                   <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold" onClick={addGalleryItem}>
@@ -541,7 +539,7 @@ export default function AdminPage() {
                       }}
                     />
                   </label>
-                  <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold" onClick={handleSaveGallery}>
+                  <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold" onClick={() => handleSaveGallery()}>
                   Save Gallery
                   </button>
                 </div>
@@ -555,35 +553,10 @@ export default function AdminPage() {
                       className={`rounded-2xl border bg-[#FFFCF8] p-4 shadow-sm transition-colors ${
                         dragOverId === image.id ? "border-[#E8A4B8] ring-2 ring-[#E8A4B8]/30" : "border-[#E8D5C4]"
                       }`}
-                      draggable
-                      onDragStart={(e) => {
-                        e.dataTransfer.effectAllowed = "move"
-                        dragIndexRef.current = index
-                      }}
-                      onDragOver={(e) => {
-                        e.preventDefault()
-                        if (dragOverId !== image.id) setDragOverId(image.id)
-                      }}
-                      onDrop={() => {
-                        const from = dragIndexRef.current
-                        if (typeof from === "number") moveGalleryItemTo(from, index)
-                        dragIndexRef.current = null
-                        setDragOverId(null)
-                      }}
-                      onDragEnd={() => {
-                        dragIndexRef.current = null
-                        setDragOverId(null)
-                      }}
                     >
                       <div className="flex items-center justify-between gap-3 mb-4">
                         <p className="text-sm font-medium text-muted-foreground">Image #{index + 1}</p>
                         <div className="flex gap-2">
-                          <button type="button" className="btn-creme px-3 py-2 rounded-xl text-sm font-semibold" onClick={() => moveGalleryItem(index, -1)}>
-                            Up
-                          </button>
-                          <button type="button" className="btn-creme px-3 py-2 rounded-xl text-sm font-semibold" onClick={() => moveGalleryItem(index, 1)}>
-                            Down
-                          </button>
                           <button
                             type="button"
                             className="px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 text-sm"
@@ -591,24 +564,11 @@ export default function AdminPage() {
                           >
                             Remove
                           </button>
-                          <button
-                            type="button"
-                            className="btn-creme px-3 py-2 rounded-xl text-sm font-semibold"
-                            onClick={() => saveGalleryItem(image.id)}
-                          >
-                            {dirtyGalleryItems[image.id] ? "Update" : "Saved"}
-                          </button>
                         </div>
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-3">
-                          <div className="rounded-xl border border-dashed border-[#E8D5C4] bg-white/70 px-4 py-3">
-                            <p className="text-sm font-semibold">Drag to reorder</p>
-                            <p className="text-xs text-muted-foreground">
-                              Grab this card and drag it up/down to rearrange the gallery.
-                            </p>
-                          </div>
                           <div className="flex items-center justify-between gap-3 rounded-xl border border-[#E8D5C4] bg-white px-4 py-3">
                             <div>
                               <p className="text-sm font-semibold">Upload image</p>
@@ -672,18 +632,6 @@ export default function AdminPage() {
                   ))}
                 </div>
               )}
-
-              {galleryData && (
-                <div className="mt-8 rounded-3xl border border-[#E8D5C4] bg-[#F5EDE6]/60 p-5">
-                  <div className="flex items-center justify-between gap-4 mb-4">
-                    <h3 className="menu-font text-xl font-semibold">Live Gallery Preview</h3>
-                    <p className="text-sm text-muted-foreground">Updates instantly as you edit (including drag & drop order).</p>
-                  </div>
-                  <div className="rounded-2xl overflow-hidden bg-[#F5EDE6]">
-                    <Gallery images={galleryData.images} />
-                  </div>
-                </div>
-              )}
             </section>
           </div>
         )}
@@ -697,4 +645,3 @@ export default function AdminPage() {
     </main>
   )
 }
-
