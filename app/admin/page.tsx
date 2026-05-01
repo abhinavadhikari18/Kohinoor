@@ -118,6 +118,20 @@ export default function AdminPage() {
     await loadEditors()
   }
 
+  const handleLogout = async () => {
+    const loadingId = toast.loading("Logging out...")
+    try {
+      await fetch("/api/admin/logout", { method: "POST" })
+      setAuthed(false)
+      setMenuData(null)
+      setGalleryData(null)
+      setActiveSection(null)
+      toast.success("Logged out successfully", { id: loadingId })
+    } catch (e) {
+      toast.error("Failed to log out", { id: loadingId })
+    }
+  }
+
   const handleSaveMenu = async () => {
     if (!menuData) return false
     setIsSavingMenu(true)
@@ -350,7 +364,15 @@ export default function AdminPage() {
       <div className="max-w-6xl mx-auto">
         <div className="relative mb-8 flex justify-center items-center">
           <h1 className="menu-font text-3xl md:text-4xl font-semibold">Admin Panel</h1>
-          <div className="absolute right-0">
+          <div className="absolute right-0 flex items-center gap-4">
+            {canUseEditor && (
+              <button
+                onClick={handleLogout}
+                className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Logout
+              </button>
+            )}
             <ThemeToggle />
           </div>
         </div>
@@ -387,7 +409,7 @@ export default function AdminPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] text-foreground shadow-inner shadow-[#3D2E24]/5 transition-all placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#E8A4B8]/60 focus:border-[#E8A4B8] dark:border-white/10 dark:bg-[#2A2420] dark:shadow-black/20 dark:focus:border-[#D4869E] dark:focus:ring-[#D4869E]/40"
+              className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all text-foreground shadow-inner shadow-[#3D2E24]/5 transition-all placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#E8A4B8]/60 focus:border-[#E8A4B8] dark:border-white/10 dark:bg-[#2A2420] dark:shadow-black/20 dark:focus:border-[#D4869E] dark:focus:ring-[#D4869E]/40"
             />
             <button
               type="submit"
@@ -402,7 +424,7 @@ export default function AdminPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <button
               onClick={() => setActiveSection("menu")}
-              className="w-full block bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow text-left group"
+              className="w-full block bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow text-left group dark:bg-[#1A1512]/80 dark:border-white/10"
             >
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mr-4">
@@ -417,7 +439,7 @@ export default function AdminPage() {
 
             <button
               onClick={() => setActiveSection("gallery")}
-              className="w-full block bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow text-left group"
+              className="w-full block bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow text-left group dark:bg-[#1A1512]/80 dark:border-white/10"
             >
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
@@ -444,7 +466,7 @@ export default function AdminPage() {
               Back to Admin Panel
             </button>
             
-            <section className="bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 shadow-lg">
+            <section className="bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 shadow-lg dark:bg-[#1A1512]/80 dark:border-white/10">
               <div className="flex items-center justify-between gap-4 mb-3">
                 <div>
                   <h2 className="menu-font text-2xl font-semibold">Menu Editor</h2>
@@ -475,106 +497,135 @@ export default function AdminPage() {
                 value={menuSearch}
                 onChange={(e) => setMenuSearch(e.target.value)}
                 placeholder="Search menu item by name..."
-                className="w-full mb-4 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white"
+                className="w-full px-4 py-3 mb-4 rounded-xl border border-[#E8D5C4] bg-white dark:border-white/10 dark:bg-[#2A2420] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
               />
 
-              {menuData && (
-                <div className="space-y-8">
-                  {(Object.keys(TAB_LABELS) as MenuTabKey[]).map((tab) => (
-                    <div key={tab} className="space-y-4">
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-                        <h3 className="menu-font text-xl font-semibold">{TAB_LABELS[tab]}</h3>
-                        <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold text-sm sm:text-base w-full sm:w-auto" onClick={() => addCategory(tab)}>
-                          Add Category
-                        </button>
-                      </div>
+              {menuData && (() => {
+                const searchLower = menuSearch.trim().toLowerCase()
+                
+                const filteredTabs = (Object.keys(TAB_LABELS) as MenuTabKey[]).map(tabKey => {
+                  const categories = menuData.tabs[tabKey]
+                    .map((category, categoryIndex) => {
+                      const matchesCategoryName = searchLower ? category.name.toLowerCase().includes(searchLower) : true
+                      
+                      const items = category.items
+                        .map((item, itemIndex) => ({ item, itemIndex }))
+                        .filter(({ item }) =>
+                          searchLower
+                            ? item.name.toLowerCase().includes(searchLower) || (item.description && item.description.toLowerCase().includes(searchLower))
+                            : true
+                        )
+                        
+                      if (searchLower && !matchesCategoryName && items.length === 0) {
+                        return null
+                      }
+                      
+                      return { ...category, categoryIndex, filteredItems: items }
+                    })
+                    .filter(Boolean) as (MenuCategory & { categoryIndex: number, filteredItems: { item: MenuItem, itemIndex: number }[] })[]
+                    
+                  return { tabKey, categories }
+                }).filter(tab => tab.categories.length > 0)
 
-                      <div className="space-y-5">
-                        {menuData.tabs[tab].map((category, categoryIndex) => (
-                          <div key={`${tab}-${categoryIndex}`} className="rounded-2xl border border-[#E8D5C4] bg-[#FFFCF8] p-5">
-                            <div className="flex items-center justify-between gap-4 mb-4">
-                              <input
-                                value={category.name}
-                                onChange={(e) => updateCategory(tab, categoryIndex, "name", e.target.value)}
-                                placeholder="Category name"
-                                className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white"
-                              />
+                if (filteredTabs.length === 0) {
+                  return (
+                    <div className="text-center py-12 border-2 border-dashed border-[#E8D5C4] dark:border-[#4A3C2C] rounded-3xl">
+                      <p className="text-muted-foreground font-medium">No menu items found matching "{menuSearch}"</p>
+                    </div>
+                  )
+                }
+
+                return (
+                  <div className="space-y-8">
+                    {filteredTabs.map(({ tabKey: tab, categories }) => (
+                      <div key={tab} className="space-y-4">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+                          <h3 className="menu-font text-xl font-semibold">{TAB_LABELS[tab]}</h3>
+                          <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold text-sm sm:text-base w-full sm:w-auto" onClick={() => addCategory(tab)}>
+                            Add Category
+                          </button>
+                        </div>
+
+                        <div className="space-y-5">
+                          {categories.map((category) => (
+                            <div key={`${tab}-${category.categoryIndex}`} className="rounded-2xl border border-[#E8D5C4] bg-[#FFFCF8] p-5 dark:border-white/10 dark:bg-[#1A1512]">
+                              <div className="flex items-center justify-between gap-4 mb-4">
+                                <input
+                                  value={category.name}
+                                  onChange={(e) => updateCategory(tab, category.categoryIndex, "name", e.target.value)}
+                                  placeholder="Category name"
+                                  className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white dark:border-white/10 dark:bg-[#2A2420] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
+                                />
+                                <button
+                                  type="button"
+                                  className="px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 dark:border-pink-900/50 dark:text-pink-400 dark:bg-pink-950/30 transition-colors hover:bg-pink-100 dark:hover:bg-pink-900/50"
+                                  onClick={() => removeCategory(tab, category.categoryIndex)}
+                                >
+                                  Remove
+                                </button>
+                              </div>
+
+                              <div className="space-y-3">
+                                {category.filteredItems.map(({ item, itemIndex }) => (
+                                  <div key={`${tab}-${category.categoryIndex}-${itemIndex}`} className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-12 gap-3 rounded-2xl border border-[#EFE2D7] bg-white p-4 dark:border-white/10 dark:bg-[#2A2420]">
+                                    <input
+                                      value={item.name}
+                                      onChange={(e) => updateMenuItem(tab, category.categoryIndex, itemIndex, "name", e.target.value)}
+                                      placeholder="Dish name"
+                                      className="col-span-2 md:col-span-3 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
+                                    />
+                                    <input
+                                      value={item.description ?? ""}
+                                      onChange={(e) => updateMenuItem(tab, category.categoryIndex, itemIndex, "description", e.target.value)}
+                                      placeholder="Description"
+                                      className="col-span-2 md:col-span-3 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
+                                    />
+                                    <input
+                                      value={item.price ?? ""}
+                                      onChange={(e) => updateMenuItem(tab, category.categoryIndex, itemIndex, "price", e.target.value)}
+                                      placeholder="Price"
+                                      className="col-span-1 md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
+                                    />
+                                    <input
+                                      value={item.vegPrice ?? ""}
+                                      onChange={(e) => updateMenuItem(tab, category.categoryIndex, itemIndex, "vegPrice", e.target.value)}
+                                      placeholder="Veg price"
+                                      className="col-span-1 md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
+                                    />
+                                    <div className="col-span-2 md:col-span-2 flex gap-2">
+                                      <input
+                                        value={item.nonVegPrice ?? ""}
+                                        onChange={(e) => updateMenuItem(tab, category.categoryIndex, itemIndex, "nonVegPrice", e.target.value)}
+                                        placeholder="Non-veg price"
+                                        className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
+                                      />
+                                      <button
+                                        type="button"
+                                        className="px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 dark:border-pink-900/50 dark:text-pink-400 dark:bg-pink-950/30 transition-colors hover:bg-pink-100 dark:hover:bg-pink-900/50 whitespace-nowrap"
+                                        onClick={() => removeMenuItem(tab, category.categoryIndex, itemIndex)}
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+
                               <button
                                 type="button"
-                                className="px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50"
-                                onClick={() => removeCategory(tab, categoryIndex)}
+                                className="btn-creme mt-4 px-4 py-2 rounded-xl font-semibold"
+                                onClick={() => addMenuItem(tab, category.categoryIndex)}
                               >
-                                Remove
+                                Add Item
                               </button>
                             </div>
-
-                            <div className="space-y-3">
-                              {category.items
-                                .map((item, itemIndex) => ({ item, itemIndex }))
-                                .filter(({ item }) =>
-                                  menuSearch.trim()
-                                    ? item.name.toLowerCase().includes(menuSearch.trim().toLowerCase())
-                                    : true,
-                                )
-                                .map(({ item, itemIndex }) => (
-                                <div key={`${tab}-${categoryIndex}-${itemIndex}`} className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-12 gap-3 rounded-2xl border border-[#EFE2D7] bg-white p-4">
-                                  <input
-                                    value={item.name}
-                                    onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "name", e.target.value)}
-                                    placeholder="Dish name"
-                                    className="col-span-2 md:col-span-3 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
-                                  />
-                                  <input
-                                    value={item.description ?? ""}
-                                    onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "description", e.target.value)}
-                                    placeholder="Description"
-                                    className="col-span-2 md:col-span-3 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
-                                  />
-                                  <input
-                                    value={item.price ?? ""}
-                                    onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "price", e.target.value)}
-                                    placeholder="Price"
-                                    className="col-span-1 md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
-                                  />
-                                  <input
-                                    value={item.vegPrice ?? ""}
-                                    onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "vegPrice", e.target.value)}
-                                    placeholder="Veg price"
-                                    className="col-span-1 md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
-                                  />
-                                  <div className="col-span-2 md:col-span-2 flex gap-2">
-                                    <input
-                                      value={item.nonVegPrice ?? ""}
-                                      onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "nonVegPrice", e.target.value)}
-                                      placeholder="Non-veg price"
-                                      className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
-                                    />
-                                    <button
-                                      type="button"
-                                      className="px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 whitespace-nowrap"
-                                      onClick={() => removeMenuItem(tab, categoryIndex, itemIndex)}
-                                    >
-                                      Remove
-                                    </button>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-
-                            <button
-                              type="button"
-                              className="btn-creme mt-4 px-4 py-2 rounded-xl font-semibold"
-                              onClick={() => addMenuItem(tab, categoryIndex)}
-                            >
-                              Add Item
-                            </button>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )
+              })()}
             </section>
           </div>
         )}
@@ -591,7 +642,7 @@ export default function AdminPage() {
               Back to Admin Panel
             </button>
 
-            <section className="bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 shadow-lg">
+            <section className="bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 shadow-lg dark:bg-[#1A1512]/80 dark:border-white/10">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
                 <div>
                   <h2 className="menu-font text-2xl font-semibold">Gallery Manager</h2>
@@ -654,7 +705,7 @@ export default function AdminPage() {
                         <div className="flex gap-2">
                           <button
                             type="button"
-                            className="px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 text-sm"
+                            className="px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 dark:border-pink-900/50 dark:text-pink-400 dark:bg-pink-950/30 transition-colors hover:bg-pink-100 dark:hover:bg-pink-900/50 text-sm"
                             onClick={() => removeGalleryItemAndSave(index)}
                           >
                             Remove
@@ -664,7 +715,7 @@ export default function AdminPage() {
 
                       <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-3">
-                          <div className="flex items-center justify-between gap-3 rounded-xl border border-[#E8D5C4] bg-white px-4 py-3">
+                          <div className="flex items-center justify-between gap-3 rounded-xl border border-[#E8D5C4] bg-white px-4 py-3 dark:border-white/10 dark:bg-[#2A2420]">
                             <div>
                               <p className="text-sm font-semibold">Upload image</p>
                               <p className="text-xs text-muted-foreground">No compression. Saved to this website.</p>
@@ -687,25 +738,25 @@ export default function AdminPage() {
                             value={image.src}
                             onChange={(e) => updateGalleryItem(index, "src", e.target.value)}
                             placeholder="Image URL"
-                            className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white"
+                            className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white dark:border-white/10 dark:bg-[#2A2420] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
                           />
                           <input
                             value={image.alt}
                             onChange={(e) => updateGalleryItem(index, "alt", e.target.value)}
                             placeholder="Image title"
-                            className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white"
+                            className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white dark:border-white/10 dark:bg-[#2A2420] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
                           />
                           <textarea
                             value={image.description}
                             onChange={(e) => updateGalleryItem(index, "description", e.target.value)}
                             placeholder="Description"
                             rows={4}
-                            className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white resize-none"
+                            className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white dark:border-white/10 dark:bg-[#2A2420] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all resize-none"
                           />
                           <select
                             value={image.size ?? "medium"}
                             onChange={(e) => updateGalleryItem(index, "size", e.target.value)}
-                            className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white"
+                            className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white dark:border-white/10 dark:bg-[#2A2420] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
                           >
                             <option value="small">Small</option>
                             <option value="medium">Medium</option>
@@ -713,7 +764,7 @@ export default function AdminPage() {
                           </select>
                         </div>
 
-                        <div className="rounded-2xl overflow-hidden border border-[#E8D5C4] bg-[#F5EDE6] min-h-[220px] flex items-center justify-center">
+                        <div className="rounded-2xl overflow-hidden border border-[#E8D5C4] bg-[#F5EDE6] dark:border-white/10 dark:bg-[#2A2420] min-h-[220px] flex items-center justify-center">
                           {image.src ? (
                             <div className="relative w-full h-full min-h-[220px]">
                               <Image src={image.src} alt={image.alt || "Preview"} fill className="object-cover" />

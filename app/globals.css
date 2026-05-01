@@ -300,18 +300,22 @@
 
 /* Soft Creme Button with Rose-Pink Hover */
 .btn-creme {
-  background-color: #F5EDE6;
-  color: #3D2E24;
-  border: 2px solid #E8D5C4;
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 2px solid var(--border);
   transition: all 0.3s ease;
 }
 
 .btn-creme:hover {
-  background-color: #E8A4B8;
-  border-color: #E8A4B8;
+  background-color: var(--rose-pink);
+  border-color: var(--rose-pink);
   color: #FFFFFF;
   box-shadow: 0 8px 25px rgba(232, 164, 184, 0.35);
   transform: translateY(-2px);
+}
+
+.dark .btn-creme:hover {
+  box-shadow: 0 8px 25px rgba(212, 134, 158, 0.25);
 }
 
 /* Menu elegant font styling */

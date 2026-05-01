@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { X, ChevronLeft, ChevronRight, Camera } from "lucide-react"
 import type { GalleryImage } from "@/lib/gallery-types"
@@ -31,6 +31,18 @@ export default function Gallery({ images }: GalleryProps) {
   const prevImage = () => {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
   }
+
+  // Add keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!lightboxOpen) return
+      if (e.key === "Escape") closeLightbox()
+      if (e.key === "ArrowRight") nextImage()
+      if (e.key === "ArrowLeft") prevImage()
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [lightboxOpen, images.length])
 
   return (
     <section id="gallery" className="py-20 px-4 bg-secondary/30">
@@ -95,7 +107,7 @@ export default function Gallery({ images }: GalleryProps) {
 
       {/* Lightbox */}
       {lightboxOpen && (
-        <div className="fixed inset-0 z-50 lightbox-overlay flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 lightbox-overlay flex items-center justify-center p-4" onClick={closeLightbox}>
           {/* Close Button */}
           <button
             onClick={closeLightbox}
@@ -106,34 +118,34 @@ export default function Gallery({ images }: GalleryProps) {
 
           {/* Navigation Buttons */}
           <button
-            onClick={prevImage}
+            onClick={(e) => { e.stopPropagation(); prevImage(); }}
             className="absolute left-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
           >
             <ChevronLeft className="w-8 h-8 text-white" />
           </button>
           <button
-            onClick={nextImage}
+            onClick={(e) => { e.stopPropagation(); nextImage(); }}
             className="absolute right-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
           >
             <ChevronRight className="w-8 h-8 text-white" />
           </button>
 
           {/* Image Container */}
-          <div className="relative max-w-5xl max-h-[80vh] w-full h-full">
-            <Image
+          <div className="relative max-w-5xl max-h-[80vh] w-full h-full flex items-center justify-center" onClick={closeLightbox}>
+            <img
               src={images[currentIndex].src}
               alt={images[currentIndex].alt}
-              fill
-              className="object-contain"
+              className="max-w-full max-h-full object-contain cursor-default"
+              onClick={(e) => e.stopPropagation()}
             />
           </div>
 
           {/* Description */}
-          <div className="absolute bottom-8 left-0 right-0 text-center">
-              <p className="text-white text-lg font-medium mb-2 menu-font">
+          <div className="absolute bottom-8 left-0 right-0 text-center pointer-events-none">
+            <p className="text-white text-lg font-medium mb-2 menu-font">
               {images[currentIndex].alt}
             </p>
-              <p className="text-white/70 text-sm desc-font">
+            <p className="text-white/70 text-sm desc-font max-w-2xl mx-auto">
               {images[currentIndex].description}
             </p>
             <p className="text-white/50 text-xs mt-2">

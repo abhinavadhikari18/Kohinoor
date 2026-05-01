@@ -1,7 +1,7 @@
 import crypto from "crypto"
 
 const COOKIE_NAME = "kohinoor_admin"
-const MAX_AGE_SECONDS = 60 * 60 * 24 * 7 // 7 days
+const MAX_AGE_SECONDS = 60 * 60 * 6 // 6 hours
 
 function getAdminUsername(): string {
   return (process.env.ADMIN_USERNAME ?? "admin").trim()
