@@ -1,13 +1,20 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
 import { X, ChevronLeft, ChevronRight, Camera } from "lucide-react"
 import type { GalleryImage } from "@/lib/gallery-types"
 
 export interface GalleryProps {
   images: GalleryImage[]
 }
+
+const gallerySizeClasses: Record<NonNullable<GalleryImage["size"]>, string> = {
+  small: "sm:col-span-1 lg:col-span-1 min-h-[230px] sm:min-h-[250px] lg:min-h-[270px]",
+  medium: "sm:col-span-1 lg:col-span-2 min-h-[300px] sm:min-h-[320px] lg:min-h-[350px]",
+  large: "sm:col-span-2 lg:col-span-2 min-h-[390px] sm:min-h-[430px] lg:min-h-[500px]",
+}
+
+const getGallerySize = (size?: GalleryImage["size"]) => size ?? "medium"
 
 export default function Gallery({ images }: GalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -62,25 +69,23 @@ export default function Gallery({ images }: GalleryProps) {
           </p>
         </div>
 
-        {/* Gallery Grid - Natural masonry flow */}
-        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 [column-gap:1.25rem]">
-          {images.map((image, index) => (
-            <div
-              key={image.id}
-              className={`group relative mb-5 break-inside-avoid overflow-hidden rounded-[1.75rem] cursor-pointer premium-hover shadow-lg border border-border/50 ${
-                image.size === "large"
-                  ? "ring-1 ring-border/80"
-                  : image.size === "medium"
-                    ? "ring-1 ring-secondary/80"
-                    : ""
-              }`}
-              onClick={() => openLightbox(index)}
-            >
-              <div className="relative">
+        {/* Gallery Grid */}
+        <div className="grid auto-rows-auto grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {images.map((image, index) => {
+            const size = getGallerySize(image.size)
+
+            return (
+              <button
+                key={image.id}
+                type="button"
+                aria-label={`Open ${image.alt} in gallery`}
+                className={`group relative overflow-hidden rounded-[1.75rem] cursor-pointer premium-hover shadow-lg border border-border/50 text-left ${gallerySizeClasses[size]}`}
+                onClick={() => openLightbox(index)}
+              >
                 <img
                   src={image.src}
                   alt={image.alt}
-                  className="w-full h-auto block transition-transform duration-500 group-hover:scale-[1.03]"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300" />
@@ -99,9 +104,9 @@ export default function Gallery({ images }: GalleryProps) {
                     <Camera className="w-6 h-6 text-white" />
                   </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              </button>
+            )
+          })}
         </div>
       </div>
 

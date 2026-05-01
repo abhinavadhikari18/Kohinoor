@@ -33,6 +33,22 @@ const emptyGalleryImage = (): GalleryImage => ({
   size: "medium",
 })
 
+const gallerySizeOptions = ["small", "medium", "large"] as const
+
+const adminGalleryCardSizeClasses: Record<(typeof gallerySizeOptions)[number], string> = {
+  small: "xl:col-span-1",
+  medium: "xl:col-span-1",
+  large: "xl:col-span-2",
+}
+
+const adminGalleryPreviewSizeClasses: Record<(typeof gallerySizeOptions)[number], string> = {
+  small: "min-h-[180px] md:min-h-[220px]",
+  medium: "min-h-[240px] md:min-h-[280px]",
+  large: "min-h-[320px] md:min-h-[380px]",
+}
+
+const getGallerySize = (size?: GalleryImage["size"]) => size ?? "medium"
+
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false)
   const [checkingSession, setCheckingSession] = useState(true)
@@ -693,15 +709,18 @@ export default function AdminPage() {
 
               {galleryData && (
                 <div className="grid xl:grid-cols-2 gap-5">
-                  {galleryData.images.map((image, index) => (
-                    <div
-                      key={image.id}
-                      className={`rounded-2xl border bg-[#FFFCF8] p-4 shadow-sm transition-colors ${
-                        dragOverId === image.id ? "border-[#E8A4B8] ring-2 ring-[#E8A4B8]/30" : "border-[#E8D5C4]"
-                      }`}
-                    >
+                  {galleryData.images.map((image, index) => {
+                    const size = getGallerySize(image.size)
+
+                    return (
+                      <div
+                        key={image.id}
+                        className={`rounded-2xl border bg-[#FFFCF8] p-4 shadow-sm transition-colors dark:bg-[#211B17] ${adminGalleryCardSizeClasses[size]} ${
+                          dragOverId === image.id ? "border-[#E8A4B8] ring-2 ring-[#E8A4B8]/30" : "border-[#E8D5C4] dark:border-white/10"
+                        }`}
+                      >
                       <div className="flex items-center justify-between gap-3 mb-4">
-                        <p className="text-sm font-medium text-muted-foreground">Image #{index + 1}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Image #{index + 1} · {size.charAt(0).toUpperCase() + size.slice(1)}</p>
                         <div className="flex gap-2">
                           <button
                             type="button"
@@ -735,12 +754,6 @@ export default function AdminPage() {
                             </label>
                           </div>
                           <input
-                            value={image.src}
-                            onChange={(e) => updateGalleryItem(index, "src", e.target.value)}
-                            placeholder="Image URL"
-                            className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white dark:border-white/10 dark:bg-[#2A2420] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
-                          />
-                          <input
                             value={image.alt}
                             onChange={(e) => updateGalleryItem(index, "alt", e.target.value)}
                             placeholder="Image title"
@@ -755,7 +768,7 @@ export default function AdminPage() {
                           />
                           <select
                             value={image.size ?? "medium"}
-                            onChange={(e) => updateGalleryItem(index, "size", e.target.value)}
+                            onChange={(e) => updateGalleryItem(index, "size", e.target.value as NonNullable<GalleryImage["size"]>)}
                             className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-white dark:border-white/10 dark:bg-[#2A2420] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
                           >
                             <option value="small">Small</option>
@@ -764,9 +777,9 @@ export default function AdminPage() {
                           </select>
                         </div>
 
-                        <div className="rounded-2xl overflow-hidden border border-[#E8D5C4] bg-[#F5EDE6] dark:border-white/10 dark:bg-[#2A2420] min-h-[220px] flex items-center justify-center">
+                        <div className={`rounded-2xl overflow-hidden border border-[#E8D5C4] bg-[#F5EDE6] dark:border-white/10 dark:bg-[#2A2420] flex items-center justify-center ${adminGalleryPreviewSizeClasses[size]}`}>
                           {image.src ? (
-                            <div className="relative w-full h-full min-h-[220px]">
+                            <div className={`relative w-full ${adminGalleryPreviewSizeClasses[size]}`}>
                               <Image src={image.src} alt={image.alt || "Preview"} fill className="object-cover" />
                             </div>
                           ) : (
@@ -775,7 +788,8 @@ export default function AdminPage() {
                         </div>
                       </div>
                     </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
             </section>
