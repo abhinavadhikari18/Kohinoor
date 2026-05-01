@@ -33,14 +33,14 @@ export default function Gallery({ images }: GalleryProps) {
   }
 
   return (
-    <section id="gallery" className="py-20 px-4 bg-[#F5EDE6]">
+    <section id="gallery" className="py-20 px-4 bg-secondary/30">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-px bg-gradient-to-r from-transparent to-[#E8A4B8]" />
-            <Camera className="w-6 h-6 text-[#E8A4B8]" />
-            <div className="w-12 h-px bg-gradient-to-l from-transparent to-[#E8A4B8]" />
+            <div className="w-12 h-px bg-gradient-to-r from-transparent to-primary" />
+            <Camera className="w-6 h-6 text-primary" />
+            <div className="w-12 h-px bg-gradient-to-l from-transparent to-primary" />
           </div>
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
             Our Gallery
@@ -55,11 +55,11 @@ export default function Gallery({ images }: GalleryProps) {
           {images.map((image, index) => (
             <div
               key={image.id}
-              className={`group relative mb-5 break-inside-avoid overflow-hidden rounded-[1.75rem] cursor-pointer premium-hover shadow-lg border border-white/50 ${
+              className={`group relative mb-5 break-inside-avoid overflow-hidden rounded-[1.75rem] cursor-pointer premium-hover shadow-lg border border-border/50 ${
                 image.size === "large"
-                  ? "ring-1 ring-[#E8D5C4]/80"
+                  ? "ring-1 ring-border/80"
                   : image.size === "medium"
-                    ? "ring-1 ring-[#F5EDE6]/80"
+                    ? "ring-1 ring-secondary/80"
                     : ""
               }`}
               onClick={() => openLightbox(index)}
@@ -83,7 +83,7 @@ export default function Gallery({ images }: GalleryProps) {
 
                 {/* Hover Icon */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-14 h-14 rounded-full bg-[#E8A4B8]/80 backdrop-blur-sm flex items-center justify-center border-2 border-white/30">
+                  <div className="w-14 h-14 rounded-full bg-primary/80 backdrop-blur-sm flex items-center justify-center border-2 border-white/30">
                     <Camera className="w-6 h-6 text-white" />
                   </div>
                 </div>

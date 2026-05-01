@@ -3,9 +3,9 @@ import { z } from "zod"
 export const MenuItemSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
-  price: z.string().min(1).optional(),
-  vegPrice: z.string().min(1).optional(),
-  nonVegPrice: z.string().min(1).optional(),
+  price: z.string().optional(),
+  vegPrice: z.string().optional(),
+  nonVegPrice: z.string().optional(),
 }).refine(
   (item) => {
     // Either a normal single `price` OR both `vegPrice` and `nonVegPrice`.

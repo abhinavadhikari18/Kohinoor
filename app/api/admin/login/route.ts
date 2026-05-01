@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
-import { getAdminCookieName, getAdminPasswordVerified, signAdminSession, verifyPassword } from "@/lib/admin-auth"
+import { getAdminCookieName, getAdminPasswordVerified, signAdminSession, verifyCredentials } from "@/lib/admin-auth"
 
 const LoginBodySchema = z.object({
+  username: z.string().min(1),
   password: z.string().min(1),
 })
 
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 })
   }
 
-  if (!verifyPassword(parsed.data.password)) {
+  if (!verifyCredentials(parsed.data.username, parsed.data.password)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 

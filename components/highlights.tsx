@@ -1,7 +1,15 @@
 "use client"
 
+import { useRef } from "react"
 import Image from "next/image"
 import { Gem, Home, Utensils, Wine } from "lucide-react"
+import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 const mainHighlight = {
   title: "Cozy Room",
@@ -33,8 +41,55 @@ const semiHighlights = [
 ]
 
 export default function Highlights() {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useGSAP(() => {
+    // 3D pop-in effect for main highlight
+    gsap.fromTo(".main-highlight-card", 
+      { 
+        y: 100, 
+        opacity: 0, 
+        rotateX: -30, 
+        transformPerspective: 1000 
+      },
+      {
+        y: 0,
+        opacity: 1,
+        rotateX: 0,
+        duration: 1.2,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".main-highlight-card",
+          start: "top 95%", // Adjusted for mobile
+        }
+      }
+    )
+
+    // Staggered 3D pop-in for semi-highlights
+    gsap.fromTo(".semi-highlight-card",
+      { 
+        y: 80, 
+        opacity: 0, 
+        rotateY: 30, 
+        transformPerspective: 1000 
+      },
+      {
+        y: 0,
+        opacity: 1,
+        rotateY: 0,
+        duration: 1,
+        stagger: 0.2,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".semi-highlights-container",
+          start: "top 95%", // Adjusted for mobile
+        }
+      }
+    )
+  }, { scope: sectionRef })
+
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-background to-secondary/30">
+    <section ref={sectionRef} className="py-20 md:py-32 px-4 sm:px-6 bg-gradient-to-b from-background to-secondary/30 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -52,7 +107,7 @@ export default function Highlights() {
         </div>
 
         {/* Main Highlight Card */}
-        <div className="relative mb-12 group">
+        <div className="relative mb-12 group main-highlight-card transform-style-3d">
           <div className="relative overflow-hidden rounded-3xl shadow-2xl premium-hover">
             <div className="relative h-[400px] md:h-[500px]">
               <Image
@@ -74,13 +129,13 @@ export default function Highlights() {
                   <div className="inline-block px-4 py-1.5 bg-amber-500 text-white text-sm font-semibold rounded-full mb-4">
                     Featured Offer
                   </div>
-                  <h3 className="font-serif text-3xl md:text-5xl font-bold text-white mb-2">
+                  <h3 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 leading-tight">
                     {mainHighlight.title}
                   </h3>
-                  <p className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-amber-300 to-amber-100 bg-clip-text text-transparent mb-4">
+                  <p className="text-4xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-amber-300 to-amber-100 bg-clip-text text-transparent mb-4">
                     {mainHighlight.subtitle}
                   </p>
-                  <p className="text-white/80 text-lg max-w-xl">
+                  <p className="text-white/80 text-base sm:text-lg max-w-xl">
                     {mainHighlight.description}
                   </p>
                 </div>
@@ -94,12 +149,11 @@ export default function Highlights() {
         </div>
 
         {/* Semi Highlights */}
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-10 semi-highlights-container">
           {semiHighlights.map((highlight, index) => (
             <div
               key={highlight.title}
-              className="group relative overflow-hidden rounded-2xl shadow-xl premium-hover"
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="group relative overflow-hidden rounded-2xl shadow-xl premium-hover semi-highlight-card transform-style-3d"
             >
               <div className="relative h-[300px]">
                 <Image

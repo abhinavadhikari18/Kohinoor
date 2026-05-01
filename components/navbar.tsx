@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { Phone, Menu, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import MagneticButton from "./magnetic-button"
+import { ThemeToggle } from "./theme-toggle"
 
 const navLinks = [
   { name: "Home", href: "#home" },
@@ -77,22 +79,29 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Call Now Button - Creme Base with Rose-Pink Hover */}
-          <div className="hidden md:block">
-            <a
-              href="tel:+9779709671703"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F5EDE6] text-[#3D2E24] border-2 border-[#E8D5C4] font-semibold rounded-full shadow-md hover:bg-[#E8A4B8] hover:border-[#E8A4B8] hover:text-white hover:shadow-[#E8A4B8]/30 hover:scale-105 transition-all duration-300"
-            >
-              <Phone className="w-4 h-4" />
-              Call Now
-            </a>
+          {/* Actions (Toggle + Call Now) */}
+          <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
+            <MagneticButton>
+              <a
+                href="tel:+9779709671703"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary text-secondary-foreground border-2 border-border font-semibold rounded-full shadow-md hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-primary/30 hover:scale-105 transition-all duration-300 interactive"
+              >
+                <Phone className="w-4 h-4" />
+                Call Now
+              </a>
+            </MagneticButton>
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`md:hidden p-2 rounded-lg transition-colors ${
-              isScrolled ? "text-foreground" : "text-white"
+            type="button"
+            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation"
+            onClick={() => setIsMobileMenuOpen((open) => !open)}
+            className={`md:hidden relative z-[60] p-2 rounded-lg transition-colors ${
+              isScrolled || isMobileMenuOpen ? "text-foreground bg-background/80" : "text-white bg-black/20"
             }`}
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -102,23 +111,38 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden absolute top-full left-0 right-0 glass shadow-xl transition-all duration-300 overflow-hidden ${
-          isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        id="mobile-navigation"
+        className={`md:hidden fixed left-0 right-0 top-[72px] z-50 border-t border-border bg-background/95 shadow-xl backdrop-blur-xl transition-all duration-300 overflow-hidden ${
+          isMobileMenuOpen
+            ? "max-h-[calc(100dvh-72px)] opacity-100 pointer-events-auto"
+            : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >
-        <div className="px-4 py-6 space-y-4">
-          {navLinks.map((link) => (
-            <button
-              key={link.name}
-              onClick={() => scrollToSection(link.href)}
-              className="block w-full text-left text-foreground font-medium py-2 hover:text-amber-600 transition-colors"
-            >
-              {link.name}
-            </button>
-          ))}
+        <div className="px-4 py-6 space-y-4 max-h-[calc(100dvh-72px)] overflow-y-auto">
+          <div className="flex items-center justify-between pb-4 border-b border-border">
+            <span className="font-medium text-foreground">Theme</span>
+            <ThemeToggle />
+          </div>
+          <div className="space-y-2 pt-2">
+            {navLinks.map((link, index) => (
+              <button
+                key={link.name}
+                onClick={() => scrollToSection(link.href)}
+                className={`block w-full text-left text-foreground font-medium py-3 hover:text-amber-600 transition-all duration-500 transform ${
+                  isMobileMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                }`}
+                style={{ transitionDelay: `${0.1 * index}s` }}
+              >
+                {link.name}
+              </button>
+            ))}
+          </div>
           <a
             href="tel:+9779709671703"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F5EDE6] text-[#3D2E24] border-2 border-[#E8D5C4] font-semibold rounded-full shadow-md hover:bg-[#E8A4B8] hover:border-[#E8A4B8] hover:text-white transition-all duration-300"
+            className={`mt-6 flex items-center justify-center gap-2 w-full px-5 py-4 bg-secondary text-secondary-foreground border-2 border-border font-semibold rounded-full shadow-md hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-500 transform ${
+              isMobileMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+            style={{ transitionDelay: `${0.1 * navLinks.length}s` }}
           >
             <Phone className="w-4 h-4" />
             Call Now

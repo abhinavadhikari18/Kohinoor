@@ -34,7 +34,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-foreground text-background">
+    <footer className="bg-foreground text-background dark:bg-black dark:text-white">
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -51,10 +51,10 @@ export default function Footer() {
               </div>
               <div>
                 <h3 className="font-serif text-xl font-bold text-amber-100">Kohinoor</h3>
-                <p className="text-sm text-background/60">Restaurant</p>
+                <p className="text-sm text-white/60">Restaurant</p>
               </div>
             </div>
-            <p className="text-background/70 text-sm leading-relaxed mb-6">
+            <p className="text-white/70 text-sm leading-relaxed mb-6">
               Where Peace, Nature & Love Meet. Experience the finest dining in a serene 
               environment with our signature dishes and warm hospitality.
             </p>
@@ -66,7 +66,7 @@ export default function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-amber-500 transition-colors"
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-amber-500 transition-colors"
                   aria-label={social.label}
                 >
                   <social.icon className="w-5 h-5" />
@@ -83,7 +83,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <button
                     onClick={() => scrollToSection(link.href)}
-                    className="text-background/70 hover:text-amber-400 transition-colors text-sm"
+                    className="text-white/70 hover:text-amber-400 transition-colors text-sm"
                   >
                     {link.name}
                   </button>
@@ -99,17 +99,17 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <p className="text-background/70">+977 9709671703</p>
-                  <p className="text-background/70">+977 9812345678</p>
+                  <p className="text-white/70">+977 9709671703</p>
+                  <p className="text-white/70">+977 9812345678</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-                <p className="text-background/70 text-sm">kohinoor.restaurant@gmail.com</p>
+                <p className="text-white/70 text-sm">kohinoor.restaurant@gmail.com</p>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-                <p className="text-background/70 text-sm">Tilottama-13, Kotihawa</p>
+                <p className="text-white/70 text-sm">Tilottama-13, Kotihawa</p>
               </li>
             </ul>
           </div>
@@ -118,15 +118,15 @@ export default function Footer() {
           <div>
             <h4 className="font-serif text-lg font-bold text-amber-100 mb-6">Opening Hours</h4>
             <ul className="space-y-3 text-sm">
-              <li className="flex justify-between text-background/70">
+              <li className="flex justify-between text-white/70">
                 <span>Monday - Friday</span>
                 <span>11AM - 10PM</span>
               </li>
-              <li className="flex justify-between text-background/70">
+              <li className="flex justify-between text-white/70">
                 <span>Saturday</span>
                 <span>10AM - 11PM</span>
               </li>
-              <li className="flex justify-between text-background/70">
+              <li className="flex justify-between text-white/70">
                 <span>Sunday</span>
                 <span>10AM - 11PM</span>
               </li>
@@ -134,7 +134,7 @@ export default function Footer() {
             <div className="mt-6">
               <a
                 href="tel:+9779845628519"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F5EDE6] text-[#3D2E24] border-2 border-[#E8D5C4] font-semibold rounded-full text-sm hover:bg-[#E8A4B8] hover:border-[#E8A4B8] hover:text-white hover:shadow-lg hover:shadow-[#E8A4B8]/30 transition-all"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-background text-foreground border-2 border-border font-semibold rounded-full text-sm hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-lg hover:shadow-primary/30 transition-all dark:bg-secondary dark:text-secondary-foreground"
               >
                 <Phone className="w-4 h-4" />
                 Reserve Now
@@ -145,13 +145,13 @@ export default function Footer() {
       </div>
 
       {/* Bottom Footer */}
-      <div className="border-t border-background/10">
+      <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-background/50 text-sm text-center md:text-left">
+            <p className="text-white/50 text-sm text-center md:text-left">
               &copy; {new Date().getFullYear()} Kohinoor Restaurant. All rights reserved.
             </p>
-            <p className="text-background/50 text-sm">
+            <p className="text-white/50 text-sm">
               Crafted by{" "}
               <Link
                 href="https://nine-sapphires9.vercel.app"

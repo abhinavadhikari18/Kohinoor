@@ -112,10 +112,7 @@ export default function Contact() {
   return (
     <section 
       id="contact" 
-      className="py-20 px-4 relative overflow-hidden"
-      style={{
-        background: "linear-gradient(135deg, rgba(248, 244, 232, 0.98) 0%, rgba(252, 231, 243, 0.95) 50%, rgba(248, 244, 232, 0.98) 100%)"
-      }}
+      className="py-20 px-4 relative overflow-hidden bg-gradient-to-br from-background via-secondary/50 to-background"
     >
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-pink-200/20 rounded-full blur-3xl" />
@@ -163,7 +160,7 @@ export default function Contact() {
                 <a
                   key={info.label}
                   href={info.href}
-                  className="flex items-start gap-4 p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-md premium-hover border border-pink-100"
+                  className="flex items-start gap-4 p-4 bg-card/80 backdrop-blur-sm rounded-xl shadow-md premium-hover border border-border/50"
                 >
                   <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-pink-400 to-amber-400">
                     <info.icon className="w-5 h-5 text-white" />
@@ -177,7 +174,7 @@ export default function Contact() {
             </div>
 
             {/* Opening Hours */}
-            <div className="p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-md mb-8 border border-pink-100">
+            <div className="p-6 bg-card/80 backdrop-blur-sm rounded-xl shadow-md mb-8 border border-border/50">
               <div className="flex items-center gap-3 mb-4">
                 <Clock className="w-5 h-5 text-pink-500" />
                 <h4 className="font-serif text-lg font-bold text-foreground">Opening Hours</h4>
@@ -195,7 +192,7 @@ export default function Contact() {
             </div>
 
             {/* Social Links */}
-            <div className="p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-pink-100">
+            <div className="p-6 bg-card/80 backdrop-blur-sm rounded-xl shadow-md border border-border/50">
               <h4 className="font-serif text-lg font-bold text-foreground mb-4">Follow Us</h4>
               <div className="space-y-3">
                 {socialLinks.map((social) => (
@@ -220,7 +217,7 @@ export default function Contact() {
           </div>
 
           {/* Contact Form Side */}
-          <div className="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-pink-100">
+          <div className="bg-card/90 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-border/50">
             <div className="flex items-center gap-3 mb-6">
               <Send className="w-6 h-6 text-pink-500" />
               <h3 className="font-serif text-2xl font-bold text-foreground">
@@ -284,7 +281,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 bg-[#F5EDE6] text-[#3D2E24] border-2 border-[#E8D5C4] font-semibold rounded-xl shadow-md hover:bg-[#E8A4B8] hover:border-[#E8A4B8] hover:text-white hover:shadow-[#E8A4B8]/30 hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-4 bg-secondary text-secondary-foreground border-2 border-border font-semibold rounded-xl shadow-md hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-primary/30 hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>

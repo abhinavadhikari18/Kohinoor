@@ -3,6 +3,10 @@ import crypto from "crypto"
 const COOKIE_NAME = "kohinoor_admin"
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 7 // 7 days
 
+function getAdminUsername(): string {
+  return (process.env.ADMIN_USERNAME ?? "admin").trim()
+}
+
 function getAdminPassword(): string {
   return (process.env.ADMIN_PASSWORD ?? "").trim()
 }
@@ -38,10 +42,16 @@ export function getAdminPasswordVerified(): string | null {
   return pw ? pw : null
 }
 
-export function verifyPassword(password: string): boolean {
+export function verifyCredentials(username: string, password: string): boolean {
+  const adminUsername = getAdminUsername()
   const adminPassword = getAdminPasswordVerified()
-  if (!adminPassword) return false
-  return timingSafeEqual(password.trim(), adminPassword)
+  
+  if (!adminPassword || !adminUsername) return false
+  
+  const isUsernameCorrect = timingSafeEqual(username.trim(), adminUsername)
+  const isPasswordCorrect = timingSafeEqual(password.trim(), adminPassword)
+  
+  return isUsernameCorrect && isPasswordCorrect
 }
 
 export function signAdminSession(nonce?: string): string {

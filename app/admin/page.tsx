@@ -2,8 +2,11 @@
 
 import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
+import MagneticButton from "@/components/magnetic-button"
+import { ThemeToggle } from "@/components/theme-toggle"
 import type { GalleryData, GalleryImage } from "@/lib/gallery-types"
 import type { MenuCategory, MenuData, MenuItem, MenuTabKey, MenuTabs } from "@/lib/menu-types"
+import { toast } from "sonner"
 
 const TAB_LABELS: Record<MenuTabKey, string> = {
   food: "Food Menu",
@@ -31,10 +34,13 @@ const emptyGalleryImage = (): GalleryImage => ({
 })
 
 export default function AdminPage() {
-  const [authed, setAuthed] = useState<boolean | null>(null)
+  const [authed, setAuthed] = useState(false)
+  const [checkingSession, setCheckingSession] = useState(true)
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [status, setStatus] = useState<string>("")
   const [activeSection, setActiveSection] = useState<"menu" | "gallery" | null>(null)
+  const [isSavingMenu, setIsSavingMenu] = useState(false)
+  const [isSavingGallery, setIsSavingGallery] = useState(false)
   const [isUploading, setIsUploading] = useState<Record<string, boolean>>({})
   const [menuSearch, setMenuSearch] = useState("")
   const [dragOverId, setDragOverId] = useState<string | null>(null)
@@ -57,7 +63,7 @@ export default function AdminPage() {
   }
 
   const loadEditors = async () => {
-    setStatus("Loading data...")
+    const loadingId = toast.loading("Loading data...")
 
     const [menuRes, galleryRes] = await Promise.all([
       fetch("/api/admin/menu", { credentials: "include" }),
@@ -72,7 +78,7 @@ export default function AdminPage() {
 
     setMenuData(menuData)
     setGalleryData(galleryData)
-    setStatus("")
+    toast.dismiss(loadingId)
   }
 
   useEffect(() => {
@@ -82,35 +88,40 @@ export default function AdminPage() {
         if (ok) await loadEditors()
       } catch (e) {
         setAuthed(false)
-        setStatus(e instanceof Error ? e.message : "Failed to load admin page")
+        toast.error(e instanceof Error ? e.message : "Failed to load admin page")
+      } finally {
+        setCheckingSession(false)
       }
     })()
   }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setStatus("Logging in...")
+    const loadingId = toast.loading("Logging in...")
 
     const res = await fetch("/api/admin/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ username, password }),
     })
 
     if (!res.ok) {
-      setStatus("Invalid password.")
+      toast.error("Invalid username or password.", { id: loadingId })
       return
     }
 
     setAuthed(true)
+    setUsername("")
     setPassword("")
+    toast.success("Logged in successfully!", { id: loadingId })
     await loadEditors()
   }
 
   const handleSaveMenu = async () => {
     if (!menuData) return false
-    setStatus("Saving menu...")
+    setIsSavingMenu(true)
+    const loadingId = toast.loading("Saving menu...")
     try {
       const res = await fetch("/api/admin/menu", {
         method: "PUT",
@@ -120,44 +131,64 @@ export default function AdminPage() {
       })
       if (!res.ok) {
         const errText = await res.text().catch(() => "")
-        throw new Error(errText || "Failed to save menu")
+        let errorMessage = "Failed to save menu"
+        try {
+          const errJson = JSON.parse(errText)
+          if (errJson.error) errorMessage = errJson.error
+        } catch {
+          if (errText) errorMessage = errText
+        }
+        throw new Error(errorMessage)
       }
       const json = (await res.json()) as { data?: MenuData; deploy?: { message?: string } } | MenuData
       const savedData = "data" in json && json.data ? json.data : (json as MenuData)
       const deployMessage = "deploy" in json && json.deploy?.message ? json.deploy.message : "Changes saved successfully."
       setMenuData(savedData)
       setDirtyMenuItems({})
-      setStatus(deployMessage)
+      toast.success(deployMessage, { id: loadingId })
+      setIsSavingMenu(false)
       return true
     } catch (e) {
-      setStatus(e instanceof Error ? e.message : "Failed to save menu")
+      toast.error(e instanceof Error ? e.message : "Failed to save menu", { id: loadingId })
+      setIsSavingMenu(false)
       return false
     }
   }
 
-  const handleSaveGallery = async () => {
-    if (!galleryData) return false
-    setStatus("Saving gallery...")
+  const handleSaveGallery = async (dataToSave?: GalleryData) => {
+    const data = dataToSave || galleryData;
+    if (!data) return false
+    setIsSavingGallery(true)
+    const loadingId = toast.loading("Saving gallery...")
     try {
       const res = await fetch("/api/admin/gallery", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(galleryData),
+        body: JSON.stringify(data),
       })
       if (!res.ok) {
         const errText = await res.text().catch(() => "")
-        throw new Error(errText || "Failed to save gallery")
+        let errorMessage = "Failed to save gallery"
+        try {
+          const errJson = JSON.parse(errText)
+          if (errJson.error) errorMessage = errJson.error
+        } catch {
+          if (errText) errorMessage = errText
+        }
+        throw new Error(errorMessage)
       }
       const json = (await res.json()) as { data?: GalleryData; deploy?: { message?: string } } | GalleryData
       const savedData = "data" in json && json.data ? json.data : (json as GalleryData)
       const deployMessage = "deploy" in json && json.deploy?.message ? json.deploy.message : "Changes saved successfully."
       setGalleryData(savedData)
       setDirtyGalleryItems({})
-      setStatus(deployMessage)
+      toast.success(deployMessage, { id: loadingId })
+      setIsSavingGallery(false)
       return true
     } catch (e) {
-      setStatus(e instanceof Error ? e.message : "Failed to save gallery")
+      toast.error(e instanceof Error ? e.message : "Failed to save gallery", { id: loadingId })
+      setIsSavingGallery(false)
       return false
     }
   }
@@ -260,6 +291,7 @@ export default function AdminPage() {
 
   const uploadGalleryFile = async (galleryId: string, file: File) => {
     setIsUploading((prev) => ({ ...prev, [galleryId]: true }))
+    const loadingId = toast.loading("Uploading image...")
     try {
       const form = new FormData()
       form.append("file", file)
@@ -291,11 +323,12 @@ export default function AdminPage() {
         setGalleryData(nextGalleryData)
         setDirtyGalleryItems((prev) => ({ ...prev, [galleryId]: true }))
         await handleSaveGallery(nextGalleryData)
+        toast.success("Image uploaded successfully", { id: loadingId })
       } else {
-        setStatus("Upload complete.")
+        toast.success("Upload complete.", { id: loadingId })
       }
     } catch (e) {
-      setStatus(e instanceof Error ? e.message : "Upload failed")
+      toast.error(e instanceof Error ? e.message : "Upload failed", { id: loadingId })
     } finally {
       setIsUploading((prev) => ({ ...prev, [galleryId]: false }))
     }
@@ -314,13 +347,39 @@ export default function AdminPage() {
 
   return (
     <main className="min-h-screen bg-background text-foreground px-4 py-12">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="menu-font text-3xl md:text-4xl font-semibold mb-8 text-center">Admin Panel</h1>
+      <div className="max-w-6xl mx-auto">
+        <div className="relative mb-8 flex justify-center items-center">
+          <h1 className="menu-font text-3xl md:text-4xl font-semibold">Admin Panel</h1>
+          <div className="absolute right-0">
+            <ThemeToggle />
+          </div>
+        </div>
 
-        {authed === false && (
-          <form onSubmit={handleLogin} className="max-w-md mx-auto bg-white/80 border border-[#E8D5C4] rounded-3xl p-6 shadow-lg">
-            <label className="block text-sm font-medium mb-2" htmlFor="password">
-              Admin password
+        {checkingSession && !canUseEditor && (
+          <div className="mb-5 flex flex-col items-center justify-center rounded-2xl border border-[#E8D5C4] bg-card/85 px-4 py-5 text-muted-foreground shadow-sm animate-pulse dark:border-white/10 dark:bg-[#1F1A17]/85">
+            <div className="w-10 h-10 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mb-4" />
+            <p className="font-medium text-center">Checking admin session...</p>
+          </div>
+        )}
+
+        {!canUseEditor && (
+          <form
+            onSubmit={handleLogin}
+            className="w-full max-w-md mx-auto rounded-3xl border border-[#E8D5C4] bg-card/90 p-5 shadow-xl shadow-[#3D2E24]/5 backdrop-blur-md sm:p-6 dark:border-white/10 dark:bg-[#1F1A17]/90 dark:shadow-black/30"
+          >
+            <label className="block text-sm font-semibold text-foreground mb-2" htmlFor="username">
+              Admin Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="w-full px-4 py-3 mb-4 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] text-foreground shadow-inner shadow-[#3D2E24]/5 transition-all placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#E8A4B8]/60 focus:border-[#E8A4B8] dark:border-white/10 dark:bg-[#2A2420] dark:shadow-black/20 dark:focus:border-[#D4869E] dark:focus:ring-[#D4869E]/40"
+            />
+            <label className="block text-sm font-semibold text-foreground mb-2" htmlFor="password">
+              Admin Password
             </label>
             <input
               id="password"
@@ -328,11 +387,11 @@ export default function AdminPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl border border-pink-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] text-foreground shadow-inner shadow-[#3D2E24]/5 transition-all placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#E8A4B8]/60 focus:border-[#E8A4B8] dark:border-white/10 dark:bg-[#2A2420] dark:shadow-black/20 dark:focus:border-[#D4869E] dark:focus:ring-[#D4869E]/40"
             />
             <button
               type="submit"
-              className="mt-4 btn-creme w-full px-4 py-3 rounded-xl font-semibold"
+              className="mt-5 w-full rounded-xl border border-[#D4B896] bg-[#F5EDE6] px-4 py-3 font-semibold text-[#3D2E24] shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#E8A4B8] hover:bg-[#E8A4B8] hover:text-white hover:shadow-lg hover:shadow-[#E8A4B8]/25 active:translate-y-0 dark:border-[#4A3C2C] dark:bg-[#2A2420] dark:text-[#FDF8F3] dark:hover:border-[#D4869E] dark:hover:bg-[#D4869E]"
             >
               Login
             </button>
@@ -340,10 +399,10 @@ export default function AdminPage() {
         )}
 
         {canUseEditor && !activeSection && (
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <button
               onClick={() => setActiveSection("menu")}
-              className="bg-white/75 border border-[#E8D5C4] rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow text-left group"
+              className="w-full block bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow text-left group"
             >
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mr-4">
@@ -358,7 +417,7 @@ export default function AdminPage() {
 
             <button
               onClick={() => setActiveSection("gallery")}
-              className="bg-white/75 border border-[#E8D5C4] rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow text-left group"
+              className="w-full block bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow text-left group"
             >
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
@@ -391,9 +450,26 @@ export default function AdminPage() {
                   <h2 className="menu-font text-2xl font-semibold">Menu Editor</h2>
                   <p className="text-sm text-muted-foreground">Edit categories and menu items.</p>
                 </div>
-                <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold" onClick={() => handleSaveMenu()}>
-                  Save Menu
-                </button>
+                <MagneticButton>
+                  <button 
+                    type="button" 
+                    className="btn-creme px-6 py-2 rounded-xl font-semibold flex items-center justify-center min-w-[140px] transition-all hover:scale-105 active:scale-95" 
+                    onClick={() => handleSaveMenu()}
+                    disabled={isSavingMenu}
+                  >
+                    {isSavingMenu ? (
+                      <span className="flex items-center gap-2">
+                        <svg className="animate-spin h-4 w-4 text-pink-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Saving...
+                      </span>
+                    ) : (
+                      "Save Menu"
+                    )}
+                  </button>
+                </MagneticButton>
               </div>
               <input
                 value={menuSearch}
@@ -406,9 +482,9 @@ export default function AdminPage() {
                 <div className="space-y-8">
                   {(Object.keys(TAB_LABELS) as MenuTabKey[]).map((tab) => (
                     <div key={tab} className="space-y-4">
-                      <div className="flex items-center justify-between gap-4">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                         <h3 className="menu-font text-xl font-semibold">{TAB_LABELS[tab]}</h3>
-                        <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold" onClick={() => addCategory(tab)}>
+                        <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold text-sm sm:text-base w-full sm:w-auto" onClick={() => addCategory(tab)}>
                           Add Category
                         </button>
                       </div>
@@ -441,32 +517,32 @@ export default function AdminPage() {
                                     : true,
                                 )
                                 .map(({ item, itemIndex }) => (
-                                <div key={`${tab}-${categoryIndex}-${itemIndex}`} className="grid md:grid-cols-12 gap-3 rounded-2xl border border-[#EFE2D7] bg-white p-4">
+                                <div key={`${tab}-${categoryIndex}-${itemIndex}`} className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-12 gap-3 rounded-2xl border border-[#EFE2D7] bg-white p-4">
                                   <input
                                     value={item.name}
                                     onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "name", e.target.value)}
                                     placeholder="Dish name"
-                                    className="md:col-span-3 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
+                                    className="col-span-2 md:col-span-3 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
                                   />
                                   <input
                                     value={item.description ?? ""}
                                     onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "description", e.target.value)}
                                     placeholder="Description"
-                                    className="md:col-span-4 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
+                                    className="col-span-2 md:col-span-3 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
                                   />
                                   <input
                                     value={item.price ?? ""}
                                     onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "price", e.target.value)}
                                     placeholder="Price"
-                                    className="md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
+                                    className="col-span-1 md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
                                   />
                                   <input
                                     value={item.vegPrice ?? ""}
                                     onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "vegPrice", e.target.value)}
                                     placeholder="Veg price"
-                                    className="md:col-span-1 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
+                                    className="col-span-1 md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC]"
                                   />
-                                  <div className="md:col-span-2 flex gap-2">
+                                  <div className="col-span-2 md:col-span-2 flex gap-2">
                                     <input
                                       value={item.nonVegPrice ?? ""}
                                       onChange={(e) => updateMenuItem(tab, categoryIndex, itemIndex, "nonVegPrice", e.target.value)}
@@ -475,7 +551,7 @@ export default function AdminPage() {
                                     />
                                     <button
                                       type="button"
-                                      className="px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50"
+                                      className="px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 whitespace-nowrap"
                                       onClick={() => removeMenuItem(tab, categoryIndex, itemIndex)}
                                     >
                                       Remove
@@ -516,17 +592,17 @@ export default function AdminPage() {
             </button>
 
             <section className="bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 shadow-lg">
-              <div className="flex items-center justify-between gap-4 mb-3">
+              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
                 <div>
                   <h2 className="menu-font text-2xl font-semibold">Gallery Manager</h2>
                   <p className="text-sm text-muted-foreground">Upload photos and manage gallery content.</p>
                 </div>
-                <div className="flex gap-3">
-                  <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold" onClick={addGalleryItem}>
+                <div className="flex flex-wrap gap-3 w-full lg:w-auto">
+                  <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold flex-1 sm:flex-none text-center" onClick={addGalleryItem}>
                     Add Image
                   </button>
-                  <label className="btn-creme px-4 py-2 rounded-xl font-semibold cursor-pointer">
-                    Upload New Photo
+                  <label className="btn-creme px-4 py-2 rounded-xl font-semibold cursor-pointer flex-1 sm:flex-none text-center">
+                    Upload Photo
                     <input
                       ref={quickUploadRef}
                       type="file"
@@ -539,9 +615,28 @@ export default function AdminPage() {
                       }}
                     />
                   </label>
-                  <button type="button" className="btn-creme px-4 py-2 rounded-xl font-semibold" onClick={() => handleSaveGallery()}>
-                  Save Gallery
-                  </button>
+                  <div className="w-full sm:w-auto mt-2 sm:mt-0">
+                    <MagneticButton>
+                      <button 
+                        type="button" 
+                        className="btn-creme px-6 py-2 rounded-xl font-semibold flex items-center justify-center w-full min-w-[140px] transition-all hover:scale-105 active:scale-95" 
+                        onClick={() => handleSaveGallery()}
+                        disabled={isSavingGallery}
+                      >
+                        {isSavingGallery ? (
+                          <span className="flex items-center gap-2">
+                            <svg className="animate-spin h-4 w-4 text-pink-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Saving...
+                          </span>
+                        ) : (
+                          "Save Gallery"
+                        )}
+                      </button>
+                    </MagneticButton>
+                  </div>
                 </div>
               </div>
 
@@ -636,11 +731,6 @@ export default function AdminPage() {
           </div>
         )}
 
-        {status && (
-          <div className="mt-6 p-3 rounded-xl border border-pink-200 bg-white/50 text-sm">
-            {status}
-          </div>
-        )}
       </div>
     </main>
   )

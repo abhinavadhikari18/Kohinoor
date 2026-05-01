@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, Lato, Raleway } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import SmoothScroller from '@/components/smooth-scroller'
+import CustomCursor from '@/components/custom-cursor'
 import './globals.css'
 
 const playfair = Playfair_Display({ 
@@ -52,16 +54,29 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
+import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from 'sonner'
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${lato.variable} ${raleway.variable} bg-background`}>
+    <html lang="en" suppressHydrationWarning className={`${playfair.variable} ${lato.variable} ${raleway.variable} bg-background`}>
       <body className="font-serif antialiased overflow-x-hidden">
-        {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SmoothScroller />
+          <CustomCursor />
+          {children}
+          {process.env.NODE_ENV === 'production' && <Analytics />}
+          <Toaster position="bottom-right" richColors theme="system" />
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -22,8 +22,15 @@ export async function PUT(req: Request) {
   }
 
   const body = await req.json().catch(() => null)
-  const parsed = MenuDataSchema.parse(body)
-  const saved = await saveMenuData(parsed)
+  const parsed = MenuDataSchema.safeParse(body)
+  
+  if (!parsed.success) {
+    // Return the first validation error message
+    const errorMessage = parsed.error.errors[0]?.message || "Invalid menu data"
+    return NextResponse.json({ error: errorMessage }, { status: 400 })
+  }
+
+  const saved = await saveMenuData(parsed.data)
   const deploy = await triggerVercelDeploy("menu-updated")
   return NextResponse.json({ data: saved, deploy })
 }

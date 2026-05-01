@@ -1,7 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
+import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 
 const heroImages = [
   {
@@ -32,6 +34,72 @@ const heroImages = [
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const heroRef = useRef<HTMLElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  useGSAP(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!heroRef.current || !contentRef.current) return
+      
+      const { clientX, clientY } = e
+      const { innerWidth, innerHeight } = window
+
+      // Calculate relative positions (-1 to 1)
+      const xPos = (clientX / innerWidth - 0.5) * 2
+      const yPos = (clientY / innerHeight - 0.5) * 2
+
+      // Animate the main content container with a 3D tilt effect
+      gsap.to(contentRef.current, {
+        rotateX: -yPos * 10,
+        rotateY: xPos * 10,
+        transformPerspective: 1000,
+        transformOrigin: "center center",
+        ease: "power2.out",
+        duration: 0.5
+      })
+
+      // Multi-layered parallax for elements inside
+      gsap.to(".parallax-layer-1", {
+        x: xPos * -15,
+        y: yPos * -15,
+        ease: "power2.out",
+        duration: 0.5
+      })
+
+      gsap.to(".parallax-layer-2", {
+        x: xPos * -30,
+        y: yPos * -30,
+        ease: "power2.out",
+        duration: 0.5
+      })
+      
+      gsap.to(".parallax-layer-3", {
+        x: xPos * -45,
+        y: yPos * -45,
+        ease: "power2.out",
+        duration: 0.5
+      })
+    }
+    
+    const handleMouseLeave = () => {
+      gsap.to([contentRef.current, ".parallax-layer-1", ".parallax-layer-2", ".parallax-layer-3"], {
+        rotateX: 0,
+        rotateY: 0,
+        x: 0,
+        y: 0,
+        ease: "power3.out",
+        duration: 1
+      })
+    }
+
+    window.addEventListener("mousemove", handleMouseMove)
+    heroRef.current?.addEventListener("mouseleave", handleMouseLeave)
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove)
+      heroRef.current?.removeEventListener("mouseleave", handleMouseLeave)
+    }
+  }, { scope: heroRef })
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,7 +109,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section id="home" className="relative h-screen w-full overflow-hidden">
+    <section ref={heroRef} id="home" className="relative h-screen w-full overflow-hidden perspective-[1000px]">
       {/* Background Images */}
       {heroImages.map((image, index) => (
         <div
@@ -54,7 +122,7 @@ export default function Hero() {
             src={image.src}
             alt={image.alt}
             fill
-            className="object-cover scale-105"
+            className="object-cover scale-105 animate-ken-burns md:animate-none"
             priority={index === 0}
           />
           {/* Blur overlay for non-active slides transitioning */}
@@ -74,9 +142,12 @@ export default function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
+      <div 
+        ref={contentRef}
+        className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 transform-style-3d"
+      >
         {/* Logo */}
-        <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 animate-float">
+        <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 animate-float parallax-layer-3">
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-400/30 to-transparent blur-xl" />
           <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-amber-400/50 shadow-2xl shadow-amber-500/20">
             <Image
@@ -90,25 +161,25 @@ export default function Hero() {
         </div>
 
         {/* Restaurant Name */}
-        <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-4 tracking-wider">
+        <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-3 md:mb-4 tracking-wider parallax-layer-2 leading-tight">
           <span className="bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
             KOHINOOR
           </span>
         </h1>
-        <p className="text-xl md:text-2xl text-amber-100/90 font-medium tracking-widest mb-6">
+        <p className="text-xl md:text-2xl text-amber-100/90 font-medium tracking-widest mb-6 parallax-layer-1">
           RESTAURANT
         </p>
 
         {/* Tagline */}
-        <div className="relative">
+        <div className="relative parallax-layer-1 px-4">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/20 to-transparent blur-sm" />
-          <p className="relative text-lg md:text-xl lg:text-2xl text-white/90 font-light italic tracking-wide">
+          <p className="relative text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light italic tracking-wide">
             &quot;Where Peace, Nature & Love Meet&quot;
           </p>
         </div>
 
         {/* Decorative Diamond Line */}
-        <div className="flex items-center gap-4 mt-8">
+        <div className="flex items-center gap-4 mt-8 parallax-layer-2">
           <div className="w-16 md:w-24 h-px bg-gradient-to-r from-transparent to-amber-400/70" />
           <div className="w-3 h-3 rotate-45 bg-amber-400/80" />
           <div className="w-16 md:w-24 h-px bg-gradient-to-l from-transparent to-amber-400/70" />

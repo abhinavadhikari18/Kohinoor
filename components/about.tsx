@@ -1,7 +1,11 @@
 "use client"
 
+import { useRef } from "react"
 import Image from "next/image"
 import { Home, Gem, Utensils, TreePine, Ship, Heart, MapPin } from "lucide-react"
+import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 const features = [
   {
@@ -44,8 +48,68 @@ const features = [
 ]
 
 export default function About() {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useGSAP(() => {
+    // Text reveal animation
+    gsap.fromTo(".about-text p",
+      {
+        y: 40,
+        opacity: 0
+      },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".about-text-container",
+          start: "top 80%",
+        }
+      }
+    )
+
+    // Image fade in
+    gsap.fromTo(".about-image-container",
+      {
+        x: -50,
+        opacity: 0
+      },
+      {
+        x: 0,
+        opacity: 1,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".about-image-container",
+          start: "top 75%",
+        }
+      }
+    )
+
+    // Stats pop up
+    gsap.fromTo(".about-stat",
+      {
+        scale: 0.8,
+        opacity: 0
+      },
+      {
+        scale: 1,
+        opacity: 1,
+        duration: 0.6,
+        stagger: 0.15,
+        ease: "back.out(1.7)",
+        scrollTrigger: {
+          trigger: ".about-stats-container",
+          start: "top 85%",
+        }
+      }
+    )
+  }, { scope: sectionRef })
+
   return (
-    <section id="about" className="py-20 px-4 bg-secondary/20">
+    <section ref={sectionRef} id="about" className="py-20 px-4 bg-secondary/20">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -65,7 +129,7 @@ export default function About() {
         {/* Main About Content */}
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
           {/* Image Side */}
-          <div className="relative">
+          <div className="relative about-image-container">
             <div className="relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-2xl">
               <Image
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/exterior%20entry-D2HBq4n2aW39dW8YEXYz5jkfr2Ijj6.jpg"
@@ -86,11 +150,11 @@ export default function About() {
           </div>
 
           {/* Text Side */}
-          <div>
+          <div className="about-text-container">
             <h3 className="font-serif text-3xl font-bold text-foreground mb-6">
               A Diamond in Culinary Excellence
             </h3>
-            <div className="space-y-4 text-muted-foreground leading-relaxed">
+            <div className="space-y-4 text-muted-foreground leading-relaxed about-text">
               <p>
                 Welcome to <span className="text-amber-600 font-semibold">Kohinoor Restaurant</span>, 
                 a gem nestled in nature&apos;s embrace. Named after the legendary diamond, we strive to 
@@ -110,16 +174,16 @@ export default function About() {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-4 mt-8">
-              <div className="text-center p-4 bg-card rounded-xl">
+            <div className="grid grid-cols-3 gap-4 mt-8 about-stats-container">
+              <div className="text-center p-4 bg-card rounded-xl about-stat">
                 <div className="text-2xl font-bold text-amber-600">9</div>
                 <div className="text-sm text-muted-foreground">Cozy Rooms</div>
               </div>
-              <div className="text-center p-4 bg-card rounded-xl">
+              <div className="text-center p-4 bg-card rounded-xl about-stat">
                 <div className="text-2xl font-bold text-amber-600">11</div>
                 <div className="text-sm text-muted-foreground">Private Cabins</div>
               </div>
-              <div className="text-center p-4 bg-card rounded-xl">
+              <div className="text-center p-4 bg-card rounded-xl about-stat">
                 <div className="text-2xl font-bold text-amber-600">50+</div>
                 <div className="text-sm text-muted-foreground">Menu Items</div>
               </div>

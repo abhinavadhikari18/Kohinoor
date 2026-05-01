@@ -22,8 +22,14 @@ export async function PUT(req: Request) {
   }
 
   const body = await req.json().catch(() => null)
-  const parsed = GalleryDataSchema.parse(body)
-  const saved = await saveGalleryData(parsed)
+  const parsed = GalleryDataSchema.safeParse(body)
+  
+  if (!parsed.success) {
+    const errorMessage = parsed.error.errors[0]?.message || "Invalid gallery data"
+    return NextResponse.json({ error: errorMessage }, { status: 400 })
+  }
+
+  const saved = await saveGalleryData(parsed.data)
   const deploy = await triggerVercelDeploy("gallery-updated")
   return NextResponse.json({ data: saved, deploy })
 }
