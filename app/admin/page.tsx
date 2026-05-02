@@ -152,12 +152,25 @@ export default function AdminPage() {
     if (!menuData) return false
     setIsSavingMenu(true)
     const loadingId = toast.loading("Saving menu...")
+
+    // Auto-clean empty items and categories before saving to prevent validation errors
+    const cleanedTabs = { food: [], bar: [], beverages: [] } as MenuTabs
+    for (const tab of Object.keys(menuData.tabs) as MenuTabKey[]) {
+      cleanedTabs[tab] = menuData.tabs[tab]
+        .map((cat) => ({
+          ...cat,
+          items: cat.items.filter((item) => item.name.trim() !== ""),
+        }))
+        .filter((cat) => cat.name.trim() !== "")
+    }
+    const cleanedMenuData: MenuData = { tabs: cleanedTabs }
+
     try {
       const res = await fetch("/api/admin/menu", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(menuData),
+        body: JSON.stringify(cleanedMenuData),
       })
       if (!res.ok) {
         const errText = await res.text().catch(() => "")
@@ -241,7 +254,7 @@ export default function AdminPage() {
   const addCategory = (tab: MenuTabKey) => {
     updateMenuTabs((tabs) => ({
       ...tabs,
-      [tab]: [...tabs[tab], emptyMenuCategory()],
+      [tab]: [emptyMenuCategory(), ...tabs[tab]],
     }))
   }
 
@@ -256,7 +269,7 @@ export default function AdminPage() {
     updateMenuTabs((tabs) => ({
       ...tabs,
       [tab]: tabs[tab].map((category, index) =>
-        index === categoryIndex ? { ...category, items: [...category.items, emptyMenuItem()] } : category,
+        index === categoryIndex ? { ...category, items: [emptyMenuItem(), ...category.items] } : category,
       ),
     }))
   }

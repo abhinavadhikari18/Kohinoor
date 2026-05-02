@@ -31,7 +31,10 @@ export async function PUT(req: Request) {
   }
 
   const saved = await saveMenuData(parsed.data)
-  const deploy = await triggerVercelDeploy("menu-updated")
-  return NextResponse.json({ data: saved, deploy })
+  
+  // Trigger Vercel deploy asynchronously so we don't block the UI response
+  triggerVercelDeploy("menu-updated").catch(console.error)
+  
+  return NextResponse.json({ data: saved, deploy: { message: "Changes saved. Updating live website..." } })
 }
 

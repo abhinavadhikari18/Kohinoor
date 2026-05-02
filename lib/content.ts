@@ -40,6 +40,8 @@ export async function getMenuData(): Promise<MenuData> {
   return MenuDataSchema.parse({ tabs });
 }
 
+import crypto from "crypto";
+
 export async function saveMenuData(data: MenuData): Promise<MenuData> {
   const parsed = MenuDataSchema.parse(data);
 
@@ -47,31 +49,46 @@ export async function saveMenuData(data: MenuData): Promise<MenuData> {
     // Delete existing categories (and items via cascade)
     await tx.delete(menuCategories);
 
-    // Insert new data
+    // Prepare batch arrays
+    const categoriesToInsert: any[] = [];
+    const itemsToInsert: any[] = [];
+
     for (const [tab, categories] of Object.entries(parsed.tabs)) {
       for (let i = 0; i < categories.length; i++) {
+        const catId = crypto.randomUUID();
         const category = categories[i];
-        const [insertedCategory] = await tx
-          .insert(menuCategories)
-          .values({
-            tab: tab as MenuTabKey,
-            name: category.name,
-            order: i,
-          })
-          .returning();
 
-        for (let j = 0; j < category.items.length; j++) {
-          const item = category.items[j];
-          await tx.insert(menuItems).values({
-            categoryId: insertedCategory.id,
-            name: item.name,
-            description: item.description,
-            price: item.price,
-            vegPrice: item.vegPrice,
-            nonVegPrice: item.nonVegPrice,
-            order: j,
+        categoriesToInsert.push({
+          id: catId,
+          tab: tab as MenuTabKey,
+          name: category.name,
+          order: i,
+        });
+
+        if (category.items && category.items.length > 0) {
+          category.items.forEach((item: any, itemIndex: number) => {
+            itemsToInsert.push({
+              id: crypto.randomUUID(),
+              categoryId: catId,
+              name: item.name,
+              description: item.description,
+              price: item.price,
+              vegPrice: item.vegPrice,
+              nonVegPrice: item.nonVegPrice,
+              order: itemIndex,
+            });
           });
         }
+      }
+    }
+
+    if (categoriesToInsert.length > 0) {
+      // 1. Batch Insert Categories
+      await tx.insert(menuCategories).values(categoriesToInsert);
+
+      // 2. Batch Insert Items
+      if (itemsToInsert.length > 0) {
+        await tx.insert(menuItems).values(itemsToInsert);
       }
     }
   });
