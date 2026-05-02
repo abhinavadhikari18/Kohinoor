@@ -120,16 +120,17 @@ export async function saveGalleryData(data: GalleryData): Promise<GalleryData> {
   await db.transaction(async (tx) => {
     await tx.delete(galleryImages);
 
-    for (let i = 0; i < parsed.images.length; i++) {
-      const img = parsed.images[i];
-      await tx.insert(galleryImages).values({
-        id: img.id, // Keep the same ID if possible, but the schema uses defaultRandom. Wait, the schema should allow manual ID if needed, but it's okay for now.
+    if (parsed.images.length > 0) {
+      const imagesToInsert = parsed.images.map((img, i) => ({
+        id: img.id || crypto.randomUUID(),
         src: img.src,
         alt: img.alt,
         description: img.description,
         size: img.size as any,
         order: i,
-      });
+      }));
+      
+      await tx.insert(galleryImages).values(imagesToInsert);
     }
   });
 

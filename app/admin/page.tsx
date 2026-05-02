@@ -322,14 +322,13 @@ export default function AdminPage() {
     updateGallery((images) => [...images, emptyGalleryImage()])
   }
 
-  const removeGalleryItemAndSave = async (index: number) => {
+  const removeGalleryItem = (index: number) => {
     if (!galleryData) return
     const nextGalleryData = {
       ...galleryData,
       images: galleryData.images.filter((_, idx) => idx !== index),
     }
     setGalleryData(nextGalleryData)
-    await handleSaveGallery(nextGalleryData)
   }
 
   const uploadGalleryFile = async (galleryId: string, file: File) => {
@@ -365,7 +364,6 @@ export default function AdminPage() {
         }
         setGalleryData(nextGalleryData)
         setDirtyGalleryItems((prev) => ({ ...prev, [galleryId]: true }))
-        await handleSaveGallery(nextGalleryData)
         toast.success("Image uploaded successfully", { id: loadingId })
       } else {
         toast.success("Upload complete.", { id: loadingId })
@@ -738,7 +736,7 @@ export default function AdminPage() {
                           <button
                             type="button"
                             className="px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 dark:border-pink-900/50 dark:text-pink-400 dark:bg-pink-950/30 transition-colors hover:bg-pink-100 dark:hover:bg-pink-900/50 text-sm"
-                            onClick={() => removeGalleryItemAndSave(index)}
+                            onClick={() => removeGalleryItem(index)}
                           >
                             Remove
                           </button>

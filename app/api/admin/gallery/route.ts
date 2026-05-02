@@ -30,7 +30,10 @@ export async function PUT(req: Request) {
   }
 
   const saved = await saveGalleryData(parsed.data)
-  const deploy = await triggerVercelDeploy("gallery-updated")
-  return NextResponse.json({ data: saved, deploy })
+  
+  // Trigger Vercel deploy asynchronously so we don't block the UI response
+  triggerVercelDeploy("gallery-updated").catch(console.error)
+  
+  return NextResponse.json({ data: saved, deploy: { message: "Changes saved. Updating live website..." } })
 }
 
