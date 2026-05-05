@@ -86,6 +86,29 @@ export default function Highlights() {
         }
       }
     )
+
+    // Image Parallax Effects
+    gsap.to(".main-highlight-parallax", {
+      y: 60,
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".main-highlight-card",
+        start: "top bottom",
+        end: "bottom top",
+        scrub: true
+      }
+    })
+
+    gsap.to(".semi-highlight-parallax", {
+      y: 40,
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".semi-highlights-container",
+        start: "top bottom",
+        end: "bottom top",
+        scrub: true
+      }
+    })
   }, { scope: sectionRef })
 
   return (
@@ -114,7 +137,7 @@ export default function Highlights() {
                 src={mainHighlight.image}
                 alt={mainHighlight.title}
                 fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                className="object-cover main-highlight-parallax scale-110 transition-transform duration-700 group-hover:scale-115"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             </div>
@@ -160,7 +183,7 @@ export default function Highlights() {
                   src={highlight.image}
                   alt={highlight.title}
                   fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="object-cover semi-highlight-parallax scale-110 transition-transform duration-700 group-hover:scale-115"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
               </div>

@@ -41,12 +41,24 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
         }
       }
     )
+
+    // Watermark Parallax
+    gsap.to(".menu-watermark", {
+      y: 100,
+      ease: "none",
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top bottom",
+        end: "bottom top",
+        scrub: true
+      }
+    })
   }, { scope: sectionRef, dependencies: [activeTab] })
 
   return (
     <section ref={sectionRef} id="menu" className="relative overflow-hidden py-20 px-4 bg-gradient-to-b from-background to-secondary/30">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 opacity-[0.035] dark:opacity-[0.015]">
+        <div className="absolute inset-0 opacity-[0.035] dark:opacity-[0.015] menu-watermark">
           <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo.PNG-RflDppQJdLrSmpnp64Ad8P8rG1e8KP.jpeg"
             alt="Kohinoor watermark logo"

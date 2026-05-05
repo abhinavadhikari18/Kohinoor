@@ -4,6 +4,11 @@ import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 const heroImages = [
   {
@@ -38,6 +43,51 @@ export default function Hero() {
   const contentRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
+    // Scroll-triggered parallax
+    gsap.to(".hero-bg-container", {
+      yPercent: 30,
+      ease: "none",
+      scrollTrigger: {
+        trigger: heroRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    })
+
+    gsap.to(".parallax-layer-1", {
+      y: 100,
+      ease: "none",
+      scrollTrigger: {
+        trigger: heroRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    })
+
+    gsap.to(".parallax-layer-2", {
+      y: 150,
+      ease: "none",
+      scrollTrigger: {
+        trigger: heroRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    })
+
+    gsap.to(".parallax-layer-3", {
+      y: 200,
+      ease: "none",
+      scrollTrigger: {
+        trigger: heroRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    })
+
     const handleMouseMove = (e: MouseEvent) => {
       if (!heroRef.current || !contentRef.current) return
       
@@ -58,22 +108,22 @@ export default function Hero() {
         duration: 0.5
       })
 
-      // Multi-layered parallax for elements inside
-      gsap.to(".parallax-layer-1", {
+      // Mouse-based parallax (smaller values as they combine with scroll)
+      gsap.to(".parallax-layer-1-mouse", {
         x: xPos * -15,
         y: yPos * -15,
         ease: "power2.out",
         duration: 0.5
       })
 
-      gsap.to(".parallax-layer-2", {
+      gsap.to(".parallax-layer-2-mouse", {
         x: xPos * -30,
         y: yPos * -30,
         ease: "power2.out",
         duration: 0.5
       })
       
-      gsap.to(".parallax-layer-3", {
+      gsap.to(".parallax-layer-3-mouse", {
         x: xPos * -45,
         y: yPos * -45,
         ease: "power2.out",
@@ -82,7 +132,7 @@ export default function Hero() {
     }
     
     const handleMouseLeave = () => {
-      gsap.to([contentRef.current, ".parallax-layer-1", ".parallax-layer-2", ".parallax-layer-3"], {
+      gsap.to([contentRef.current, ".parallax-layer-1-mouse", ".parallax-layer-2-mouse", ".parallax-layer-3-mouse"], {
         rotateX: 0,
         rotateY: 0,
         x: 0,
@@ -111,30 +161,32 @@ export default function Hero() {
   return (
     <section ref={heroRef} id="home" className="relative h-screen w-full overflow-hidden perspective-[1000px]">
       {/* Background Images */}
-      {heroImages.map((image, index) => (
-        <div
-          key={image.src}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-            index === currentSlide ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <Image
-            src={image.src}
-            alt={image.alt}
-            fill
-            className="object-cover scale-105 animate-ken-burns md:animate-none"
-            priority={index === 0}
-          />
-          {/* Blur overlay for non-active slides transitioning */}
-          <div className="absolute inset-0 backdrop-blur-[2px]" />
-        </div>
-      ))}
+      <div className="absolute inset-0 hero-bg-container h-[120%] -top-[10%]">
+        {heroImages.map((image, index) => (
+          <div
+            key={image.src}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              index === currentSlide ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <Image
+              src={image.src}
+              alt={image.alt}
+              fill
+              className="object-cover scale-105 animate-ken-burns md:animate-none"
+              priority={index === 0}
+            />
+            {/* Blur overlay for non-active slides transitioning */}
+            <div className="absolute inset-0 backdrop-blur-[2px]" />
+          </div>
+        ))}
+      </div>
 
       {/* Elegant Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 z-[1]" />
       
       {/* Diamond sparkle overlay effect */}
-      <div className="absolute inset-0 opacity-30">
+      <div className="absolute inset-0 opacity-30 z-[1]">
         <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full animate-sparkle" />
         <div className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-white rounded-full animate-sparkle delay-300" />
         <div className="absolute bottom-1/3 left-1/2 w-2 h-2 bg-white rounded-full animate-sparkle delay-500" />
@@ -147,42 +199,53 @@ export default function Hero() {
         className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 transform-style-3d"
       >
         {/* Logo */}
-        <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 animate-float parallax-layer-3">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-400/30 to-transparent blur-xl" />
-          <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-amber-400/50 shadow-2xl shadow-amber-500/20">
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo.PNG-RflDppQJdLrSmpnp64Ad8P8rG1e8KP.jpeg"
-              alt="Kohinoor Restaurant Logo"
-              fill
-              className="object-cover"
-              priority
-            />
+        <div className="parallax-layer-3">
+          <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 animate-float parallax-layer-3-mouse">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-400/30 to-transparent blur-xl" />
+            <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-amber-400/50 shadow-2xl shadow-amber-500/20">
+              <Image
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo.PNG-RflDppQJdLrSmpnp64Ad8P8rG1e8KP.jpeg"
+                alt="Kohinoor Restaurant Logo"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
           </div>
         </div>
 
         {/* Restaurant Name */}
-        <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-3 md:mb-4 tracking-wider parallax-layer-2 leading-tight">
-          <span className="bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
-            KOHINOOR
-          </span>
-        </h1>
-        <p className="text-xl md:text-2xl text-amber-100/90 font-medium tracking-widest mb-6 parallax-layer-1">
-          RESTAURANT
-        </p>
-
-        {/* Tagline */}
-        <div className="relative parallax-layer-1 px-4">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/20 to-transparent blur-sm" />
-          <p className="relative text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light italic tracking-wide">
-            &quot;Where Peace, Nature & Love Meet&quot;
+        <div className="parallax-layer-2">
+          <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-3 md:mb-4 tracking-wider parallax-layer-2-mouse leading-tight">
+            <span className="bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
+              KOHINOOR
+            </span>
+          </h1>
+        </div>
+        
+        <div className="parallax-layer-1">
+          <p className="text-xl md:text-2xl text-amber-100/90 font-medium tracking-widest mb-6 parallax-layer-1-mouse">
+            RESTAURANT
           </p>
         </div>
 
+        {/* Tagline */}
+        <div className="parallax-layer-1">
+          <div className="relative parallax-layer-1-mouse px-4">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/20 to-transparent blur-sm" />
+            <p className="relative text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light italic tracking-wide">
+              &quot;Where Peace, Nature & Love Meet&quot;
+            </p>
+          </div>
+        </div>
+
         {/* Decorative Diamond Line */}
-        <div className="flex items-center gap-4 mt-8 parallax-layer-2">
-          <div className="w-16 md:w-24 h-px bg-gradient-to-r from-transparent to-amber-400/70" />
-          <div className="w-3 h-3 rotate-45 bg-amber-400/80" />
-          <div className="w-16 md:w-24 h-px bg-gradient-to-l from-transparent to-amber-400/70" />
+        <div className="parallax-layer-2">
+          <div className="flex items-center gap-4 mt-8 parallax-layer-2-mouse">
+            <div className="w-16 md:w-24 h-px bg-gradient-to-r from-transparent to-amber-400/70" />
+            <div className="w-3 h-3 rotate-45 bg-amber-400/80" />
+            <div className="w-16 md:w-24 h-px bg-gradient-to-l from-transparent to-amber-400/70" />
+          </div>
         </div>
 
         {/* Scroll Indicator */}

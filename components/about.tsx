@@ -106,6 +106,18 @@ export default function About() {
         }
       }
     )
+
+    // Image Parallax Effect
+    gsap.to(".about-image-parallax", {
+      y: 50,
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".about-image-container",
+        start: "top bottom",
+        end: "bottom top",
+        scrub: true
+      }
+    })
   }, { scope: sectionRef })
 
   return (
@@ -135,7 +147,7 @@ export default function About() {
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/exterior%20entry-D2HBq4n2aW39dW8YEXYz5jkfr2Ijj6.jpg"
                 alt="Kohinoor Restaurant"
                 fill
-                className="object-cover"
+                className="object-cover about-image-parallax scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
             </div>

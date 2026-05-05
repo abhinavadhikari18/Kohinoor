@@ -1,6 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 interface Diamond {
   id: number
@@ -9,30 +15,54 @@ interface Diamond {
   size: number
   delay: number
   duration: number
+  depth: number
 }
 
 export default function SparklingDiamonds() {
   const [diamonds, setDiamonds] = useState<Diamond[]>([])
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Generate ~20 diamonds with random positions
-    const generatedDiamonds: Diamond[] = Array.from({ length: 20 }, (_, i) => ({
+    // Generate ~25 diamonds with random positions and depths
+    const generatedDiamonds: Diamond[] = Array.from({ length: 25 }, (_, i) => ({
       id: i,
       left: Math.random() * 100,
-      top: Math.random() * 100,
-      size: Math.random() * 8 + 4, // 4-12px
+      top: Math.random() * 200, // Spread across more height
+      size: Math.random() * 10 + 4, // 4-14px
       delay: Math.random() * 5,
       duration: Math.random() * 3 + 2, // 2-5s
+      depth: Math.random() * 0.5 + 0.1, // Parallax speed factor
     }))
     setDiamonds(generatedDiamonds)
   }, [])
 
+  useEffect(() => {
+    if (diamonds.length === 0) return
+
+    const ctx = gsap.context(() => {
+      diamonds.forEach((diamond) => {
+        gsap.to(`.diamond-${diamond.id}`, {
+          y: -500 * diamond.depth,
+          ease: "none",
+          scrollTrigger: {
+            trigger: document.body,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: true,
+          },
+        })
+      })
+    }, containerRef)
+
+    return () => ctx.revert()
+  }, [diamonds])
+
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div ref={containerRef} className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       {diamonds.map((diamond) => (
         <div
           key={diamond.id}
-          className="absolute"
+          className={`absolute diamond-${diamond.id}`}
           style={{
             left: `${diamond.left}%`,
             top: `${diamond.top}%`,
