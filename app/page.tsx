@@ -7,6 +7,7 @@ import About from "@/components/about"
 import Contact from "@/components/contact"
 import Footer from "@/components/footer"
 import SparklingDiamonds from "@/components/sparkling-diamonds"
+import MobileBottomBar from "@/components/mobile-bottom-bar"
 import { getGalleryData, getMenuData } from "@/lib/content"
 
 export const dynamic = "force-dynamic"
@@ -29,6 +30,7 @@ export default async function Home() {
         <About />
         <Contact />
         <Footer />
+        <MobileBottomBar />
       </div>
     </main>
   )

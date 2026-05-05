@@ -112,41 +112,57 @@ export default function Navbar() {
       {/* Mobile Menu */}
       <div
         id="mobile-navigation"
-        className={`md:hidden fixed left-0 right-0 top-[72px] z-50 border-t border-border bg-background/95 shadow-xl backdrop-blur-xl transition-all duration-300 overflow-hidden ${
+        className={`md:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-2xl transition-all duration-500 ease-in-out ${
           isMobileMenuOpen
-            ? "max-h-[calc(100dvh-72px)] opacity-100 pointer-events-auto"
-            : "max-h-0 opacity-0 pointer-events-none"
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
       >
-        <div className="px-4 py-6 space-y-4 max-h-[calc(100dvh-72px)] overflow-y-auto">
-          <div className="flex items-center justify-between pb-4 border-b border-border">
-            <span className="font-medium text-foreground">Theme</span>
-            <ThemeToggle />
+        <div className="flex flex-col h-full pt-24 pb-32 px-6 overflow-y-auto">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-border/50">
+              <span className="text-sm font-semibold tracking-widest text-muted-foreground uppercase">Menu</span>
+              <ThemeToggle />
+            </div>
+            
+            <nav className="space-y-1">
+              {navLinks.map((link, index) => (
+                <button
+                  key={link.name}
+                  onClick={() => scrollToSection(link.href)}
+                  className={`group flex items-center justify-between w-full py-4 text-3xl font-serif font-bold transition-all duration-500 transform ${
+                    isMobileMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
+                  }`}
+                  style={{ transitionDelay: `${0.1 * index}s` }}
+                >
+                  <span className="group-active:text-amber-500 transition-colors">{link.name}</span>
+                  <div className="w-8 h-px bg-amber-500 scale-x-0 group-active:scale-x-100 origin-right transition-transform duration-300" />
+                </button>
+              ))}
+            </nav>
+
+            <div className="pt-8 space-y-6">
+              <div className="pb-4 border-b border-border/50">
+                <span className="text-sm font-semibold tracking-widest text-muted-foreground uppercase">Contact</span>
+              </div>
+              <div className="space-y-4">
+                <a
+                  href="tel:+9779715233533"
+                  className="flex items-center gap-4 text-lg font-medium text-foreground hover:text-amber-600 transition-colors"
+                >
+                  <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                    <Phone className="w-5 h-5" />
+                  </div>
+                  +977 9715233533
+                </a>
+              </div>
+            </div>
           </div>
-          <div className="space-y-2 pt-2">
-            {navLinks.map((link, index) => (
-              <button
-                key={link.name}
-                onClick={() => scrollToSection(link.href)}
-                className={`block w-full text-left text-foreground font-medium py-3 hover:text-amber-600 transition-all duration-500 transform ${
-                  isMobileMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                }`}
-                style={{ transitionDelay: `${0.1 * index}s` }}
-              >
-                {link.name}
-              </button>
-            ))}
+
+          <div className="mt-auto pt-12 text-center">
+            <p className="text-sm text-muted-foreground mb-2">Kohinoor Restaurant</p>
+            <p className="text-xs text-muted-foreground/60 tracking-widest uppercase italic">Where Peace, Nature & Love Meet</p>
           </div>
-          <a
-            href="tel:+9779715233533"
-            className={`mt-6 flex items-center justify-center gap-2 w-full px-5 py-4 bg-secondary text-secondary-foreground border-2 border-border font-semibold rounded-full shadow-md hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-500 transform ${
-              isMobileMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-            style={{ transitionDelay: `${0.1 * navLinks.length}s` }}
-          >
-            <Phone className="w-4 h-4" />
-            Call Now
-          </a>
         </div>
       </div>
     </nav>

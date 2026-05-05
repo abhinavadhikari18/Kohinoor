@@ -186,18 +186,18 @@ export default function About() {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-4 mt-8 about-stats-container">
-              <div className="text-center p-4 bg-card rounded-xl about-stat">
-                <div className="text-2xl font-bold text-amber-600">9</div>
-                <div className="text-sm text-muted-foreground">Cozy Rooms</div>
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-8 about-stats-container">
+              <div className="text-center p-3 sm:p-4 bg-card rounded-xl about-stat border border-border/50">
+                <div className="text-xl sm:text-2xl font-bold text-amber-600">9</div>
+                <div className="text-[10px] sm:text-sm text-muted-foreground uppercase tracking-tighter">Rooms</div>
               </div>
-              <div className="text-center p-4 bg-card rounded-xl about-stat">
-                <div className="text-2xl font-bold text-amber-600">11</div>
-                <div className="text-sm text-muted-foreground">Private Cabins</div>
+              <div className="text-center p-3 sm:p-4 bg-card rounded-xl about-stat border border-border/50">
+                <div className="text-xl sm:text-2xl font-bold text-amber-600">11</div>
+                <div className="text-[10px] sm:text-sm text-muted-foreground uppercase tracking-tighter">Cabins</div>
               </div>
-              <div className="text-center p-4 bg-card rounded-xl about-stat">
-                <div className="text-2xl font-bold text-amber-600">50+</div>
-                <div className="text-sm text-muted-foreground">Menu Items</div>
+              <div className="text-center p-3 sm:p-4 bg-card rounded-xl about-stat border border-border/50">
+                <div className="text-xl sm:text-2xl font-bold text-amber-600">50+</div>
+                <div className="text-[10px] sm:text-sm text-muted-foreground uppercase tracking-tighter">Items</div>
               </div>
             </div>
           </div>

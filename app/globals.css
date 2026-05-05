@@ -142,6 +142,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-tap-highlight-color: transparent;
   }
   
   /* Hide default cursor globally for custom cursor on desktop */
