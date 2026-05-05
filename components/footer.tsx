@@ -152,7 +152,16 @@ export default function Footer() {
               >
                 NineSapphires
               </Link>
-              {" "}by Ab.
+              {" "}by Ab & backend/ux by{" "}
+              <Link
+                href="https://sagarb.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-400 hover:text-amber-300 transition-colors font-medium"
+              >
+                Sagar
+              </Link>
+              .
             </p>
           </div>
         </div>
