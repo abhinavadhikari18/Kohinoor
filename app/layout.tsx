@@ -30,21 +30,8 @@ export const metadata: Metadata = {
   description: 'Experience the finest dining at Kohinoor Restaurant - a diamond in culinary excellence. Private cabins, serene lake views, famous Sekuwa corner, and cozy rooms starting at Rs 500.',
   keywords: 'Kohinoor Restaurant, fine dining, private cabins, Sekuwa, romantic dining, nature restaurant, Nepal restaurant',
   icons: {
-    icon: [
-      {
-        url: 'logo.PNG',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: 'logo.PNG',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: 'logo.PNG',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: '/favicon.jpg',
+    apple: '/favicon.jpg',
   },
 }
 

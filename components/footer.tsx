@@ -99,8 +99,7 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <p className="text-white/70">+977 9709671703</p>
-                  <p className="text-white/70">+977 9812345678</p>
+                  <p className="text-white/70">9715233533</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -119,21 +118,13 @@ export default function Footer() {
             <h4 className="font-serif text-lg font-bold text-amber-100 mb-6">Opening Hours</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex justify-between text-white/70">
-                <span>Monday - Friday</span>
-                <span>11AM - 10PM</span>
-              </li>
-              <li className="flex justify-between text-white/70">
-                <span>Saturday</span>
-                <span>10AM - 11PM</span>
-              </li>
-              <li className="flex justify-between text-white/70">
-                <span>Sunday</span>
-                <span>10AM - 11PM</span>
+                <span>Sunday - Saturday</span>
+                <span>10AM - 10PM</span>
               </li>
             </ul>
             <div className="mt-6">
               <a
-                href="tel:+9779845628519"
+                href="tel:9715233533"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-background text-foreground border-2 border-border font-semibold rounded-full text-sm hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-lg hover:shadow-primary/30 transition-all dark:bg-secondary dark:text-secondary-foreground"
               >
                 <Phone className="w-4 h-4" />

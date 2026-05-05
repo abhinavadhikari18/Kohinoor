@@ -15,14 +15,8 @@ const contactInfo = [
   {
     icon: Phone,
     label: "Phone",
-    value: "+977 9709671703",
-    href: "tel:+9779709671703",
-  },
-  {
-    icon: Phone,
-    label: "Alternate",
-    value: "+977 9812345678",
-    href: "tel:+9779812345678",
+    value: "9715233533",
+    href: "tel:9715233533",
   },
   {
     icon: Mail,
@@ -181,12 +175,8 @@ export default function Contact() {
               </div>
               <div className="space-y-2 text-muted-foreground">
                 <div className="flex justify-between">
-                  <span>Monday - Friday</span>
-                  <span className="font-medium text-foreground">11:00 AM - 10:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Saturday - Sunday</span>
-                  <span className="font-medium text-foreground">10:00 AM - 11:00 PM</span>
+                  <span>Sunday - Saturday</span>
+                  <span className="font-medium text-foreground">10:00 AM - 10:00 PM</span>
                 </div>
               </div>
             </div>
