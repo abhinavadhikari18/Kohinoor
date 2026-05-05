@@ -33,6 +33,28 @@ export const metadata: Metadata = {
     icon: '/favicon.jpg',
     apple: '/favicon.jpg',
   },
+  openGraph: {
+    title: 'Kohinoor Restaurant | Where Peace, Nature & Love Meet',
+    description: 'Experience the finest dining at Kohinoor Restaurant - a diamond in culinary excellence.',
+    url: 'https://kohinoorrestaurant.com', // Replace with actual URL if known, but keeping generic for now or user can provide
+    siteName: 'Kohinoor Restaurant',
+    images: [
+      {
+        url: '/favicon.jpg',
+        width: 800,
+        height: 800,
+        alt: 'Kohinoor Restaurant Logo',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Kohinoor Restaurant | Where Peace, Nature & Love Meet',
+    description: 'Experience the finest dining at Kohinoor Restaurant - a diamond in culinary excellence.',
+    images: ['/favicon.jpg'],
+  },
 }
 
 export const viewport: Viewport = {
