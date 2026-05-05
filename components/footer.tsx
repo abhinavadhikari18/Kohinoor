@@ -99,12 +99,12 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <p className="text-white/70">9715233533</p>
+                  <p className="text-white/70">+977 9715233533</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-                <p className="text-white/70 text-sm">kohinoor.restaurant@gmail.com</p>
+                <p className="text-white/70 text-sm">restaurantkohinoor11@gmail.com</p>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
@@ -124,7 +124,7 @@ export default function Footer() {
             </ul>
             <div className="mt-6">
               <a
-                href="tel:9715233533"
+                href="tel:+9779715233533"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-background text-foreground border-2 border-border font-semibold rounded-full text-sm hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-lg hover:shadow-primary/30 transition-all dark:bg-secondary dark:text-secondary-foreground"
               >
                 <Phone className="w-4 h-4" />

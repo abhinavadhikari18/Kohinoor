@@ -15,8 +15,8 @@ const contactInfo = [
   {
     icon: Phone,
     label: "Phone",
-    value: "9715233533",
-    href: "tel:9715233533",
+    value: "+977 9715233533",
+    href: "tel:+9779715233533",
   },
   {
     icon: Mail,

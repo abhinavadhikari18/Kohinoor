@@ -84,7 +84,7 @@ export default function Navbar() {
             <ThemeToggle />
             <MagneticButton>
               <a
-                href="tel:9715233533"
+                href="tel:+9779715233533"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary text-secondary-foreground border-2 border-border font-semibold rounded-full shadow-md hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-primary/30 hover:scale-105 transition-all duration-300 interactive"
               >
                 <Phone className="w-4 h-4" />
@@ -138,7 +138,7 @@ export default function Navbar() {
             ))}
           </div>
           <a
-            href="tel:9715233533"
+            href="tel:+9779715233533"
             className={`mt-6 flex items-center justify-center gap-2 w-full px-5 py-4 bg-secondary text-secondary-foreground border-2 border-border font-semibold rounded-full shadow-md hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-500 transform ${
               isMobileMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
