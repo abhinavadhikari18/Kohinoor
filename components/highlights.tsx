@@ -2,7 +2,7 @@
 
 import { useRef } from "react"
 import Image from "next/image"
-import { Gem, Home, Utensils, Wine } from "lucide-react"
+import { Gem, Home, UtensilsCrossed, Wine, Sparkles, BedDouble, Flame, Crown, Martini } from "lucide-react"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -16,7 +16,7 @@ const mainHighlight = {
   subtitle: "Just Rs 500",
   description: "Experience comfort in our beautifully furnished rooms with all modern amenities. Perfect for a peaceful overnight stay.",
   image: "bedroom1.jpg",
-  icon: Home,
+  icon: BedDouble,
 }
 
 const semiHighlights = [
@@ -24,19 +24,19 @@ const semiHighlights = [
     title: "Free Private Cabins",
     description: "Enjoy intimate moments in our complimentary private cabins surrounded by nature.",
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cabin2-R0016rsTLy5HRs9rNsXLSYOpfvF07k.jpg",
-    icon: Gem,
+    icon: Crown,
   },
   {
     title: "Famous Sekuwa Corner",
     description: "Savor our signature Sekuwa, grilled to perfection with authentic Nepali spices.",
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/bar-YpqqsjZipzBQzh64D0eHgHZhcLpvIv.jpg",
-    icon: Utensils,
+    icon: Flame,
   },
   {
     title: "Hookah Bar Lounge",
-    description: "Unwind in our stylish hookah bar lounge with cozy seating, warm lights, and a relaxed evening vibe.",
+    description: "Unwind in our stylish hookah bar lounge with cozy seating and a relaxed evening vibe.",
     image: "bar.jpg",
-    icon: Wine,
+    icon: Martini,
   },
 ]
 
@@ -143,22 +143,22 @@ export default function Highlights() {
             </div>
             
             {/* Content Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
+            <div className="absolute bottom-0 left-0 right-0 px-8 pb-6 pt-12 md:px-12 md:pb-8 md:pt-16">
               <div className="flex items-start gap-6">
-                <div className="hidden md:flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-lg">
-                  <mainHighlight.icon className="w-8 h-8 text-white" />
+                <div className="hidden md:flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-xl ring-4 ring-amber-500/20 group-hover:scale-110 transition-transform duration-500">
+                  <mainHighlight.icon className="w-8 h-8 text-white animate-pulse" />
                 </div>
                 <div className="flex-1">
                   <div className="inline-block px-4 py-1.5 bg-amber-500 text-white text-sm font-semibold rounded-full mb-4">
                     Featured Offer
                   </div>
-                  <h3 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 leading-tight">
+                  <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 leading-tight">
                     {mainHighlight.title}
                   </h3>
-                  <p className="text-4xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-amber-300 to-amber-100 bg-clip-text text-transparent mb-4">
+                  <p className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-300 to-amber-100 bg-clip-text text-transparent mb-3">
                     {mainHighlight.subtitle}
                   </p>
-                  <p className="text-white/80 text-base sm:text-lg max-w-xl">
+                  <p className="text-white/80 text-sm sm:text-base max-w-xl">
                     {mainHighlight.description}
                   </p>
                 </div>
@@ -189,16 +189,16 @@ export default function Highlights() {
               </div>
 
               {/* Content */}
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600">
+              <div className="absolute bottom-0 left-0 right-0 px-6 pb-4 pt-10">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shrink-0 shadow-lg ring-2 ring-amber-500/20 group-hover:scale-110 transition-transform duration-500">
                     <highlight.icon className="w-5 h-5 text-white" />
                   </div>
-                  <h3 className="font-serif text-2xl font-bold text-white">
+                  <h3 className="font-serif text-xl font-bold text-white leading-tight">
                     {highlight.title}
                   </h3>
                 </div>
-                <p className="text-white/80">
+                <p className="text-white/80 text-sm leading-relaxed">
                   {highlight.description}
                 </p>
               </div>

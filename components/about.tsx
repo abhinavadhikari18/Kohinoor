@@ -2,26 +2,26 @@
 
 import { useRef } from "react"
 import Image from "next/image"
-import { Home, Gem, Utensils, TreePine, Ship, Heart, MapPin } from "lucide-react"
+import { Home, Gem, Utensils, TreePine, Ship, Heart, MapPin, BedDouble, Crown, Flame, Martini, Waves } from "lucide-react"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 const features = [
   {
-    icon: Home,
+    icon: BedDouble,
     title: "Cozy Rooms",
     description: "Comfortable rooms starting at just Rs 500 for a peaceful overnight stay.",
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/bedroom1-jWqxDbDWEIRo6VCC7dYB24PnPtZeeE.jpg",
   },
   {
-    icon: Gem,
+    icon: Crown,
     title: "Private Cabins",
     description: "Complimentary private cabins perfect for intimate dining experiences.",
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cabin2-R0016rsTLy5HRs9rNsXLSYOpfvF07k.jpg",
   },
   {
-    icon: Utensils,
+    icon: Flame,
     title: "Famous Sekuwa",
     description: "Our signature Sekuwa grilled with authentic Nepali spices and flavors.",
     image: "sekuwa.jpg",
@@ -33,14 +33,14 @@ const features = [
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/peace%20ambience-iLfDxor9pBjoyyqYwv3Wubuh4UZY1p.jpg",
   },
   {
-    icon: Ship,
+    icon: Waves,
     title: "Lake & Boating",
     description: "Enjoy our serene lake with boating facilities available.",
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/boat%20scene-QgqqN8CTMX9ompWDEEQZblUFaCFjx9.jpg",
   },
 
   {
-    icon: Heart,
+    icon: Martini,
     title: "Hookah Bar Lounge",
     description: "Elevate your evening with our premium hookah experience.",
     image: "bar.jpg",
@@ -220,16 +220,16 @@ export default function About() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-6">
+              <div className="absolute bottom-0 left-0 right-0 px-6 pb-4 pt-10">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg ring-2 ring-amber-500/20 group-hover:scale-110 transition-transform duration-500">
                     <feature.icon className="w-5 h-5 text-white" />
                   </div>
-                  <h4 className="font-serif text-lg font-bold text-white">
+                  <h4 className="font-serif text-base font-bold text-white leading-tight">
                     {feature.title}
                   </h4>
                 </div>
-                <p className="text-white/80 text-sm">
+                <p className="text-white/80 text-xs leading-relaxed">
                   {feature.description}
                 </p>
               </div>
