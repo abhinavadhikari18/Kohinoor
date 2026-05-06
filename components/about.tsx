@@ -124,6 +124,9 @@ export default function About() {
     const cards = gsap.utils.toArray<HTMLElement>(".tilt-card")
     cards.forEach((card) => {
       const handleMouseMove = (e: MouseEvent) => {
+        // Don't run on touch devices
+        if (window.matchMedia("(pointer: coarse)").matches) return
+
         const { left, top, width, height } = card.getBoundingClientRect()
         const x = (e.clientX - left) / width - 0.5
         const y = (e.clientY - top) / height - 0.5
@@ -261,7 +264,7 @@ export default function About() {
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className="group relative overflow-hidden rounded-2xl bg-card shadow-lg premium-hover transform-style-3d tilt-card"
+              className="group relative overflow-hidden rounded-2xl bg-card shadow-lg premium-hover transform-style-3d tilt-card interactive-touch"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="relative h-48 transform-style-3d">

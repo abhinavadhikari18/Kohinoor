@@ -66,7 +66,7 @@ export default function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group/social relative w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-amber-500 transition-all duration-300 hover:-translate-y-1"
+                  className="group/social relative w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-amber-500 transition-all duration-300 hover:-translate-y-1 interactive-touch"
                   aria-label={social.label}
                 >
                   <div className="absolute inset-0 bg-amber-400/20 blur-md rounded-full opacity-0 group-hover/social:opacity-100 transition-opacity" />
@@ -84,7 +84,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <button
                     onClick={() => scrollToSection(link.href)}
-                    className="text-white/70 hover:text-amber-400 transition-colors text-sm"
+                    className="text-white/70 hover:text-amber-400 transition-colors text-sm interactive-touch"
                   >
                     {link.name}
                   </button>
@@ -135,7 +135,7 @@ export default function Footer() {
             <div className="mt-6">
               <a
                 href="tel:+9779715233533"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-background text-foreground border-2 border-border font-semibold rounded-full text-sm hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-lg hover:shadow-primary/30 transition-all dark:bg-secondary dark:text-secondary-foreground"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-background text-foreground border-2 border-border font-semibold rounded-full text-sm hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-lg hover:shadow-primary/30 transition-all dark:bg-secondary dark:text-secondary-foreground interactive-touch"
               >
                 <Phone className="w-4 h-4" />
                 Reserve Now

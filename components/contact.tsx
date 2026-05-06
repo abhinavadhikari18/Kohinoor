@@ -158,7 +158,7 @@ export default function Contact() {
                 <a
                   key={info.label}
                   href={info.href}
-                  className="flex items-start gap-4 p-4 bg-card/80 backdrop-blur-sm rounded-xl shadow-md premium-hover border border-border/50"
+                  className="flex items-start gap-4 p-4 bg-card/80 backdrop-blur-sm rounded-xl shadow-md premium-hover border border-border/50 interactive-touch"
                 >
                   <RelaxingIcon 
                     icon={info.icon} 
@@ -200,7 +200,7 @@ export default function Contact() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex items-center gap-4 p-3 rounded-xl ${social.bgColor} transition-all duration-300 hover:scale-[1.02] group/social`}
+                    className={`flex items-center gap-4 p-3 rounded-xl ${social.bgColor} transition-all duration-300 hover:scale-[1.02] group/social interactive-touch`}
                   >
                     <div className={`relative flex items-center justify-center w-10 h-10 rounded-xl bg-white text-gray-700 shadow-sm transition-all duration-300 ${social.color} group-hover/social:text-white group-hover/social:-translate-y-1`}>
                       <div className="absolute inset-0 bg-current opacity-0 group-hover/social:opacity-20 blur-md rounded-xl transition-opacity" />

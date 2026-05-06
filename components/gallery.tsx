@@ -105,7 +105,7 @@ export default function Gallery({ images }: GalleryProps) {
                 key={image.id}
                 type="button"
                 aria-label={`Open ${image.alt} in gallery`}
-                className={`group relative overflow-hidden rounded-[1.75rem] cursor-pointer premium-hover shadow-lg border border-border/50 text-left ${gallerySizeClasses[size]}`}
+                className={`group relative overflow-hidden rounded-[1.75rem] cursor-pointer premium-hover shadow-lg border border-border/50 text-left interactive-touch ${gallerySizeClasses[size]}`}
                 onClick={() => openLightbox(index)}
               >
                 <img

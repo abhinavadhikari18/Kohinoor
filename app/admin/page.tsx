@@ -387,9 +387,29 @@ export default function AdminPage() {
     await uploadGalleryFile(fresh.id, file)
   }
 
+  const hasDirtyItems = Object.keys(dirtyMenuItems).length > 0 || Object.keys(dirtyGalleryItems).length > 0
+
   return (
     <main className="min-h-screen bg-background text-foreground px-4 py-12">
       <div className="max-w-6xl mx-auto">
+        {hasDirtyItems && (
+          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="bg-amber-500 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 border border-amber-400">
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+              <span className="text-sm font-bold tracking-wide uppercase">Unsaved Changes</span>
+              <button 
+                onClick={() => {
+                  if (activeSection === "menu") handleSaveMenu()
+                  else if (activeSection === "gallery") handleSaveGallery()
+                }}
+                className="ml-2 bg-white text-amber-600 px-3 py-1 rounded-lg text-xs font-black hover:bg-amber-50 transition-colors uppercase"
+              >
+                Save Now
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="relative mb-8 flex justify-center items-center">
           <h1 className="menu-font text-3xl md:text-4xl font-semibold">Admin Panel</h1>
           <div className="absolute right-0 flex items-center gap-4">
@@ -452,7 +472,7 @@ export default function AdminPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <button
               onClick={() => setActiveSection("menu")}
-              className="w-full block bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow text-left group dark:bg-[#1A1512]/80 dark:border-white/10"
+              className="w-full block bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-all text-left group dark:bg-[#1A1512]/80 dark:border-white/10 interactive-touch"
             >
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mr-4">
@@ -467,7 +487,7 @@ export default function AdminPage() {
 
             <button
               onClick={() => setActiveSection("gallery")}
-              className="w-full block bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow text-left group dark:bg-[#1A1512]/80 dark:border-white/10"
+              className="w-full block bg-white/75 border border-[#E8D5C4] rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-all text-left group dark:bg-[#1A1512]/80 dark:border-white/10 interactive-touch"
             >
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
@@ -594,13 +614,12 @@ export default function AdminPage() {
                               </div>
 
                               <div className="space-y-3">
-                                {category.filteredItems.map(({ item, itemIndex }) => (
-                                  <div key={`${tab}-${category.categoryIndex}-${itemIndex}`} className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-12 gap-3 rounded-2xl border border-[#EFE2D7] bg-white p-4 dark:border-white/10 dark:bg-[#2A2420]">
+                                  <div key={`${tab}-${category.categoryIndex}-${itemIndex}`} className={`grid grid-cols-2 md:grid-cols-12 gap-3 rounded-2xl border bg-white p-4 dark:bg-[#2A2420] transition-colors ${dirtyMenuItems[menuItemKey(tab, category.categoryIndex, itemIndex)] ? "border-amber-400/50 shadow-[0_0_15px_rgba(251,191,36,0.1)] dark:border-amber-500/30" : "border-[#EFE2D7] dark:border-white/10"}`}>
                                     <input
                                       value={item.name}
                                       onChange={(e) => updateMenuItem(tab, category.categoryIndex, itemIndex, "name", e.target.value)}
                                       placeholder="Dish name"
-                                      className="col-span-2 md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
+                                      className={`col-span-2 md:col-span-2 px-4 py-3 rounded-xl border bg-[#FFFDFC] dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:ring-2 transition-all ${dirtyMenuItems[menuItemKey(tab, category.categoryIndex, itemIndex)] ? "border-amber-400/30 focus:ring-amber-400/20" : "border-[#E8D5C4] dark:border-white/10 focus:ring-[#E8A4B8]/60"}`}
                                     />
                                     <input
                                       value={item.description ?? ""}
@@ -612,7 +631,7 @@ export default function AdminPage() {
                                       value={item.price ?? ""}
                                       onChange={(e) => updateMenuItem(tab, category.categoryIndex, itemIndex, "price", e.target.value)}
                                       placeholder="Price"
-                                      className="col-span-1 md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
+                                      className="col-span-2 sm:col-span-1 md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
                                     />
                                     <div className="col-span-1 md:col-span-2 relative group">
                                       <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10">
@@ -638,10 +657,10 @@ export default function AdminPage() {
                                     </div>
                                     <button
                                       type="button"
-                                      className="col-span-1 md:col-span-1 px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 dark:border-pink-900/50 dark:text-pink-400 dark:bg-pink-950/30 transition-colors hover:bg-pink-100 dark:hover:bg-pink-900/50 flex items-center justify-center"
+                                      className="col-span-2 md:col-span-1 px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 dark:border-pink-900/50 dark:text-pink-400 dark:bg-pink-950/30 transition-colors hover:bg-pink-100 dark:hover:bg-pink-900/50 flex items-center justify-center font-semibold"
                                       onClick={() => removeMenuItem(tab, category.categoryIndex, itemIndex)}
                                     >
-                                      <span className="md:hidden">Remove</span>
+                                      <span className="md:hidden">Remove Item</span>
                                       <span className="hidden md:inline">×</span>
                                     </button>
                                   </div>
@@ -736,8 +755,8 @@ export default function AdminPage() {
                     return (
                       <div
                         key={image.id}
-                        className={`rounded-2xl border bg-[#FFFCF8] p-4 shadow-sm transition-colors dark:bg-[#211B17] ${adminGalleryCardSizeClasses[size]} ${
-                          dragOverId === image.id ? "border-[#E8A4B8] ring-2 ring-[#E8A4B8]/30" : "border-[#E8D5C4] dark:border-white/10"
+                        className={`rounded-2xl border bg-[#FFFCF8] p-4 shadow-sm transition-all dark:bg-[#211B17] ${adminGalleryCardSizeClasses[size]} ${
+                          dirtyGalleryItems[image.id] ? "border-amber-400/50 ring-2 ring-amber-400/20" : dragOverId === image.id ? "border-[#E8A4B8] ring-2 ring-[#E8A4B8]/30" : "border-[#E8D5C4] dark:border-white/10"
                         }`}
                       >
                       <div className="flex items-center justify-between gap-3 mb-4">
@@ -804,7 +823,13 @@ export default function AdminPage() {
                               <Image src={image.src} alt={image.alt || "Preview"} fill className="object-cover" />
                             </div>
                           ) : (
-                            <p className="text-sm text-muted-foreground px-4 text-center">Image preview appears here after adding a valid image URL.</p>
+                            <div className="flex flex-col items-center gap-2 text-muted-foreground px-6 text-center">
+                              <svg className="w-10 h-10 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <p className="text-sm font-medium">No Image Uploaded</p>
+                              <p className="text-xs opacity-60">Upload a photo to see it here</p>
+                            </div>
                           )}
                         </div>
                       </div>

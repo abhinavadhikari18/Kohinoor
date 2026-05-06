@@ -40,9 +40,16 @@ export default function SparklingDiamonds() {
     if (diamonds.length === 0) return
 
     const ctx = gsap.context(() => {
-      diamonds.forEach((diamond) => {
-        gsap.to(`.diamond-${diamond.id}`, {
-          y: -500 * diamond.depth,
+      // Create 3 layers of diamonds for more efficient ScrollTriggers
+      const layers = [
+        { selector: ".diamond-layer-1", depth: 0.15 },
+        { selector: ".diamond-layer-2", depth: 0.35 },
+        { selector: ".diamond-layer-3", depth: 0.55 },
+      ]
+
+      layers.forEach((layer) => {
+        gsap.to(layer.selector, {
+          y: -400 * layer.depth,
           ease: "none",
           scrollTrigger: {
             trigger: document.body,
@@ -59,10 +66,10 @@ export default function SparklingDiamonds() {
 
   return (
     <div ref={containerRef} className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {diamonds.map((diamond) => (
+      {diamonds.map((diamond, index) => (
         <div
           key={diamond.id}
-          className={`absolute diamond-${diamond.id}`}
+          className={`absolute diamond-${diamond.id} diamond-layer-${(index % 3) + 1}`}
           style={{
             left: `${diamond.left}%`,
             top: `${diamond.top}%`,

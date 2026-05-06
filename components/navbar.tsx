@@ -115,10 +115,10 @@ export default function Navbar() {
       {/* Mobile Menu */}
       <div
         id="mobile-navigation"
-        className={`md:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-2xl transition-all duration-500 ease-in-out ${
+        className={`md:hidden fixed inset-0 z-40 bg-background/98 backdrop-blur-2xl transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
           isMobileMenuOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-full"
         }`}
       >
         <div className="flex flex-col h-full pt-24 pb-32 px-6 overflow-y-auto">
@@ -133,7 +133,7 @@ export default function Navbar() {
                 <button
                   key={link.name}
                   onClick={() => scrollToSection(link.href)}
-                  className={`group flex items-center justify-between w-full py-4 text-3xl font-serif font-bold transition-all duration-500 transform ${
+                  className={`group flex items-center justify-between w-full py-4 text-3xl font-serif font-bold transition-all duration-500 transform interactive-touch ${
                     isMobileMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
                   }`}
                   style={{ transitionDelay: `${0.1 * index}s` }}

@@ -49,6 +49,9 @@ export default function Highlights() {
     
     cards.forEach((card) => {
       const handleMouseMove = (e: MouseEvent) => {
+        // Don't run on touch devices
+        if (window.matchMedia("(pointer: coarse)").matches) return
+
         const { left, top, width, height } = card.getBoundingClientRect()
         const x = (e.clientX - left) / width - 0.5
         const y = (e.clientY - top) / height - 0.5
@@ -184,7 +187,7 @@ export default function Highlights() {
         </div>
 
         {/* Main Highlight Card */}
-        <div className="relative mb-12 group main-highlight-card transform-style-3d tilt-card">
+        <div className="relative mb-12 group main-highlight-card transform-style-3d tilt-card interactive-touch">
           <div className="relative overflow-hidden rounded-3xl shadow-2xl premium-hover transform-style-3d">
             <div className="relative h-[400px] md:h-[500px]">
               <Image
@@ -234,7 +237,7 @@ export default function Highlights() {
           {semiHighlights.map((highlight, index) => (
             <div
               key={highlight.title}
-              className="group relative overflow-hidden rounded-2xl shadow-xl premium-hover semi-highlight-card transform-style-3d tilt-card"
+              className="group relative overflow-hidden rounded-2xl shadow-xl premium-hover semi-highlight-card transform-style-3d tilt-card interactive-touch"
             >
               <div className="relative h-[300px]">
                 <Image

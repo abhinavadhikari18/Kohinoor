@@ -89,6 +89,9 @@ export default function Hero() {
     })
 
     const handleMouseMove = (e: MouseEvent) => {
+      // Don't run on touch devices
+      if (window.matchMedia("(pointer: coarse)").matches) return
+      
       if (!heroRef.current || !contentRef.current) return
       
       const { clientX, clientY } = e
@@ -173,8 +176,9 @@ export default function Hero() {
               src={image.src}
               alt={image.alt}
               fill
-              className="object-cover scale-105 animate-ken-burns md:animate-none"
+              className="object-cover scale-105 md:animate-ken-burns"
               priority={index === 0}
+              sizes="100vw"
             />
             {/* Blur overlay for non-active slides transitioning */}
             <div className="absolute inset-0 backdrop-blur-[2px]" />

@@ -225,6 +225,20 @@
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 25%, #f8f9fa 50%, #dee2e6 75%, #f8f9fa 100%);
 }
 
+/* Touch-friendly interactive utilities */
+.touch-active {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+}
+
+.touch-active:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+.interactive-touch {
+  @apply touch-active cursor-pointer select-none;
+}
+
 /* Premium hover effects */
 .premium-hover {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);

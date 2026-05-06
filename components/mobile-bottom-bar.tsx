@@ -72,7 +72,7 @@ export default function MobileBottomBar() {
               onClick={(e) => scrollToSection(e, item.href)}
               target={isExternal ? "_blank" : undefined}
               rel={isExternal ? "noopener noreferrer" : undefined}
-              className={`flex flex-col items-center gap-1 flex-1 py-2 px-1 rounded-full transition-all duration-300 active:scale-90 ${
+              className={`flex flex-col items-center gap-1 flex-1 py-2 px-1 rounded-full transition-all duration-300 interactive-touch ${
                 isActive 
                   ? "text-amber-600 bg-amber-500/10" 
                   : "text-muted-foreground hover:text-foreground"
