@@ -66,10 +66,11 @@ export default function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-amber-500 transition-colors"
+                  className="group/social relative w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-amber-500 transition-all duration-300 hover:-translate-y-1"
                   aria-label={social.label}
                 >
-                  <social.icon className="w-5 h-5" />
+                  <div className="absolute inset-0 bg-amber-400/20 blur-md rounded-full opacity-0 group-hover/social:opacity-100 transition-opacity" />
+                  <social.icon className="w-5 h-5 relative z-10 group-hover/social:animate-float-slow" />
                 </a>
               ))}
             </div>
@@ -96,18 +97,27 @@ export default function Footer() {
           <div>
             <h4 className="font-serif text-lg font-bold text-amber-100 mb-6">Contact Us</h4>
             <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <li className="flex items-start gap-3 group/item">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-amber-400/20 blur-sm rounded-full opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                  <Phone className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5 relative z-10 group-hover/item:animate-float-slow" />
+                </div>
                 <div className="text-sm">
                   <p className="text-white/70">+977 9715233533</p>
                 </div>
               </li>
-              <li className="flex items-start gap-3">
-                <Mail className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <li className="flex items-start gap-3 group/item">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-amber-400/20 blur-sm rounded-full opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                  <Mail className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5 relative z-10 group-hover/item:animate-float-slow" />
+                </div>
                 <p className="text-white/70 text-sm">restaurantkohinoor11@gmail.com</p>
               </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <li className="flex items-start gap-3 group/item">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-amber-400/20 blur-sm rounded-full opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                  <MapPin className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5 relative z-10 group-hover/item:animate-float-slow" />
+                </div>
                 <p className="text-white/70 text-sm">Tilottama-13, Kotihawa</p>
               </li>
             </ul>

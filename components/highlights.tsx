@@ -6,6 +6,7 @@ import { Gem, Home, UtensilsCrossed, Wine, Sparkles, BedDouble, Flame, Crown, Ma
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { RelaxingIcon } from "./relaxing-icon"
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
@@ -44,6 +45,56 @@ export default function Highlights() {
   const sectionRef = useRef<HTMLElement>(null)
 
   useGSAP(() => {
+    const cards = gsap.utils.toArray<HTMLElement>(".tilt-card")
+    
+    cards.forEach((card) => {
+      const handleMouseMove = (e: MouseEvent) => {
+        const { left, top, width, height } = card.getBoundingClientRect()
+        const x = (e.clientX - left) / width - 0.5
+        const y = (e.clientY - top) / height - 0.5
+        
+        gsap.to(card, {
+          rotateX: -y * 20,
+          rotateY: x * 20,
+          transformPerspective: 1000,
+          ease: "power2.out",
+          duration: 0.5
+        })
+
+        // Inner content parallax
+        const inner = card.querySelector(".tilt-inner")
+        if (inner) {
+          gsap.to(inner, {
+            x: x * 20,
+            y: y * 20,
+            ease: "power2.out",
+            duration: 0.5
+          })
+        }
+      }
+
+      const handleMouseLeave = () => {
+        gsap.to(card, {
+          rotateX: 0,
+          rotateY: 0,
+          ease: "power3.out",
+          duration: 1
+        })
+        const inner = card.querySelector(".tilt-inner")
+        if (inner) {
+          gsap.to(inner, {
+            x: 0,
+            y: 0,
+            ease: "power3.out",
+            duration: 1
+          })
+        }
+      }
+
+      card.addEventListener("mousemove", handleMouseMove)
+      card.addEventListener("mouseleave", handleMouseLeave)
+    })
+
     // 3D pop-in effect for main highlight
     gsap.fromTo(".main-highlight-card", 
       { 
@@ -118,7 +169,10 @@ export default function Highlights() {
         <div className="text-center mb-16">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="w-12 h-px bg-gradient-to-r from-transparent to-amber-400" />
-            <Gem className="w-6 h-6 text-amber-500" />
+            <div className="relative">
+              <div className="absolute inset-0 bg-amber-400/20 blur-md rounded-full animate-pulse" />
+              <Gem className="w-6 h-6 text-amber-500 relative z-10 animate-float-slow" />
+            </div>
             <div className="w-12 h-px bg-gradient-to-l from-transparent to-amber-400" />
           </div>
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
@@ -130,8 +184,8 @@ export default function Highlights() {
         </div>
 
         {/* Main Highlight Card */}
-        <div className="relative mb-12 group main-highlight-card transform-style-3d">
-          <div className="relative overflow-hidden rounded-3xl shadow-2xl premium-hover">
+        <div className="relative mb-12 group main-highlight-card transform-style-3d tilt-card">
+          <div className="relative overflow-hidden rounded-3xl shadow-2xl premium-hover transform-style-3d">
             <div className="relative h-[400px] md:h-[500px]">
               <Image
                 src={mainHighlight.image}
@@ -143,22 +197,26 @@ export default function Highlights() {
             </div>
             
             {/* Content Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 px-8 pb-6 pt-12 md:px-12 md:pb-8 md:pt-16">
-              <div className="flex items-start gap-6">
-                <div className="hidden md:flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-xl ring-4 ring-amber-500/20 group-hover:scale-110 transition-transform duration-500">
-                  <mainHighlight.icon className="w-8 h-8 text-white animate-pulse" />
+            <div className="absolute bottom-0 left-0 right-0 px-8 pb-6 pt-12 md:px-12 md:pb-8 md:pt-16 tilt-inner transform-style-3d">
+              <div className="flex items-start gap-6 transform-style-3d">
+                <div className="hidden md:block">
+                  <RelaxingIcon 
+                    icon={mainHighlight.icon} 
+                    containerClassName="scale-125" 
+                    className="w-6 h-6"
+                  />
                 </div>
-                <div className="flex-1">
-                  <div className="inline-block px-4 py-1.5 bg-amber-500 text-white text-sm font-semibold rounded-full mb-4">
+                <div className="flex-1 transform-style-3d">
+                  <div className="inline-block px-4 py-1.5 bg-amber-500 text-white text-sm font-semibold rounded-full mb-4 translate-z-50">
                     Featured Offer
                   </div>
-                  <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 leading-tight">
+                  <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 leading-tight translate-z-50">
                     {mainHighlight.title}
                   </h3>
-                  <p className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-300 to-amber-100 bg-clip-text text-transparent mb-3">
+                  <p className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-300 to-amber-100 bg-clip-text text-transparent mb-3 translate-z-50">
                     {mainHighlight.subtitle}
                   </p>
-                  <p className="text-white/80 text-sm sm:text-base max-w-xl">
+                  <p className="text-white/80 text-sm sm:text-base max-w-xl translate-z-20">
                     {mainHighlight.description}
                   </p>
                 </div>
@@ -166,8 +224,8 @@ export default function Highlights() {
             </div>
 
             {/* Diamond Decoration */}
-            <div className="absolute top-6 right-6 w-4 h-4 rotate-45 bg-amber-400/80 animate-sparkle" />
-            <div className="absolute top-12 right-12 w-2 h-2 rotate-45 bg-amber-300/60 animate-sparkle delay-300" />
+            <div className="absolute top-6 right-6 w-4 h-4 rotate-45 bg-amber-400/80 animate-sparkle translate-z-50" />
+            <div className="absolute top-12 right-12 w-2 h-2 rotate-45 bg-amber-300/60 animate-sparkle delay-300 translate-z-20" />
           </div>
         </div>
 
@@ -176,7 +234,7 @@ export default function Highlights() {
           {semiHighlights.map((highlight, index) => (
             <div
               key={highlight.title}
-              className="group relative overflow-hidden rounded-2xl shadow-xl premium-hover semi-highlight-card transform-style-3d"
+              className="group relative overflow-hidden rounded-2xl shadow-xl premium-hover semi-highlight-card transform-style-3d tilt-card"
             >
               <div className="relative h-[300px]">
                 <Image
@@ -189,16 +247,14 @@ export default function Highlights() {
               </div>
 
               {/* Content */}
-              <div className="absolute bottom-0 left-0 right-0 px-6 pb-4 pt-10">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shrink-0 shadow-lg ring-2 ring-amber-500/20 group-hover:scale-110 transition-transform duration-500">
-                    <highlight.icon className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="font-serif text-xl font-bold text-white leading-tight">
+              <div className="absolute bottom-0 left-0 right-0 px-6 pb-4 pt-10 tilt-inner transform-style-3d">
+                <div className="flex items-center gap-3 mb-2 transform-style-3d">
+                  <RelaxingIcon icon={highlight.icon} />
+                  <h3 className="font-serif text-xl font-bold text-white leading-tight translate-z-50">
                     {highlight.title}
                   </h3>
                 </div>
-                <p className="text-white/80 text-sm leading-relaxed">
+                <p className="text-white/80 text-sm leading-relaxed translate-z-20">
                   {highlight.description}
                 </p>
               </div>

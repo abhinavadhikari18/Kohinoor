@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Phone, Mail, MapPin, Send, Facebook, Instagram, Clock, Heart } from "lucide-react"
 import Image from "next/image"
+import { RelaxingIcon } from "./relaxing-icon"
 
 // TikTok icon component since lucide doesn't have it
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -117,7 +118,10 @@ export default function Contact() {
         <div className="text-center mb-16">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="w-12 h-px bg-gradient-to-r from-transparent via-pink-400 to-amber-400" />
-            <Heart className="w-6 h-6 text-pink-500 fill-pink-500" />
+            <div className="relative">
+              <div className="absolute inset-0 bg-pink-400/30 blur-md rounded-full animate-pulse" />
+              <Heart className="w-6 h-6 text-pink-500 fill-pink-500 relative z-10 animate-float-slow" />
+            </div>
             <div className="w-12 h-px bg-gradient-to-l from-transparent via-pink-400 to-amber-400" />
           </div>
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
@@ -156,9 +160,11 @@ export default function Contact() {
                   href={info.href}
                   className="flex items-start gap-4 p-4 bg-card/80 backdrop-blur-sm rounded-xl shadow-md premium-hover border border-border/50"
                 >
-                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-pink-400 to-amber-400">
-                    <info.icon className="w-5 h-5 text-white" />
-                  </div>
+                  <RelaxingIcon 
+                    icon={info.icon} 
+                    glowColor="from-pink-400 to-amber-400"
+                    containerClassName="scale-90"
+                  />
                   <div>
                     <p className="text-sm text-pink-600">{info.label}</p>
                     <p className="font-medium text-foreground">{info.value}</p>
@@ -168,9 +174,12 @@ export default function Contact() {
             </div>
 
             {/* Opening Hours */}
-            <div className="p-6 bg-card/80 backdrop-blur-sm rounded-xl shadow-md mb-8 border border-border/50">
+            <div className="p-6 bg-card/80 backdrop-blur-sm rounded-xl shadow-md mb-8 border border-border/50 group/hours">
               <div className="flex items-center gap-3 mb-4">
-                <Clock className="w-5 h-5 text-pink-500" />
+                <div className="relative">
+                  <div className="absolute inset-0 bg-pink-400/20 blur-sm rounded-full opacity-0 group-hover/hours:opacity-100 transition-opacity" />
+                  <Clock className="w-5 h-5 text-pink-500 relative z-10 group-hover/hours:animate-float-slow" />
+                </div>
                 <h4 className="font-serif text-lg font-bold text-foreground">Opening Hours</h4>
               </div>
               <div className="space-y-2 text-muted-foreground">
@@ -191,10 +200,11 @@ export default function Contact() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex items-center gap-4 p-3 rounded-xl ${social.bgColor} transition-all duration-300 hover:scale-[1.02] group`}
+                    className={`flex items-center gap-4 p-3 rounded-xl ${social.bgColor} transition-all duration-300 hover:scale-[1.02] group/social`}
                   >
-                    <div className={`flex items-center justify-center w-10 h-10 rounded-xl bg-white text-gray-700 transition-all duration-300 ${social.color} group-hover:text-white`}>
-                      <social.icon className="w-5 h-5" />
+                    <div className={`relative flex items-center justify-center w-10 h-10 rounded-xl bg-white text-gray-700 shadow-sm transition-all duration-300 ${social.color} group-hover/social:text-white group-hover/social:-translate-y-1`}>
+                      <div className="absolute inset-0 bg-current opacity-0 group-hover/social:opacity-20 blur-md rounded-xl transition-opacity" />
+                      <social.icon className="w-5 h-5 relative z-10 group-hover/social:animate-float-slow" />
                     </div>
                     <div>
                       <p className="font-medium text-foreground">{social.label}</p>
@@ -208,8 +218,11 @@ export default function Contact() {
 
           {/* Contact Form Side */}
           <div className="bg-card/90 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-border/50">
-            <div className="flex items-center gap-3 mb-6">
-              <Send className="w-6 h-6 text-pink-500" />
+            <div className="flex items-center gap-3 mb-6 group/send">
+              <div className="relative">
+                <div className="absolute inset-0 bg-pink-400/20 blur-md rounded-full opacity-0 group-hover/send:opacity-100 transition-opacity" />
+                <Send className="w-6 h-6 text-pink-500 relative z-10 group-hover/send:animate-float-slow" />
+              </div>
               <h3 className="font-serif text-2xl font-bold text-foreground">
                 Send Us a Message
               </h3>

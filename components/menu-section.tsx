@@ -8,6 +8,7 @@ import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import type { MenuTabKey, MenuTabs } from "@/lib/menu-types"
 import { VegIcon, NonVegIcon } from "@/components/veg-non-veg-icons"
+import { RelaxingIcon } from "./relaxing-icon"
 
 export interface MenuSectionProps {
   tabs: MenuTabs
@@ -53,6 +54,57 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
         end: "bottom top",
         scrub: true
       }
+    })
+  }, { scope: sectionRef, dependencies: [activeTab] })
+
+  useGSAP(() => {
+    // 3D Tilt for menu categories
+    const cards = gsap.utils.toArray<HTMLElement>(".tilt-card")
+    cards.forEach((card) => {
+      const handleMouseMove = (e: MouseEvent) => {
+        const { left, top, width, height } = card.getBoundingClientRect()
+        const x = (e.clientX - left) / width - 0.5
+        const y = (e.clientY - top) / height - 0.5
+        
+        gsap.to(card, {
+          rotateX: -y * 10,
+          rotateY: x * 10,
+          transformPerspective: 1000,
+          ease: "power2.out",
+          duration: 0.5
+        })
+
+        const inner = card.querySelector(".tilt-inner")
+        if (inner) {
+          gsap.to(inner, {
+            x: x * 10,
+            y: y * 10,
+            ease: "power2.out",
+            duration: 0.5
+          })
+        }
+      }
+
+      const handleMouseLeave = () => {
+        gsap.to(card, {
+          rotateX: 0,
+          rotateY: 0,
+          ease: "power3.out",
+          duration: 1
+        })
+        const inner = card.querySelector(".tilt-inner")
+        if (inner) {
+          gsap.to(inner, {
+            x: 0,
+            y: 0,
+            ease: "power3.out",
+            duration: 1
+          })
+        }
+      }
+
+      card.addEventListener("mousemove", handleMouseMove)
+      card.addEventListener("mouseleave", handleMouseLeave)
     })
   }, { scope: sectionRef, dependencies: [activeTab] })
 
@@ -102,15 +154,21 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as MenuTabKey)}
-                className={`flex items-center gap-2.5 px-8 py-3.5 rounded-full font-medium transition-all duration-500 ${activeTab === tab.id
+                className={`flex items-center gap-3 px-8 py-3.5 rounded-full font-medium transition-all duration-500 group/tab ${
+                  activeTab === tab.id
                     ? "bg-primary text-primary-foreground shadow-[0_10px_20px_rgba(61,46,36,0.2)]"
                     : "text-muted-foreground hover:text-foreground hover:bg-white/60 dark:hover:bg-secondary/40"
-                  }`}
+                }`}
               >
-                <tab.icon className={`w-4 h-4 transition-transform duration-500 ${activeTab === tab.id ? "scale-110" : ""}`} />
+                <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-500 ${
+                  activeTab === tab.id ? "bg-white/20 scale-110" : "bg-transparent group-hover/tab:bg-white/40 dark:group-hover/tab:bg-white/5"
+                }`}>
+                  <tab.icon className={`w-4 h-4 transition-all duration-500 ${activeTab === tab.id ? "animate-float-slow text-white" : ""}`} />
+                </div>
                 <span className="menu-font tracking-wide">{tab.label}</span>
               </button>
             ))}
+
           </div>
         </div>
 
@@ -119,47 +177,49 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
           {activeMenu.map((category) => (
             <div
               key={category.name}
-              className="menu-category group bg-card/60 dark:bg-card/40 backdrop-blur-md rounded-3xl p-6 lg:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-border/40 hover:border-primary/20 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+              className="menu-category group bg-card/60 dark:bg-card/40 backdrop-blur-md rounded-3xl p-6 lg:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-border/40 hover:border-primary/20 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] transform-style-3d tilt-card"
             >
-              <h3 className="menu-font text-2xl font-semibold text-foreground mb-6 pb-4 border-b border-border/50 flex items-center justify-between">
-                <span>{category.name}</span>
-                <span className="w-8 h-px bg-primary/30 group-hover:w-12 transition-all duration-500" />
-              </h3>
-              <div className="space-y-6">
-                {category.items.map((item) => (
-                  <div key={item.name} className="group/item">
-                    <div className="flex justify-between items-baseline gap-2">
-                      <span className="menu-font text-[17px] text-foreground/90 group-hover/item:text-primary transition-colors duration-300">
-                        {item.name}
-                      </span>
-                      <div className="flex-1 border-b border-dotted border-foreground/20 mx-2 mb-1" />
-                      <span className="text-primary font-bold whitespace-nowrap desc-font text-lg">
-                        {item.vegPrice && item.nonVegPrice ? (
-                          <div className="flex flex-col items-end leading-tight">
-                            <span className="flex items-center gap-3">
-                              <span className="flex items-center gap-1.5">
-                                <VegIcon />
-                                <span className="text-green-600 dark:text-green-500">{item.vegPrice}</span>
+              <div className="tilt-inner transform-style-3d h-full">
+                <h3 className="menu-font text-2xl font-semibold text-foreground mb-6 pb-4 border-b border-border/50 flex items-center justify-between translate-z-50">
+                  <span>{category.name}</span>
+                  <span className="w-8 h-px bg-primary/30 group-hover:w-12 transition-all duration-500" />
+                </h3>
+                <div className="space-y-6 transform-style-3d">
+                  {category.items.map((item) => (
+                    <div key={item.name} className="group/item transform-style-3d translate-z-20">
+                      <div className="flex justify-between items-baseline gap-2">
+                        <span className="menu-font text-[17px] text-foreground/90 group-hover/item:text-primary transition-colors duration-300">
+                          {item.name}
+                        </span>
+                        <div className="flex-1 border-b border-dotted border-foreground/20 mx-2 mb-1" />
+                        <span className="text-primary font-bold whitespace-nowrap desc-font text-lg translate-z-10">
+                          {item.vegPrice && item.nonVegPrice ? (
+                            <div className="flex flex-col items-end leading-tight">
+                              <span className="flex items-center gap-3">
+                                <span className="flex items-center gap-1.5">
+                                  <VegIcon />
+                                  <span className="text-green-600 dark:text-green-500">{item.vegPrice}</span>
+                                </span>
+                                <span className="text-foreground/20 font-light">|</span>
+                                <span className="flex items-center gap-1.5">
+                                  <NonVegIcon />
+                                  <span className="text-red-600 dark:text-red-500">{item.nonVegPrice}</span>
+                                </span>
                               </span>
-                              <span className="text-foreground/20 font-light">|</span>
-                              <span className="flex items-center gap-1.5">
-                                <NonVegIcon />
-                                <span className="text-red-600 dark:text-red-500">{item.nonVegPrice}</span>
-                              </span>
-                            </span>
-                          </div>
-                        ) : (
-                          `Rs ${item.price ?? "-"}`
-                        )}
-                      </span>
+                            </div>
+                          ) : (
+                            `Rs ${item.price ?? "-"}`
+                          )}
+                        </span>
+                      </div>
+                      {item.description ? (
+                        <p className="text-sm text-muted-foreground mt-1 desc-font font-light leading-relaxed max-w-[85%]">
+                          {item.description}
+                        </p>
+                      ) : null}
                     </div>
-                    {item.description ? (
-                      <p className="text-sm text-muted-foreground mt-1 desc-font font-light leading-relaxed max-w-[85%]">
-                        {item.description}
-                      </p>
-                    ) : null}
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           ))}

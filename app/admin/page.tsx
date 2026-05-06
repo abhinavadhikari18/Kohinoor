@@ -600,7 +600,7 @@ export default function AdminPage() {
                                       value={item.name}
                                       onChange={(e) => updateMenuItem(tab, category.categoryIndex, itemIndex, "name", e.target.value)}
                                       placeholder="Dish name"
-                                      className="col-span-2 md:col-span-3 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
+                                      className="col-span-2 md:col-span-2 px-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
                                     />
                                     <input
                                       value={item.description ?? ""}
@@ -625,26 +625,25 @@ export default function AdminPage() {
                                         className="w-full pl-9 pr-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
                                       />
                                     </div>
-                                    <div className="col-span-2 md:col-span-2 flex gap-2">
-                                      <div className="relative flex-1 group">
-                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10">
-                                          <NonVegIcon className="scale-90" />
-                                        </div>
-                                        <input
-                                          value={item.nonVegPrice ?? ""}
-                                          onChange={(e) => updateMenuItem(tab, category.categoryIndex, itemIndex, "nonVegPrice", e.target.value)}
-                                          placeholder="Non-veg price"
-                                          className="w-full pl-9 pr-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
-                                        />
+                                    <div className="col-span-1 md:col-span-2 relative group">
+                                      <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10">
+                                        <NonVegIcon className="scale-90" />
                                       </div>
-                                      <button
-                                        type="button"
-                                        className="px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 dark:border-pink-900/50 dark:text-pink-400 dark:bg-pink-950/30 transition-colors hover:bg-pink-100 dark:hover:bg-pink-900/50 whitespace-nowrap"
-                                        onClick={() => removeMenuItem(tab, category.categoryIndex, itemIndex)}
-                                      >
-                                        Remove
-                                      </button>
+                                      <input
+                                        value={item.nonVegPrice ?? ""}
+                                        onChange={(e) => updateMenuItem(tab, category.categoryIndex, itemIndex, "nonVegPrice", e.target.value)}
+                                        placeholder="Non-veg price"
+                                        className="w-full pl-9 pr-4 py-3 rounded-xl border border-[#E8D5C4] bg-[#FFFDFC] dark:border-white/10 dark:bg-[#1A1512] dark:text-foreground focus:outline-none focus:border-[#E8A4B8] dark:focus:border-[#D4869E] focus:ring-1 focus:ring-[#E8A4B8] dark:focus:ring-[#D4869E] transition-all"
+                                      />
                                     </div>
+                                    <button
+                                      type="button"
+                                      className="col-span-1 md:col-span-1 px-3 py-2 rounded-xl border border-pink-200 text-pink-700 bg-pink-50 dark:border-pink-900/50 dark:text-pink-400 dark:bg-pink-950/30 transition-colors hover:bg-pink-100 dark:hover:bg-pink-900/50 flex items-center justify-center"
+                                      onClick={() => removeMenuItem(tab, category.categoryIndex, itemIndex)}
+                                    >
+                                      <span className="md:hidden">Remove</span>
+                                      <span className="hidden md:inline">×</span>
+                                    </button>
                                   </div>
                                 ))}
                               </div>

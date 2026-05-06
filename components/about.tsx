@@ -6,6 +6,7 @@ import { Home, Gem, Utensils, TreePine, Ship, Heart, MapPin, BedDouble, Crown, F
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { RelaxingIcon } from "./relaxing-icon"
 
 const features = [
   {
@@ -118,6 +119,55 @@ export default function About() {
         scrub: true
       }
     })
+
+    // 3D Tilt for feature cards
+    const cards = gsap.utils.toArray<HTMLElement>(".tilt-card")
+    cards.forEach((card) => {
+      const handleMouseMove = (e: MouseEvent) => {
+        const { left, top, width, height } = card.getBoundingClientRect()
+        const x = (e.clientX - left) / width - 0.5
+        const y = (e.clientY - top) / height - 0.5
+        
+        gsap.to(card, {
+          rotateX: -y * 15,
+          rotateY: x * 15,
+          transformPerspective: 1000,
+          ease: "power2.out",
+          duration: 0.5
+        })
+
+        const inner = card.querySelector(".tilt-inner")
+        if (inner) {
+          gsap.to(inner, {
+            x: x * 15,
+            y: y * 15,
+            ease: "power2.out",
+            duration: 0.5
+          })
+        }
+      }
+
+      const handleMouseLeave = () => {
+        gsap.to(card, {
+          rotateX: 0,
+          rotateY: 0,
+          ease: "power3.out",
+          duration: 1
+        })
+        const inner = card.querySelector(".tilt-inner")
+        if (inner) {
+          gsap.to(inner, {
+            x: 0,
+            y: 0,
+            ease: "power3.out",
+            duration: 1
+          })
+        }
+      }
+
+      card.addEventListener("mousemove", handleMouseMove)
+      card.addEventListener("mouseleave", handleMouseLeave)
+    })
   }, { scope: sectionRef })
 
   return (
@@ -127,7 +177,10 @@ export default function About() {
         <div className="text-center mb-16">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="w-12 h-px bg-gradient-to-r from-transparent to-amber-400" />
-            <Heart className="w-6 h-6 text-amber-500" />
+            <div className="relative">
+              <div className="absolute inset-0 bg-pink-400/20 blur-md rounded-full animate-pulse" />
+              <Heart className="w-6 h-6 text-pink-500 fill-pink-500 relative z-10 animate-float-slow" />
+            </div>
             <div className="w-12 h-px bg-gradient-to-l from-transparent to-amber-400" />
           </div>
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
@@ -208,10 +261,10 @@ export default function About() {
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className="group relative overflow-hidden rounded-2xl bg-card shadow-lg premium-hover"
+              className="group relative overflow-hidden rounded-2xl bg-card shadow-lg premium-hover transform-style-3d tilt-card"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="relative h-48">
+              <div className="relative h-48 transform-style-3d">
                 <Image
                   src={feature.image}
                   alt={feature.title}
@@ -220,19 +273,18 @@ export default function About() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 px-6 pb-4 pt-10">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg ring-2 ring-amber-500/20 group-hover:scale-110 transition-transform duration-500">
-                    <feature.icon className="w-5 h-5 text-white" />
-                  </div>
-                  <h4 className="font-serif text-base font-bold text-white leading-tight">
+              <div className="absolute bottom-0 left-0 right-0 p-6 tilt-inner transform-style-3d">
+                <div className="flex items-center gap-3 mb-2 transform-style-3d">
+                  <RelaxingIcon icon={feature.icon} />
+                  <h4 className="font-serif text-base font-bold text-white leading-tight translate-z-50">
                     {feature.title}
                   </h4>
                 </div>
-                <p className="text-white/80 text-xs leading-relaxed">
+                <p className="text-white/80 text-xs leading-relaxed translate-z-20">
                   {feature.description}
                 </p>
               </div>
+
             </div>
           ))}
         </div>

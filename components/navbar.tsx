@@ -85,9 +85,12 @@ export default function Navbar() {
             <MagneticButton>
               <a
                 href="tel:+9779715233533"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary text-secondary-foreground border-2 border-border font-semibold rounded-full shadow-md hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-primary/30 hover:scale-105 transition-all duration-300 interactive"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary text-secondary-foreground border-2 border-border font-semibold rounded-full shadow-md hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-primary/30 hover:scale-105 transition-all duration-300 interactive group/btn"
               >
-                <Phone className="w-4 h-4" />
+                <div className="relative">
+                  <div className="absolute inset-0 bg-current opacity-0 group-hover/btn:opacity-20 blur-md rounded-full transition-opacity" />
+                  <Phone className="w-4 h-4 group-hover/btn:animate-float-slow relative z-10" />
+                </div>
                 Call Now
               </a>
             </MagneticButton>

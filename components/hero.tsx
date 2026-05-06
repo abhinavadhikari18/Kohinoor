@@ -196,11 +196,11 @@ export default function Hero() {
       {/* Content */}
       <div 
         ref={contentRef}
-        className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 transform-style-3d"
+        className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 transform-style-3d perspective-1000"
       >
         {/* Logo */}
-        <div className="parallax-layer-3">
-          <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 animate-float parallax-layer-3-mouse">
+        <div className="parallax-layer-3 transform-style-3d">
+          <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 animate-float parallax-layer-3-mouse translate-z-100">
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-400/30 to-transparent blur-xl" />
             <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-amber-400/50 shadow-2xl shadow-amber-500/20">
               <Image
@@ -215,23 +215,23 @@ export default function Hero() {
         </div>
 
         {/* Restaurant Name */}
-        <div className="parallax-layer-2">
-          <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-3 md:mb-4 tracking-wider parallax-layer-2-mouse leading-tight">
+        <div className="parallax-layer-2 transform-style-3d">
+          <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-3 md:mb-4 tracking-wider parallax-layer-2-mouse leading-tight translate-z-50">
             <span className="bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
               KOHINOOR
             </span>
           </h1>
         </div>
         
-        <div className="parallax-layer-1">
-          <p className="text-xl md:text-2xl text-amber-100/90 font-medium tracking-widest mb-6 parallax-layer-1-mouse">
+        <div className="parallax-layer-1 transform-style-3d">
+          <p className="text-xl md:text-2xl text-amber-100/90 font-medium tracking-widest mb-6 parallax-layer-1-mouse translate-z-20">
             RESTAURANT
           </p>
         </div>
 
         {/* Tagline */}
-        <div className="parallax-layer-1">
-          <div className="relative parallax-layer-1-mouse px-4">
+        <div className="parallax-layer-1 transform-style-3d">
+          <div className="relative parallax-layer-1-mouse px-4 translate-z-20">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/20 to-transparent blur-sm" />
             <p className="relative text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light italic tracking-wide">
               &quot;Where Peace, Nature & Love Meet&quot;
@@ -240,8 +240,8 @@ export default function Hero() {
         </div>
 
         {/* Decorative Diamond Line */}
-        <div className="parallax-layer-2">
-          <div className="flex items-center gap-4 mt-8 parallax-layer-2-mouse">
+        <div className="parallax-layer-2 transform-style-3d">
+          <div className="flex items-center gap-4 mt-8 parallax-layer-2-mouse translate-z-50">
             <div className="w-16 md:w-24 h-px bg-gradient-to-r from-transparent to-amber-400/70" />
             <div className="w-3 h-3 rotate-45 bg-amber-400/80" />
             <div className="w-16 md:w-24 h-px bg-gradient-to-l from-transparent to-amber-400/70" />
