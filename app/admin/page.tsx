@@ -614,6 +614,7 @@ export default function AdminPage() {
                               </div>
 
                               <div className="space-y-3">
+                                {category.filteredItems.map(({ item, itemIndex }) => (
                                   <div key={`${tab}-${category.categoryIndex}-${itemIndex}`} className={`grid grid-cols-2 md:grid-cols-12 gap-3 rounded-2xl border bg-white p-4 dark:bg-[#2A2420] transition-colors ${dirtyMenuItems[menuItemKey(tab, category.categoryIndex, itemIndex)] ? "border-amber-400/50 shadow-[0_0_15px_rgba(251,191,36,0.1)] dark:border-amber-500/30" : "border-[#EFE2D7] dark:border-white/10"}`}>
                                     <input
                                       value={item.name}

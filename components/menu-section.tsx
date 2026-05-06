@@ -142,7 +142,7 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
             <Flame className="w-6 h-6 text-primary/60" />
             <div className="w-16 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
           </div>
-          <h2 className="menu-font text-5xl md:text-6xl font-semibold text-foreground mb-6 tracking-tight">
+          <h2 className="menu-font text-4xl md:text-5xl font-semibold text-foreground mb-6 tracking-tight">
             Our Menu
           </h2>
           <p className="desc-font text-muted-foreground text-lg max-w-2xl mx-auto font-light tracking-wide">

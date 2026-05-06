@@ -186,7 +186,7 @@ export default function About() {
             </div>
             <div className="w-12 h-px bg-gradient-to-l from-transparent to-amber-400" />
           </div>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
+          <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-4">
             About Kohinoor
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
