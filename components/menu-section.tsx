@@ -68,11 +68,11 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
             className="object-contain scale-[0.8]"
           />
         </div>
-        
+
         {/* Soft Glows */}
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
         <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-rose-pink/5 rounded-full blur-[120px]" />
-        
+
         {/* Sparkles */}
         <div className="absolute left-[5%] top-[15%] w-3 h-3 rotate-45 bg-gold/20 animate-sparkle" />
         <div className="absolute right-[8%] top-[25%] w-2 h-2 rotate-45 bg-primary/10 animate-sparkle" style={{ animationDelay: "1s" }} />
@@ -88,7 +88,7 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
             <div className="w-16 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
           </div>
           <h2 className="menu-font text-5xl md:text-6xl font-semibold text-foreground mb-6 tracking-tight">
-            Our Culinary Gems
+            Our Menu
           </h2>
           <p className="desc-font text-muted-foreground text-lg max-w-2xl mx-auto font-light tracking-wide">
             A symphony of flavors crafted with passion and tradition.
@@ -102,11 +102,10 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as MenuTabKey)}
-                className={`flex items-center gap-2.5 px-8 py-3.5 rounded-full font-medium transition-all duration-500 ${
-                  activeTab === tab.id
+                className={`flex items-center gap-2.5 px-8 py-3.5 rounded-full font-medium transition-all duration-500 ${activeTab === tab.id
                     ? "bg-primary text-primary-foreground shadow-[0_10px_20px_rgba(61,46,36,0.2)]"
                     : "text-muted-foreground hover:text-foreground hover:bg-white/60 dark:hover:bg-secondary/40"
-                }`}
+                  }`}
               >
                 <tab.icon className={`w-4 h-4 transition-transform duration-500 ${activeTab === tab.id ? "scale-110" : ""}`} />
                 <span className="menu-font tracking-wide">{tab.label}</span>
