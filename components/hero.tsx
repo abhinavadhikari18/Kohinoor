@@ -204,9 +204,9 @@ export default function Hero() {
       >
         {/* Logo */}
         <div className="parallax-layer-3 transform-style-3d">
-          <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 animate-float parallax-layer-3-mouse translate-z-20">
+          <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mb-4 md:mb-6 animate-float parallax-layer-3-mouse translate-z-20">
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-400/30 to-transparent blur-xl" />
-            <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-amber-400/50 shadow-2xl shadow-amber-500/20">
+            <div className="relative w-full h-full rounded-full overflow-hidden border-2 md:border-4 border-amber-400/50 shadow-2xl shadow-amber-500/20">
               <Image
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo.PNG-RflDppQJdLrSmpnp64Ad8P8rG1e8KP.jpeg"
                 alt="Kohinoor Restaurant Logo"
@@ -219,11 +219,11 @@ export default function Hero() {
         </div>
 
         {/* Restaurant Name */}
-        <div className="parallax-layer-2 transform-style-3d max-w-[90vw] md:max-w-3xl mx-auto">
-          <h2 className="font-serif text-sm sm:text-base md:text-lg lg:text-xl font-medium text-amber-200/90 mb-3 uppercase tracking-[0.2em] parallax-layer-2-mouse translate-z-20">
+        <div className="parallax-layer-2 transform-style-3d max-w-[95vw] md:max-w-3xl mx-auto">
+          <h2 className="font-serif text-[10px] xs:text-xs sm:text-base md:text-lg lg:text-xl font-medium text-amber-200/90 mb-2 md:mb-3 uppercase tracking-[0.15em] md:tracking-[0.2em] parallax-layer-2-mouse translate-z-20 px-2">
             Best Romantic Restaurant in Bhairahawa, Butwal & Kotihawa
           </h2>
-          <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-4 tracking-wider parallax-layer-2-mouse leading-none translate-z-20">
+          <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-2 md:mb-4 tracking-wider parallax-layer-2-mouse leading-[1.1] md:leading-none translate-z-20">
             <span className="bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
               KOHINOOR
             </span>
@@ -231,7 +231,7 @@ export default function Hero() {
         </div>
         
         <div className="parallax-layer-1 transform-style-3d">
-          <p className="text-xl md:text-2xl text-amber-100/90 font-medium tracking-widest mb-6 parallax-layer-1-mouse translate-z-10">
+          <p className="text-base sm:text-xl md:text-2xl text-amber-100/90 font-medium tracking-[0.1em] md:tracking-widest mb-4 md:mb-6 parallax-layer-1-mouse translate-z-10">
             RESTAURANT & COZY ROOMS @ Rs 500
           </p>
         </div>
