@@ -11,6 +11,7 @@ Kohinoor is a premium restaurant platform built with **Next.js (App Router)** an
 - **Styling:** Tailwind CSS 4.0 + PostCSS
 - **Database:** Neon PostgreSQL + Drizzle ORM
 - **Animations:** GSAP (`@gsap/react`) + Lenis (Smooth Scrolling)
+- **State Management:** React Context (Performance Tracking)
 - **Validation:** Zod
 - **UI Components:** Radix UI (shadcn/ui)
 - **Notifications:** Sonner
@@ -19,45 +20,49 @@ Kohinoor is a premium restaurant platform built with **Next.js (App Router)** an
 
 ## Architecture & Patterns
 
-### 1. Data Layer (`/db` & `/lib/content.ts`)
-- **Database Connection:** Use the cached connection pool in `db/index.ts` to prevent "ECONNRESET" errors during HMR (Hot Module Replacement) in development.
-- **Transactions:** Use `db.transaction()` for multi-step updates (e.g., the delete-and-batch-insert strategy used for menu updates).
-- **Server Isolation:** Any file containing database queries or sensitive logic MUST use the `"server-only"` directive.
-- **Caching:** Use `unstable_noStore()` for data fetching functions that need to reflect real-time changes from the admin panel.
+### 1. Adaptive Performance (`@/components/performance-provider.tsx`)
+- **Detection Logic:** Automatically identifies "low-end" devices based on:
+  - Hardware Specs: RAM < 4GB or Logical CPU Cores < 4.
+  - User Preferences: `prefers-reduced-motion` enabled.
+  - Network Conditions: `Save Data` mode active.
+- **Implementation:** Always use the `usePerformance()` hook to conditionally disable or simplify heavy features (Smooth Scroll, Custom Cursor, 3D Tilts, Backdrop Blurs).
 
-### 2. Administrative Security (`/lib/admin-auth.ts`)
-- **Authentication:** Custom credential-based flow using native Node `crypto`.
-- **Session:** Stateless JWT-like tokens stored in HttpOnly, Secure, SameSite=Lax cookies.
-- **Timing Attacks:** Always use `crypto.timingSafeEqual()` for password/token verification.
+### 2. UI & Animations (GSAP)
+- **Optimization:** Use `gsap.quickTo` for frequent updates like mouse-follow or tilt effects to maintain 60fps.
+- **Scroll Triggers:** Consolidate multiple ScrollTriggers into single timelines to minimize main-thread overhead.
+- **Hardware Acceleration:** Apply `will-change-transform` to layers moving during scroll.
+- **Mobile Parallax:** Use `gsap.matchMedia` to disable scroll-based parallax on touch devices (`pointer: coarse`) to prevent lag.
 
-### 3. API Routes (`/app/api`)
-- **Validation:** Use Zod's `.safeParse()` instead of `.parse()` to handle validation errors gracefully without crashing the server (500).
-- **Response Consistency:** Return structured JSON with clear error messages for the UI to consume.
+### 3. SEO & Structured Data (`@/components/seo-json-ld.tsx`)
+- **Schema types:** `Restaurant`, `FAQPage`, `BreadcrumbList`.
+- **Testimonials:** Always mirror guest testimonials in the `restaurantSchema` using `aggregateRating` and `review` arrays to boost local search visibility.
 
-### 4. UI & Animations
-- **GSAP:** Use the `@gsap/react` hook for animations. Ensure proper cleanup to avoid memory leaks.
-- **Mobile Fallbacks:** For complex 3D or mouse-heavy animations (like the Hero tilt), provide CSS-only fallbacks (`@keyframes`) for touch devices.
-- **Responsiveness:** Favor Tailwind's responsive prefixes (`sm:`, `md:`, `lg:`) over custom media queries.
+### 4. Data Layer (`/db` & `/lib/content.ts`)
+- **Database Connection:** Use the cached connection pool in `db/index.ts`.
+- **Transactions:** Use `db.transaction()` for multi-step updates (e.g., delete-and-batch-insert for menu).
+- **Server Isolation:** Use the `"server-only"` directive for sensitive files.
+
+### 5. Administrative Security (`/lib/admin-auth.ts`)
+- **Authentication:** Native Node `crypto` flow with HttpOnly, Secure, Lax cookies.
+- **Timing Attacks:** Always use `crypto.timingSafeEqual()` for verification.
 
 ---
 
 ## Development Workflows
 
 ### Database Migrations
-Use `drizzle-kit` for schema changes:
 1. Modify `db/schema.ts`.
 2. Generate migration: `npx drizzle-kit generate`.
 3. Push to DB: `npx drizzle-kit push`.
-- Common scripts are available in `package.json`: `npm run dev`, `npm run build`, `npm run lint`.
 
-### Admin Access
-- Environment variables required: `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`.
-- Local URL: `/admin`.
+### Layout Standards
+- **Typography:** Ensure subheaders use `tracking-normal` and sufficient padding on mobile to prevent overflow.
+- **Interactive Elements:** Use horizontal scroll indicators (e.g., in Menu tabs) on mobile to signal hidden content.
 
 ---
 
 ## Core Mandates & Constraints
+- **Performance First:** No lag on mobile. If a feature drops FPS below 30 on budget devices, it MUST be simplified or disabled via `isLowEnd`.
 - **Zero-Tolerance for 500s:** API routes must never crash. Always wrap risky operations in try/catch or use Zod safe parsing.
-- **Mobile First:** The Admin panel must be fully functional on mobile devices. Use responsive grids and wrapping flex layouts.
-- **No Volatile Storage:** Do not use local JSON files for production data. All content must persist in the Neon PostgreSQL database.
-- **Performance:** Utilize batch inserts (`tx.insert().values([...])`) when updating large datasets like the menu or gallery.
+- **Mobile First:** All sections, including the Admin panel and large data tables, must be fully functional and elegantly constrained on mobile.
+- **No Volatile Storage:** All content must persist in the Neon PostgreSQL database; do not use local JSON for production data.
