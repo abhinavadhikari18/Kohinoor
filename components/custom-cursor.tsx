@@ -3,20 +3,25 @@
 import { useEffect, useRef } from "react"
 import gsap from "gsap"
 import { usePathname } from "next/navigation"
+import { usePerformance } from "./performance-provider"
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
+  const { isLowEnd } = usePerformance()
 
   useEffect(() => {
     const cursor = cursorRef.current
     if (!cursor) return
 
     // Don't show custom cursor on mobile touch devices
+    // Keep it on low-end desktops/laptops as requested
     if (window.matchMedia("(pointer: coarse)").matches) {
       cursor.style.display = "none"
       return
     }
+
+    cursor.style.display = "block"
 
     const moveCursor = (e: MouseEvent) => {
       gsap.to(cursor, {

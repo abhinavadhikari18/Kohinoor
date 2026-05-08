@@ -64,6 +64,7 @@ export const viewport: Viewport = {
 }
 
 import { ThemeProvider } from '@/components/theme-provider'
+import { PerformanceProvider } from '@/components/performance-provider'
 import { Toaster } from 'sonner'
 import SeoJsonLd from '@/components/seo-json-ld'
 
@@ -76,18 +77,20 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${playfair.variable} ${lato.variable} ${raleway.variable} bg-background`}>
       <body className="font-serif antialiased overflow-x-hidden">
         <SeoJsonLd />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SmoothScroller />
-          <CustomCursor />
-          {children}
-          {process.env.NODE_ENV === 'production' && <Analytics />}
-          <Toaster position="bottom-right" richColors theme="system" />
-        </ThemeProvider>
+        <PerformanceProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SmoothScroller />
+            <CustomCursor />
+            {children}
+            {process.env.NODE_ENV === 'production' && <Analytics />}
+            <Toaster position="bottom-right" richColors theme="system" />
+          </ThemeProvider>
+        </PerformanceProvider>
       </body>
     </html>
   )

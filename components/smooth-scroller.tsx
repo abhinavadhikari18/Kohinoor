@@ -5,13 +5,16 @@ import { usePathname } from "next/navigation"
 import Lenis from "lenis"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { usePerformance } from "./performance-provider"
 
 export default function SmoothScroller() {
   const pathname = usePathname()
+  const { isLowEnd } = usePerformance()
 
   useEffect(() => {
     if (pathname?.startsWith("/admin")) return
     if (window.matchMedia("(pointer: coarse)").matches) return
+    if (isLowEnd) return
 
     const lenis = new Lenis({
       lerp: 0.08,

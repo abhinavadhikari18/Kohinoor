@@ -7,6 +7,7 @@ import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { RelaxingIcon } from "./relaxing-icon"
+import { usePerformance } from "./performance-provider"
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
@@ -36,134 +37,112 @@ const semiHighlights = [
   {
     title: "Peaceful Boating Experience",
     description: "Unwind at our lakeside restaurant with boating facilities, perfect for a peaceful evening in Kotihawa.",
-    image: "bar.jpg",
+    image: "boat.jpg",
     icon: Martini,
   },
 ]
 
 export default function Highlights() {
   const sectionRef = useRef<HTMLElement>(null)
+  const { isLowEnd } = usePerformance()
 
   useGSAP(() => {
+    // Optimization: Performance-focused mouse tilt for cards
     const cards = gsap.utils.toArray<HTMLElement>(".tilt-card")
     
-    cards.forEach((card) => {
-      const handleMouseMove = (e: MouseEvent) => {
-        // Don't run on touch devices
-        if (window.matchMedia("(pointer: coarse)").matches) return
-
-        const { left, top, width, height } = card.getBoundingClientRect()
-        const x = (e.clientX - left) / width - 0.5
-        const y = (e.clientY - top) / height - 0.5
-        
-        gsap.to(card, {
-          rotateX: -y * 20,
-          rotateY: x * 20,
-          transformPerspective: 1000,
-          ease: "power2.out",
-          duration: 0.5
-        })
-
-        // Inner content parallax
+    if (!window.matchMedia("(pointer: coarse)").matches && !isLowEnd) {
+      cards.forEach((card) => {
+        const xTo = gsap.quickTo(card, "rotateY", { duration: 0.4, ease: "power2.out" })
+        const yTo = gsap.quickTo(card, "rotateX", { duration: 0.4, ease: "power2.out" })
         const inner = card.querySelector(".tilt-inner")
-        if (inner) {
-          gsap.to(inner, {
-            x: x * 20,
-            y: y * 20,
-            ease: "power2.out",
-            duration: 0.5
-          })
+        const innerXTo = inner ? gsap.quickTo(inner, "x", { duration: 0.4, ease: "power2.out" }) : null
+        const innerYTo = inner ? gsap.quickTo(inner, "y", { duration: 0.4, ease: "power2.out" }) : null
+
+        const handleMouseMove = (e: MouseEvent) => {
+          const { left, top, width, height } = card.getBoundingClientRect()
+          const x = (e.clientX - left) / width - 0.5
+          const y = (e.clientY - top) / height - 0.5
+          
+          xTo(x * 15)
+          yTo(-y * 15)
+          
+          if (innerXTo && innerYTo) {
+            innerXTo(x * 15)
+            innerYTo(y * 15)
+          }
         }
-      }
 
-      const handleMouseLeave = () => {
-        gsap.to(card, {
-          rotateX: 0,
-          rotateY: 0,
-          ease: "power3.out",
-          duration: 1
-        })
-        const inner = card.querySelector(".tilt-inner")
-        if (inner) {
-          gsap.to(inner, {
+        const handleMouseLeave = () => {
+          gsap.to([card, inner], {
+            rotateX: 0,
+            rotateY: 0,
             x: 0,
             y: 0,
             ease: "power3.out",
             duration: 1
           })
         }
-      }
 
-      card.addEventListener("mousemove", handleMouseMove)
-      card.addEventListener("mouseleave", handleMouseLeave)
+        card.addEventListener("mousemove", handleMouseMove)
+        card.addEventListener("mouseleave", handleMouseLeave)
+      })
+    }
+
+    // Consolidated ScrollTrigger for better performance
+    const commonScrollTrigger = (trigger: string) => ({
+      trigger,
+      start: "top 95%",
+      toggleActions: "play none none none" // Performance: don't reverse or re-play
     })
 
     // 3D pop-in effect for main highlight
     gsap.fromTo(".main-highlight-card", 
-      { 
-        y: 100, 
-        opacity: 0, 
-        rotateX: -30, 
-        transformPerspective: 1000 
-      },
+      { y: 60, opacity: 0, rotateX: isLowEnd ? 0 : -15 },
       {
-        y: 0,
-        opacity: 1,
-        rotateX: 0,
-        duration: 1.2,
+        y: 0, opacity: 1, rotateX: 0,
+        duration: 1,
         ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".main-highlight-card",
-          start: "top 95%", // Adjusted for mobile
-        }
+        scrollTrigger: commonScrollTrigger(".main-highlight-card")
       }
     )
 
     // Staggered 3D pop-in for semi-highlights
     gsap.fromTo(".semi-highlight-card",
-      { 
-        y: 80, 
-        opacity: 0, 
-        rotateY: 30, 
-        transformPerspective: 1000 
-      },
+      { y: 40, opacity: 0, rotateY: isLowEnd ? 0 : 15 },
       {
-        y: 0,
-        opacity: 1,
-        rotateY: 0,
-        duration: 1,
-        stagger: 0.2,
+        y: 0, opacity: 1, rotateY: 0,
+        duration: 0.8,
+        stagger: 0.15,
         ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".semi-highlights-container",
-          start: "top 95%", // Adjusted for mobile
-        }
+        scrollTrigger: commonScrollTrigger(".semi-highlights-container")
       }
     )
 
-    // Image Parallax Effects
-    gsap.to(".main-highlight-parallax", {
-      y: 60,
-      ease: "none",
-      scrollTrigger: {
-        trigger: ".main-highlight-card",
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true
-      }
-    })
+    // Image Parallax - Performance Optimization: Simplified and reduced intensity
+    if (!isLowEnd) {
+      gsap.to(".main-highlight-parallax", {
+        y: 40,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".main-highlight-card",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 0.5 // Performance: add slight scrub delay to smooth out CPU spikes
+        }
+      })
 
-    gsap.to(".semi-highlight-parallax", {
-      y: 40,
-      ease: "none",
-      scrollTrigger: {
-        trigger: ".semi-highlights-container",
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true
-      }
-    })
-  }, { scope: sectionRef })
+      gsap.to(".semi-highlight-parallax", {
+        y: 30,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".semi-highlights-container",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 0.5
+        }
+      })
+    }
+  }, { scope: sectionRef, dependencies: [isLowEnd] })
 
   return (
     <section ref={sectionRef} className="py-20 md:py-32 px-4 sm:px-6 bg-gradient-to-b from-background to-secondary/30 overflow-hidden">
@@ -173,8 +152,8 @@ export default function Highlights() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="w-12 h-px bg-gradient-to-r from-transparent to-amber-400" />
             <div className="relative">
-              <div className="absolute inset-0 bg-amber-400/20 blur-md rounded-full animate-pulse" />
-              <Gem className="w-6 h-6 text-amber-500 relative z-10 animate-float-slow" />
+              {!isLowEnd && <div className="absolute inset-0 bg-amber-400/20 blur-md rounded-full animate-pulse" />}
+              <Gem className={`w-6 h-6 text-amber-500 relative z-10 ${!isLowEnd ? 'animate-float-slow' : ''}`} />
             </div>
             <div className="w-12 h-px bg-gradient-to-l from-transparent to-amber-400" />
           </div>
@@ -187,21 +166,21 @@ export default function Highlights() {
         </div>
 
         {/* Main Highlight Card */}
-        <div className="relative mb-12 group main-highlight-card transform-style-3d tilt-card interactive-touch">
-          <div className="relative overflow-hidden rounded-3xl shadow-2xl premium-hover transform-style-3d">
+        <div className={`relative mb-12 group main-highlight-card ${!isLowEnd ? 'transform-style-3d tilt-card interactive-touch' : ''}`}>
+          <div className={`relative overflow-hidden rounded-3xl shadow-2xl ${!isLowEnd ? 'premium-hover transform-style-3d' : ''}`}>
             <div className="relative h-[400px] md:h-[500px]">
               <Image
                 src={mainHighlight.image}
                 alt={mainHighlight.title}
                 fill
-                className="object-cover main-highlight-parallax scale-110 transition-transform duration-700 group-hover:scale-115"
+                className={`object-cover ${!isLowEnd ? 'main-highlight-parallax scale-110' : ''} transition-transform duration-700 group-hover:scale-105`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             </div>
             
             {/* Content Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 px-8 pb-6 pt-12 md:px-12 md:pb-8 md:pt-16 tilt-inner transform-style-3d">
-              <div className="flex items-start gap-6 transform-style-3d">
+            <div className={`absolute bottom-0 left-0 right-0 px-8 pb-6 pt-12 md:px-12 md:pb-8 md:pt-16 ${!isLowEnd ? 'tilt-inner transform-style-3d' : ''}`}>
+              <div className={`flex items-start gap-6 ${!isLowEnd ? 'transform-style-3d' : ''}`}>
                 <div className="hidden md:block">
                   <RelaxingIcon 
                     icon={mainHighlight.icon} 
@@ -209,17 +188,17 @@ export default function Highlights() {
                     className="w-6 h-6"
                   />
                 </div>
-                <div className="flex-1 transform-style-3d">
-                  <div className="inline-block px-4 py-1.5 bg-amber-500 text-white text-sm font-semibold rounded-full mb-4 translate-z-50">
+                <div className={`flex-1 ${!isLowEnd ? 'transform-style-3d' : ''}`}>
+                  <div className={`inline-block px-4 py-1.5 bg-amber-500 text-white text-sm font-semibold rounded-full mb-4 ${!isLowEnd ? 'translate-z-50' : ''}`}>
                     Featured Offer
                   </div>
-                  <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 leading-tight translate-z-50">
+                  <h3 className={`font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 leading-tight ${!isLowEnd ? 'translate-z-50' : ''}`}>
                     {mainHighlight.title}
                   </h3>
-                  <p className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-300 to-amber-100 bg-clip-text text-transparent mb-3 translate-z-50">
+                  <p className={`text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-300 to-amber-100 bg-clip-text text-transparent mb-3 ${!isLowEnd ? 'translate-z-50' : ''}`}>
                     {mainHighlight.subtitle}
                   </p>
-                  <p className="text-white/80 text-sm sm:text-base max-w-xl translate-z-20">
+                  <p className={`text-white/80 text-sm sm:text-base max-w-xl ${!isLowEnd ? 'translate-z-20' : ''}`}>
                     {mainHighlight.description}
                   </p>
                 </div>
@@ -227,8 +206,12 @@ export default function Highlights() {
             </div>
 
             {/* Diamond Decoration */}
-            <div className="absolute top-6 right-6 w-4 h-4 rotate-45 bg-amber-400/80 animate-sparkle translate-z-50" />
-            <div className="absolute top-12 right-12 w-2 h-2 rotate-45 bg-amber-300/60 animate-sparkle delay-300 translate-z-20" />
+            {!isLowEnd && (
+              <>
+                <div className="absolute top-6 right-6 w-4 h-4 rotate-45 bg-amber-400/80 animate-sparkle translate-z-50" />
+                <div className="absolute top-12 right-12 w-2 h-2 rotate-45 bg-amber-300/60 animate-sparkle delay-300 translate-z-20" />
+              </>
+            )}
           </div>
         </div>
 
@@ -237,35 +220,37 @@ export default function Highlights() {
           {semiHighlights.map((highlight, index) => (
             <div
               key={highlight.title}
-              className="group relative overflow-hidden rounded-2xl shadow-xl premium-hover semi-highlight-card transform-style-3d tilt-card interactive-touch"
+              className={`group relative overflow-hidden rounded-2xl shadow-xl ${!isLowEnd ? 'premium-hover semi-highlight-card transform-style-3d tilt-card interactive-touch' : ''}`}
             >
               <div className="relative h-[300px]">
                 <Image
                   src={highlight.image}
                   alt={highlight.title}
                   fill
-                  className="object-cover semi-highlight-parallax scale-110 transition-transform duration-700 group-hover:scale-115"
+                  className={`object-cover ${!isLowEnd ? 'semi-highlight-parallax scale-110' : ''} transition-transform duration-700 group-hover:scale-105`}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
               </div>
 
               {/* Content */}
-              <div className="absolute bottom-0 left-0 right-0 px-6 pb-4 pt-10 tilt-inner transform-style-3d">
-                <div className="flex items-center gap-3 mb-2 transform-style-3d">
+              <div className={`absolute bottom-0 left-0 right-0 px-6 pb-4 pt-10 ${!isLowEnd ? 'tilt-inner transform-style-3d' : ''}`}>
+                <div className={`flex items-center gap-3 mb-2 ${!isLowEnd ? 'transform-style-3d' : ''}`}>
                   <RelaxingIcon icon={highlight.icon} />
-                  <h3 className="font-serif text-xl font-bold text-white leading-tight translate-z-50">
+                  <h3 className={`font-serif text-xl font-bold text-white leading-tight ${!isLowEnd ? 'translate-z-50' : ''}`}>
                     {highlight.title}
                   </h3>
                 </div>
-                <p className="text-white/80 text-sm leading-relaxed translate-z-20">
+                <p className={`text-white/80 text-sm leading-relaxed ${!isLowEnd ? 'translate-z-20' : ''}`}>
                   {highlight.description}
                 </p>
               </div>
 
               {/* Shimmer Effect */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-              </div>
+              {!isLowEnd && (
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <div className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                </div>
+              )}
             </div>
           ))}
         </div>

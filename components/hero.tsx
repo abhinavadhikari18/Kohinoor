@@ -5,6 +5,7 @@ import Image from "next/image"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { usePerformance } from "./performance-provider"
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
@@ -41,130 +42,92 @@ export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const heroRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+  const { isLowEnd } = usePerformance()
 
   useGSAP(() => {
-    // Scroll-triggered parallax
-    gsap.to(".hero-bg-container", {
-      yPercent: 30,
-      ease: "none",
-      scrollTrigger: {
-        trigger: heroRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true
+    if (isLowEnd) return // Optimization: Disable heavy animations on low-end devices
+
+    const mm = gsap.matchMedia()
+
+    // Performance: Only run parallax scroll on desktop/non-touch devices
+    mm.add("(min-width: 768px) and (pointer: fine)", () => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true
+        }
+      })
+
+      tl.to(".hero-bg-container", { yPercent: 20, ease: "none" }, 0)
+        .to(".parallax-layer-1", { y: 50, ease: "none" }, 0)
+        .to(".parallax-layer-2", { y: 100, ease: "none" }, 0)
+        .to(".parallax-layer-3", { y: 150, ease: "none" }, 0)
+
+      if (contentRef.current) {
+        const xTo = gsap.quickTo(contentRef.current, "rotateY", { duration: 0.4, ease: "power2.out" })
+        const yTo = gsap.quickTo(contentRef.current, "rotateX", { duration: 0.4, ease: "power2.out" })
+        
+        const m1xTo = gsap.quickTo(".parallax-layer-1-mouse", "x", { duration: 0.4, ease: "power2.out" })
+        const m1yTo = gsap.quickTo(".parallax-layer-1-mouse", "y", { duration: 0.4, ease: "power2.out" })
+        
+        const m2xTo = gsap.quickTo(".parallax-layer-2-mouse", "x", { duration: 0.4, ease: "power2.out" })
+        const m2yTo = gsap.quickTo(".parallax-layer-2-mouse", "y", { duration: 0.4, ease: "power2.out" })
+        
+        const m3xTo = gsap.quickTo(".parallax-layer-3-mouse", "x", { duration: 0.4, ease: "power2.out" })
+        const m3yTo = gsap.quickTo(".parallax-layer-3-mouse", "y", { duration: 0.4, ease: "power2.out" })
+
+        const handleMouseMove = (e: MouseEvent) => {
+          const { clientX, clientY } = e
+          const { innerWidth, innerHeight } = window
+          const xPos = (clientX / innerWidth - 0.5) * 2
+          const yPos = (clientY / innerHeight - 0.5) * 2
+
+          xTo(xPos * 4)
+          yTo(-yPos * 4)
+          
+          m1xTo(xPos * -10)
+          m1yTo(yPos * -10)
+          
+          m2xTo(xPos * -20)
+          m2yTo(yPos * -20)
+          
+          m3xTo(xPos * -30)
+          m3yTo(yPos * -30)
+        }
+        
+        const handleMouseLeave = () => {
+          gsap.to([contentRef.current, ".parallax-layer-1-mouse", ".parallax-layer-2-mouse", ".parallax-layer-3-mouse"], {
+            rotateX: 0, rotateY: 0, x: 0, y: 0,
+            ease: "power3.out", duration: 1
+          })
+        }
+
+        window.addEventListener("mousemove", handleMouseMove)
+        heroRef.current?.addEventListener("mouseleave", handleMouseLeave)
+
+        return () => {
+          window.removeEventListener("mousemove", handleMouseMove)
+          heroRef.current?.removeEventListener("mouseleave", handleMouseLeave)
+        }
       }
     })
 
-    gsap.to(".parallax-layer-1", {
-      y: 100,
-      ease: "none",
-      scrollTrigger: {
-        trigger: heroRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true
-      }
-    })
-
-    gsap.to(".parallax-layer-2", {
-      y: 150,
-      ease: "none",
-      scrollTrigger: {
-        trigger: heroRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true
-      }
-    })
-
-    gsap.to(".parallax-layer-3", {
-      y: 200,
-      ease: "none",
-      scrollTrigger: {
-        trigger: heroRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true
-      }
-    })
-
-    const handleMouseMove = (e: MouseEvent) => {
-      // Don't run on touch devices
-      if (window.matchMedia("(pointer: coarse)").matches) return
-      
-      if (!heroRef.current || !contentRef.current) return
-      
-      const { clientX, clientY } = e
-      const { innerWidth, innerHeight } = window
-
-      // Calculate relative positions (-1 to 1)
-      const xPos = (clientX / innerWidth - 0.5) * 2
-      const yPos = (clientY / innerHeight - 0.5) * 2
-
-      // Animate the main content container with a 3D tilt effect
-      gsap.to(contentRef.current, {
-        rotateX: -yPos * 4,
-        rotateY: xPos * 4,
-        transformPerspective: 1200,
-        transformOrigin: "center center",
-        ease: "power2.out",
-        duration: 0.5
-      })
-
-      // Mouse-based parallax (smaller values as they combine with scroll)
-      gsap.to(".parallax-layer-1-mouse", {
-        x: xPos * -15,
-        y: yPos * -15,
-        ease: "power2.out",
-        duration: 0.5
-      })
-
-      gsap.to(".parallax-layer-2-mouse", {
-        x: xPos * -30,
-        y: yPos * -30,
-        ease: "power2.out",
-        duration: 0.5
-      })
-      
-      gsap.to(".parallax-layer-3-mouse", {
-        x: xPos * -45,
-        y: yPos * -45,
-        ease: "power2.out",
-        duration: 0.5
-      })
-    }
-    
-    const handleMouseLeave = () => {
-      gsap.to([contentRef.current, ".parallax-layer-1-mouse", ".parallax-layer-2-mouse", ".parallax-layer-3-mouse"], {
-        rotateX: 0,
-        rotateY: 0,
-        x: 0,
-        y: 0,
-        ease: "power3.out",
-        duration: 1
-      })
-    }
-
-    window.addEventListener("mousemove", handleMouseMove)
-    heroRef.current?.addEventListener("mouseleave", handleMouseLeave)
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove)
-      heroRef.current?.removeEventListener("mouseleave", handleMouseLeave)
-    }
-  }, { scope: heroRef })
+    return () => mm.revert()
+  }, { scope: heroRef, dependencies: [isLowEnd] })
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length)
-    }, 3000)
+    }, isLowEnd ? 6000 : 4000)
     return () => clearInterval(interval)
-  }, [])
+  }, [isLowEnd])
 
   return (
     <section ref={heroRef} id="home" className="relative h-screen w-full overflow-hidden perspective-[1000px]">
       {/* Background Images */}
-      <div className="absolute inset-0 hero-bg-container h-[120%] -top-[10%]">
+      <div className={`absolute inset-0 hero-bg-container ${isLowEnd ? 'h-full top-0' : 'h-[110%] md:h-[115%] -top-[5%] md:-top-[7%]'} will-change-transform`}>
         {heroImages.map((image, index) => (
           <div
             key={image.src}
@@ -176,37 +139,38 @@ export default function Hero() {
               src={image.src}
               alt={image.alt}
               fill
-              className="object-cover scale-105 md:animate-ken-burns"
+              className="object-cover"
               priority={index === 0}
               sizes="100vw"
             />
             {/* Blur overlay for non-active slides transitioning */}
-            <div className="absolute inset-0 backdrop-blur-[2px]" />
+            {!isLowEnd && <div className="absolute inset-0 backdrop-blur-[1px]" />}
           </div>
         ))}
       </div>
 
       {/* Elegant Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60 z-[1]" />
       
       {/* Diamond sparkle overlay effect */}
-      <div className="absolute inset-0 opacity-30 z-[1]">
-        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full animate-sparkle" />
-        <div className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-white rounded-full animate-sparkle delay-300" />
-        <div className="absolute bottom-1/3 left-1/2 w-2 h-2 bg-white rounded-full animate-sparkle delay-500" />
-        <div className="absolute top-1/2 right-1/4 w-1 h-1 bg-white rounded-full animate-sparkle delay-700" />
-      </div>
+      {!isLowEnd && (
+        <div className="absolute inset-0 opacity-20 z-[1] pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-1.5 h-1.5 bg-white rounded-full animate-sparkle" />
+          <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-sparkle delay-300" />
+          <div className="absolute bottom-1/3 left-1/2 w-1.5 h-1.5 bg-white rounded-full animate-sparkle delay-500" />
+        </div>
+      )}
 
       {/* Content */}
       <div 
         ref={contentRef}
-        className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 transform-style-3d perspective-1000"
+        className={`relative z-10 h-full flex flex-col items-center justify-center text-center px-4 ${!isLowEnd ? 'transform-style-3d will-change-transform' : ''}`}
       >
         {/* Logo */}
-        <div className="parallax-layer-3 transform-style-3d">
-          <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mb-4 md:mb-6 animate-float parallax-layer-3-mouse translate-z-20">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-400/30 to-transparent blur-xl" />
-            <div className="relative w-full h-full rounded-full overflow-hidden border-2 md:border-4 border-amber-400/50 shadow-2xl shadow-amber-500/20">
+        <div className={!isLowEnd ? "parallax-layer-3 transform-style-3d" : ""}>
+          <div className={`relative w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 mb-4 ${!isLowEnd ? 'animate-float parallax-layer-3-mouse translate-z-20' : ''}`}>
+            {!isLowEnd && <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-400/20 to-transparent blur-xl" />}
+            <div className={`relative w-full h-full rounded-full overflow-hidden border-2 border-amber-400/40 shadow-xl ${!isLowEnd ? 'shadow-amber-500/10' : ''}`}>
               <Image
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo.PNG-RflDppQJdLrSmpnp64Ad8P8rG1e8KP.jpeg"
                 alt="Kohinoor Restaurant Logo"
@@ -219,36 +183,36 @@ export default function Hero() {
         </div>
 
         {/* Restaurant Name */}
-        <div className="parallax-layer-2 transform-style-3d max-w-[95vw] md:max-w-4xl mx-auto">
-          <h2 className="font-serif text-xs sm:text-base md:text-lg lg:text-xl font-medium text-amber-200/90 mb-3 md:mb-4 uppercase tracking-[0.12em] sm:tracking-[0.15em] md:tracking-[0.2em] parallax-layer-2-mouse translate-z-20 px-4">
+        <div className={`${!isLowEnd ? 'parallax-layer-2 transform-style-3d' : ''} max-w-[95vw] md:max-w-3xl mx-auto px-2`}>
+          <h2 className={`font-serif text-[10px] xs:text-xs sm:text-sm md:text-base lg:text-lg font-medium text-amber-200/90 mb-2 md:mb-3 uppercase tracking-normal sm:tracking-[0.15em] md:tracking-[0.2em] ${!isLowEnd ? 'parallax-layer-2-mouse translate-z-20' : ''}`}>
             Best Romantic Restaurant in Bhairahawa, Butwal & Kotihawa
           </h2>
-          <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white mb-4 md:mb-6 tracking-tight sm:tracking-normal md:tracking-wider parallax-layer-2-mouse leading-[0.95] sm:leading-[1.1] md:leading-none translate-z-20">
+          <h1 className={`font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-3 md:mb-4 tracking-normal sm:tracking-wide ${!isLowEnd ? 'parallax-layer-2-mouse leading-[1] sm:leading-[1.1] md:leading-none translate-z-20' : ''}`}>
             <span className="bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
               KOHINOOR
             </span>
           </h1>
         </div>
         
-        <div className="parallax-layer-1 transform-style-3d">
-          <p className="text-lg sm:text-xl md:text-2xl text-amber-100/90 font-medium tracking-[0.05em] sm:tracking-[0.1em] md:tracking-widest mb-6 md:mb-8 parallax-layer-1-mouse translate-z-10">
+        <div className={!isLowEnd ? "parallax-layer-1 transform-style-3d" : ""}>
+          <p className={`text-base sm:text-lg md:text-xl lg:text-2xl text-amber-100/90 font-medium tracking-[0.05em] sm:tracking-[0.1em] md:tracking-widest mb-4 md:mb-6 ${!isLowEnd ? 'parallax-layer-1-mouse translate-z-10' : ''}`}>
             RESTAURANT & COZY ROOMS @ Rs 500
           </p>
         </div>
 
         {/* Tagline */}
-        <div className="parallax-layer-1 transform-style-3d">
-          <div className="relative parallax-layer-1-mouse px-6 translate-z-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/10 to-transparent blur-md" />
-            <p className="relative text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light italic tracking-wide leading-relaxed">
+        <div className={!isLowEnd ? "parallax-layer-1 transform-style-3d" : ""}>
+          <div className={`relative ${!isLowEnd ? 'parallax-layer-1-mouse px-4 translate-z-10' : 'px-4'}`}>
+            {!isLowEnd && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/5 to-transparent blur-md" />}
+            <p className="relative text-base sm:text-lg md:text-xl text-white/90 font-light italic tracking-wide leading-relaxed">
               &quot;Where Peace, Nature & Love Meet&quot;
             </p>
           </div>
         </div>
 
         {/* Decorative Diamond Line */}
-        <div className="parallax-layer-2 transform-style-3d">
-          <div className="flex items-center gap-4 mt-8 parallax-layer-2-mouse translate-z-20">
+        <div className={!isLowEnd ? "parallax-layer-2 transform-style-3d" : ""}>
+          <div className={`flex items-center gap-4 mt-8 ${!isLowEnd ? 'parallax-layer-2-mouse translate-z-20' : ''}`}>
             <div className="w-16 md:w-24 h-px bg-gradient-to-r from-transparent to-amber-400/70" />
             <div className="w-3 h-3 rotate-45 bg-amber-400/80" />
             <div className="w-16 md:w-24 h-px bg-gradient-to-l from-transparent to-amber-400/70" />

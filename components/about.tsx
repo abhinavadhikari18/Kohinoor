@@ -7,6 +7,7 @@ import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { RelaxingIcon } from "./relaxing-icon"
+import { usePerformance } from "./performance-provider"
 
 const features = [
   {
@@ -50,128 +51,85 @@ const features = [
 
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null)
+  const { isLowEnd } = usePerformance()
 
   useGSAP(() => {
-    // Text reveal animation
-    gsap.fromTo(".about-text p",
-      {
-        y: 40,
-        opacity: 0
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".about-text-container",
-          start: "top 80%",
-        }
+    // Consolidated timeline for main about content reveal
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".about-text-container",
+        start: "top 85%",
+        toggleActions: "play none none none"
       }
+    })
+
+    tl.fromTo(".about-image-container", 
+      { x: isLowEnd ? 0 : -30, opacity: 0 },
+      { x: 0, opacity: 1, duration: 1, ease: "power3.out" }
+    ).fromTo(".about-text p",
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power2.out" },
+      "-=0.6"
+    ).fromTo(".about-stat",
+      { scale: 0.9, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.4, stagger: 0.1, ease: "back.out(1.7)" },
+      "-=0.4"
     )
 
-    // Image fade in
-    gsap.fromTo(".about-image-container",
-      {
-        x: -50,
-        opacity: 0
-      },
-      {
-        x: 0,
-        opacity: 1,
-        duration: 1,
-        ease: "power3.out",
+    // Performance-focused Image Parallax
+    if (!isLowEnd) {
+      gsap.to(".about-image-parallax", {
+        y: 30,
+        ease: "none",
         scrollTrigger: {
           trigger: ".about-image-container",
-          start: "top 75%",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 0.5
         }
-      }
-    )
+      })
 
-    // Stats pop up
-    gsap.fromTo(".about-stat",
-      {
-        scale: 0.8,
-        opacity: 0
-      },
-      {
-        scale: 1,
-        opacity: 1,
-        duration: 0.6,
-        stagger: 0.15,
-        ease: "back.out(1.7)",
-        scrollTrigger: {
-          trigger: ".about-stats-container",
-          start: "top 85%",
-        }
-      }
-    )
+      // Optimized 3D Tilt for feature cards
+      const cards = gsap.utils.toArray<HTMLElement>(".tilt-card")
+      if (!window.matchMedia("(pointer: coarse)").matches) {
+        cards.forEach((card) => {
+          const xTo = gsap.quickTo(card, "rotateY", { duration: 0.4, ease: "power2.out" })
+          const yTo = gsap.quickTo(card, "rotateX", { duration: 0.4, ease: "power2.out" })
+          const inner = card.querySelector(".tilt-inner")
+          const innerXTo = inner ? gsap.quickTo(inner, "x", { duration: 0.4, ease: "power2.out" }) : null
+          const innerYTo = inner ? gsap.quickTo(inner, "y", { duration: 0.4, ease: "power2.out" }) : null
 
-    // Image Parallax Effect
-    gsap.to(".about-image-parallax", {
-      y: 50,
-      ease: "none",
-      scrollTrigger: {
-        trigger: ".about-image-container",
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true
-      }
-    })
+          const handleMouseMove = (e: MouseEvent) => {
+            const { left, top, width, height } = card.getBoundingClientRect()
+            const x = (e.clientX - left) / width - 0.5
+            const y = (e.clientY - top) / height - 0.5
+            
+            xTo(x * 12)
+            yTo(-y * 12)
+            
+            if (innerXTo && innerYTo) {
+              innerXTo(x * 12)
+              innerYTo(y * 12)
+            }
+          }
 
-    // 3D Tilt for feature cards
-    const cards = gsap.utils.toArray<HTMLElement>(".tilt-card")
-    cards.forEach((card) => {
-      const handleMouseMove = (e: MouseEvent) => {
-        // Don't run on touch devices
-        if (window.matchMedia("(pointer: coarse)").matches) return
+          const handleMouseLeave = () => {
+            gsap.to([card, inner], {
+              rotateX: 0,
+              rotateY: 0,
+              x: 0,
+              y: 0,
+              ease: "power3.out",
+              duration: 1
+            })
+          }
 
-        const { left, top, width, height } = card.getBoundingClientRect()
-        const x = (e.clientX - left) / width - 0.5
-        const y = (e.clientY - top) / height - 0.5
-        
-        gsap.to(card, {
-          rotateX: -y * 15,
-          rotateY: x * 15,
-          transformPerspective: 1000,
-          ease: "power2.out",
-          duration: 0.5
+          card.addEventListener("mousemove", handleMouseMove)
+          card.addEventListener("mouseleave", handleMouseLeave)
         })
-
-        const inner = card.querySelector(".tilt-inner")
-        if (inner) {
-          gsap.to(inner, {
-            x: x * 15,
-            y: y * 15,
-            ease: "power2.out",
-            duration: 0.5
-          })
-        }
       }
-
-      const handleMouseLeave = () => {
-        gsap.to(card, {
-          rotateX: 0,
-          rotateY: 0,
-          ease: "power3.out",
-          duration: 1
-        })
-        const inner = card.querySelector(".tilt-inner")
-        if (inner) {
-          gsap.to(inner, {
-            x: 0,
-            y: 0,
-            ease: "power3.out",
-            duration: 1
-          })
-        }
-      }
-
-      card.addEventListener("mousemove", handleMouseMove)
-      card.addEventListener("mouseleave", handleMouseLeave)
-    })
-  }, { scope: sectionRef })
+    }
+  }, { scope: sectionRef, dependencies: [isLowEnd] })
 
   return (
     <section ref={sectionRef} id="about" className="py-20 px-4 bg-secondary/20">
@@ -181,8 +139,8 @@ export default function About() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="w-12 h-px bg-gradient-to-r from-transparent to-amber-400" />
             <div className="relative">
-              <div className="absolute inset-0 bg-pink-400/20 blur-md rounded-full animate-pulse" />
-              <Heart className="w-6 h-6 text-pink-500 fill-pink-500 relative z-10 animate-float-slow" />
+              {!isLowEnd && <div className="absolute inset-0 bg-pink-400/20 blur-md rounded-full animate-pulse" />}
+              <Heart className={`w-6 h-6 text-pink-500 fill-pink-500 relative z-10 ${!isLowEnd ? 'animate-float-slow' : ''}`} />
             </div>
             <div className="w-12 h-px bg-gradient-to-l from-transparent to-amber-400" />
           </div>
@@ -203,7 +161,7 @@ export default function About() {
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/exterior%20entry-D2HBq4n2aW39dW8YEXYz5jkfr2Ijj6.jpg"
                 alt="Kohinoor Restaurant"
                 fill
-                className="object-cover about-image-parallax scale-110"
+                className={`object-cover ${!isLowEnd ? 'about-image-parallax scale-110' : ''}`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
             </div>
@@ -263,26 +221,26 @@ export default function About() {
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className="group relative overflow-hidden rounded-2xl bg-card shadow-lg premium-hover transform-style-3d tilt-card interactive-touch"
+              className={`group relative overflow-hidden rounded-2xl bg-card shadow-lg ${!isLowEnd ? 'premium-hover transform-style-3d tilt-card interactive-touch' : ''}`}
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="relative h-48 transform-style-3d">
+              <div className={`relative h-48 ${!isLowEnd ? 'transform-style-3d' : ''}`}>
                 <Image
                   src={feature.image}
                   alt={feature.title}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-6 tilt-inner transform-style-3d">
-                <div className="flex items-center gap-3 mb-2 transform-style-3d">
+              <div className={`absolute bottom-0 left-0 right-0 p-6 ${!isLowEnd ? 'tilt-inner transform-style-3d' : ''}`}>
+                <div className={`flex items-center gap-3 mb-2 ${!isLowEnd ? 'transform-style-3d' : ''}`}>
                   <RelaxingIcon icon={feature.icon} />
-                  <h4 className="font-serif text-base font-bold text-white leading-tight translate-z-50">
+                  <h4 className={`font-serif text-base font-bold text-white leading-tight ${!isLowEnd ? 'translate-z-50' : ''}`}>
                     {feature.title}
                   </h4>
                 </div>
-                <p className="text-white/80 text-xs leading-relaxed translate-z-20">
+                <p className={`text-white/80 text-xs leading-relaxed ${!isLowEnd ? 'translate-z-20' : ''}`}>
                   {feature.description}
                 </p>
               </div>
