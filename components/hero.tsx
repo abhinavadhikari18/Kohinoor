@@ -196,7 +196,7 @@ export default function Hero() {
         
         <div className={!isLowEnd ? "parallax-layer-1 transform-style-3d" : ""}>
           <p className={`text-lg sm:text-2xl md:text-3xl text-amber-100/90 font-medium tracking-[0.02em] sm:tracking-[0.05em] md:tracking-widest mb-4 md:mb-6 ${!isLowEnd ? 'parallax-layer-1-mouse translate-z-10' : ''}`}>
-            RESTAURANT, ROMANTIC CABINS & COZY ROOMS
+              NETURAL VIBES , ROMANTIC CABINS & COZY ROOMS
           </p>
         </div>
 
