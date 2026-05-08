@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
-import { Utensils, Wine, Coffee, Flame } from "lucide-react"
+import { Utensils, Wine, Coffee, Flame, ChevronRight } from "lucide-react"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -22,8 +22,23 @@ const uiTabs = [
 
 export default function MenuSection({ tabs }: MenuSectionProps) {
   const [activeTab, setActiveTab] = useState<MenuTabKey>("food")
+  const [showScrollIndicator, setShowScrollIndicator] = useState(true)
   const activeMenu = tabs[activeTab]
   const sectionRef = useRef<HTMLElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const checkScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
+      setShowScrollIndicator(scrollLeft + clientWidth < scrollWidth - 5)
+    }
+  }
+
+  useEffect(() => {
+    checkScroll()
+    window.addEventListener("resize", checkScroll)
+    return () => window.removeEventListener("resize", checkScroll)
+  }, [])
 
   useGSAP(() => {
     gsap.fromTo(".menu-category",
@@ -163,27 +178,40 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
         </div>
 
         {/* Menu Tabs */}
-        <div className="flex justify-start sm:justify-center mb-16 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar">
-          <div className="inline-flex bg-white/40 dark:bg-card/40 backdrop-blur-xl rounded-full p-1.5 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-white/20 dark:border-border/40 min-w-max">
-            {uiTabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as MenuTabKey)}
-                className={`flex items-center gap-3 px-8 py-3.5 rounded-full font-medium transition-all duration-500 group/tab ${
-                  activeTab === tab.id
-                    ? "bg-primary text-primary-foreground shadow-[0_10px_20px_rgba(61,46,36,0.2)]"
-                    : "text-muted-foreground hover:text-foreground hover:bg-white/60 dark:hover:bg-secondary/40"
-                }`}
-              >
-                <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-500 ${
-                  activeTab === tab.id ? "bg-white/20 scale-110" : "bg-transparent group-hover/tab:bg-white/40 dark:group-hover/tab:bg-white/5"
-                }`}>
-                  <tab.icon className={`w-4 h-4 transition-all duration-500 ${activeTab === tab.id ? "animate-float-slow text-white" : ""}`} />
-                </div>
-                <span className="menu-font tracking-wide">{tab.label}</span>
-              </button>
-            ))}
-
+        <div className="relative max-w-fit mx-auto mb-16 group/tabs">
+          <div 
+            ref={scrollRef}
+            onScroll={checkScroll}
+            className="flex justify-start sm:justify-center overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar scroll-smooth"
+          >
+            <div className="inline-flex bg-white/40 dark:bg-card/40 backdrop-blur-xl rounded-full p-1.5 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-white/20 dark:border-border/40 min-w-max">
+              {uiTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as MenuTabKey)}
+                  className={`flex items-center gap-3 px-8 py-3.5 rounded-full font-medium transition-all duration-500 group/tab ${
+                    activeTab === tab.id
+                      ? "bg-primary text-primary-foreground shadow-[0_10px_20px_rgba(61,46,36,0.2)]"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/60 dark:hover:bg-secondary/40"
+                  }`}
+                >
+                  <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-500 ${
+                    activeTab === tab.id ? "bg-white/20 scale-110" : "bg-transparent group-hover/tab:bg-white/40 dark:group-hover/tab:bg-white/5"
+                  }`}>
+                    <tab.icon className={`w-4 h-4 transition-all duration-500 ${activeTab === tab.id ? "animate-float-slow text-white" : ""}`} />
+                  </div>
+                  <span className="menu-font tracking-wide">{tab.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Mobile Scroll Indicator */}
+          <div className={`absolute right-[-1rem] top-1/2 -translate-y-1/2 flex items-center pointer-events-none sm:hidden transition-opacity duration-300 ${showScrollIndicator ? 'opacity-100' : 'opacity-0'}`}>
+            <div className="h-12 w-12 bg-gradient-to-l from-[#FDF8F3] dark:from-background to-transparent" />
+            <div className="bg-[#FDF8F3] dark:bg-background pr-2">
+              <ChevronRight className="w-5 h-5 text-primary animate-pulse" />
+            </div>
           </div>
         </div>
 
