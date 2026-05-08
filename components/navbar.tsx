@@ -8,11 +8,11 @@ import MagneticButton from "./magnetic-button"
 import { ThemeToggle } from "./theme-toggle"
 
 const navLinks = [
-  { name: "Home", href: "#home" },
-  { name: "Gallery", href: "#gallery" },
-  { name: "Menu", href: "#menu" },
-  { name: "About Us", href: "#about" },
-  { name: "Contact", href: "#contact" },
+  { name: "Home", href: "#home", title: "Kohinoor Restaurant Home - Best in Bhairahawa" },
+  { name: "Gallery", href: "#gallery", title: "Explore our Romantic Cabins & Lakeside Views" },
+  { name: "Menu", href: "#menu", title: "Famous Sekuwa & Nepali Cuisine Menu" },
+  { name: "About Us", href: "#about", title: "Nature Friendly Restaurant Near Lumbini" },
+  { name: "Contact", href: "#contact", title: "Book a Table or Rs 500 Room Stay" },
 ]
 
 export default function Navbar() {
@@ -68,6 +68,7 @@ export default function Navbar() {
               <button
                 key={link.name}
                 onClick={() => scrollToSection(link.href)}
+                title={link.title}
                 className={`underline-animation font-medium tracking-wide transition-colors duration-300 ${
                   isScrolled
                     ? "text-foreground hover:text-amber-600"
