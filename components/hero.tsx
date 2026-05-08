@@ -195,8 +195,8 @@ export default function Hero() {
         </div>
         
         <div className={!isLowEnd ? "parallax-layer-1 transform-style-3d" : ""}>
-          <p className={`text-base sm:text-lg md:text-xl lg:text-2xl text-amber-100/90 font-medium tracking-[0.05em] sm:tracking-[0.1em] md:tracking-widest mb-4 md:mb-6 ${!isLowEnd ? 'parallax-layer-1-mouse translate-z-10' : ''}`}>
-            RESTAURANT & COZY ROOMS @ Rs 500
+          <p className={`text-lg sm:text-2xl md:text-3xl text-amber-100/90 font-medium tracking-[0.02em] sm:tracking-[0.05em] md:tracking-widest mb-4 md:mb-6 ${!isLowEnd ? 'parallax-layer-1-mouse translate-z-10' : ''}`}>
+            RESTAURANT, ROMANTIC CABINS & COZY ROOMS
           </p>
         </div>
 
@@ -204,12 +204,11 @@ export default function Hero() {
         <div className={!isLowEnd ? "parallax-layer-1 transform-style-3d" : ""}>
           <div className={`relative ${!isLowEnd ? 'parallax-layer-1-mouse px-4 translate-z-10' : 'px-4'}`}>
             {!isLowEnd && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/5 to-transparent blur-md" />}
-            <p className="relative text-base sm:text-lg md:text-xl text-white/90 font-light italic tracking-wide leading-relaxed">
+            <p className="relative text-xl sm:text-2xl md:text-3xl text-white/90 font-light italic tracking-wide leading-relaxed">     
               &quot;Where Peace, Nature & Love Meet&quot;
             </p>
           </div>
         </div>
-
         {/* Decorative Diamond Line */}
         <div className={!isLowEnd ? "parallax-layer-2 transform-style-3d" : ""}>
           <div className={`flex items-center gap-4 mt-8 ${!isLowEnd ? 'parallax-layer-2-mouse translate-z-20' : ''}`}>

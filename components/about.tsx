@@ -63,7 +63,7 @@ export default function About() {
       }
     })
 
-    tl.fromTo(".about-image-container", 
+    tl.fromTo(".about-image-container",
       { x: isLowEnd ? 0 : -30, opacity: 0 },
       { x: 0, opacity: 1, duration: 1, ease: "power3.out" }
     ).fromTo(".about-text p",
@@ -103,10 +103,10 @@ export default function About() {
             const { left, top, width, height } = card.getBoundingClientRect()
             const x = (e.clientX - left) / width - 0.5
             const y = (e.clientY - top) / height - 0.5
-            
+
             xTo(x * 12)
             yTo(-y * 12)
-            
+
             if (innerXTo && innerYTo) {
               innerXTo(x * 12)
               innerYTo(y * 12)
@@ -165,7 +165,7 @@ export default function About() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
             </div>
-            
+
             {/* Floating Card */}
             <div className="absolute -bottom-6 -right-6 md:bottom-8 md:-right-8 bg-card p-6 rounded-2xl shadow-xl max-w-[200px]">
               <div className="text-4xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
@@ -182,18 +182,18 @@ export default function About() {
             </h3>
             <div className="space-y-4 text-muted-foreground leading-relaxed about-text">
               <p>
-                Welcome to <span className="text-amber-600 font-semibold">Kohinoor Restaurant</span>, 
-                the best romantic restaurant in Bhairahawa, Butwal, and Kotihawa. Nestled near the sacred 
+                Welcome to <span className="text-amber-600 font-semibold">Kohinoor Restaurant</span>,
+                the best romantic restaurant in Bhairahawa, Butwal, and Kotihawa. Nestled near the sacred
                 birthplace of Buddha, Lumbini, we offer a serene escape where nature and culinary excellence meet.
               </p>
               <p>
-                Our establishment is perfect for couples seeking privacy in our <span className="text-amber-600">romantic cabins</span> 
-                or anyone looking for the <span className="text-amber-600">cheapest room stay at Rs 500</span> in the region. 
+                Our establishment is perfect for couples seeking privacy in our <span className="text-amber-600">romantic cabins</span>
+                <br />or anyone looking for the <span className="text-amber-600">cheapest room stay at Rs 500</span> in the region.
                 We specialize in creating memorable moments for birthday parties, anniversaries, and special occasions.
               </p>
               <p>
-                From our famous <span className="text-amber-600">Chicken, Buff, and Pork Sekuwa</span> to peaceful boating on our 
-                private lake, Kohinoor provides a unique blend of adventure and relaxation that you won&apos;t find 
+                From our famous <span className="text-amber-600">Chicken, Buff, and Pork Sekuwa</span> to peaceful boating on our
+                private lake, Kohinoor provides a unique blend of adventure and relaxation that you won&apos;t find
                 anywhere else in Butwal or Bhairahawa.
               </p>
             </div>

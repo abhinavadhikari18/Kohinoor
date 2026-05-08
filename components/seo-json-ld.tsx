@@ -58,6 +58,73 @@ export default function SeoJsonLd() {
       "opens": "10:00",
       "closes": "22:00"
     },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "5"
+    },
+    "review": [
+      {
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": "Dilip BK"
+        },
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5"
+        },
+        "reviewBody": "The Rs 500 room was clean and cozy, definitely the cheapest and most affordable stay I’ve found. The romantic private cabins made it feel like the best romantic restaurant for couples. Food was excellent, especially the sekuwa, and the boating added a peaceful touch for families."
+      },
+      {
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": "Sudan Gyawali"
+        },
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5"
+        },
+        "reviewBody": "This place is ideal for both couples and families. The private cabins give a romantic vibe, while the garden and boating are peaceful for everyone. The Rs 500 room is the cheapest option yet comfortable, and the sekuwa is simply the best."
+      },
+      {
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": "Rahul Sharma"
+        },
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5"
+        },
+        "reviewBody": "Sathi haru sanga gako, Sekuwa was ekdam delicious! Private cabin vibes are something else. 500 ma room paunu is a real deal. Best place to chill."
+      },
+      {
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": "Anjali Thapa"
+        },
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "4"
+        },
+        "reviewBody": "Family party ko lagi perfect thau. Boating garera kids were so happy. Peaceful environment, Bhairahawa ma esto aru thau chaina hola. Highly recommended!"
+      },
+      {
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": "Sameer & Neha"
+        },
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5"
+        },
+        "reviewBody": "Best romantic date! Privacy ekdam ramro cha cabin ma. Lakeside view and music made our anniversary truly special. Food quality is top-notch. Love from Butwal."
+      }
+    ],
     "sameAs": [
       "https://www.facebook.com/people/Kohinoor-Restaurant/61570447280338/",
       "https://www.instagram.com/kohinoor_restaurant2024",
