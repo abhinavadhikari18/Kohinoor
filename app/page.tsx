@@ -4,6 +4,7 @@ import Highlights from "@/components/highlights"
 import Gallery from "@/components/gallery"
 import MenuSection from "@/components/menu-section"
 import About from "@/components/about"
+import Testimonials from "@/components/testimonials"
 import Contact from "@/components/contact"
 import FAQ from "@/components/faq"
 import Footer from "@/components/footer"
@@ -29,6 +30,7 @@ export default async function Home() {
         <Gallery images={galleryData.images} />
         <MenuSection tabs={menuData.tabs} />
         <About />
+        <Testimonials />
         <FAQ />
         <Contact />
         <Footer />
