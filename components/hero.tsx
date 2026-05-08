@@ -219,11 +219,11 @@ export default function Hero() {
         </div>
 
         {/* Restaurant Name */}
-        <div className="parallax-layer-2 transform-style-3d">
-          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-amber-200 mb-2 parallax-layer-2-mouse translate-z-20">
+        <div className="parallax-layer-2 transform-style-3d max-w-[90vw] md:max-w-3xl mx-auto">
+          <h2 className="font-serif text-sm sm:text-base md:text-lg lg:text-xl font-medium text-amber-200/90 mb-3 uppercase tracking-[0.2em] parallax-layer-2-mouse translate-z-20">
             Best Romantic Restaurant in Bhairahawa, Butwal & Kotihawa
           </h2>
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-3 md:mb-4 tracking-wider parallax-layer-2-mouse leading-tight translate-z-20">
+          <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-4 tracking-wider parallax-layer-2-mouse leading-none translate-z-20">
             <span className="bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
               KOHINOOR
             </span>
