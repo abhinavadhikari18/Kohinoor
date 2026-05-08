@@ -33,10 +33,10 @@ export async function POST(req: Request) {
 
   res.cookies.set(getAdminCookieName(), token, {
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: "strict",
     path: "/",
-    maxAge: 60 * 60 * 6,
-    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 6, // 6 hours
+    secure: true, // Always secure for admin sessions
   })
 
   return res

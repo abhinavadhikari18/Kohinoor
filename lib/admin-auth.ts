@@ -61,14 +61,19 @@ export function signAdminSession(nonce?: string): string {
   const payload = {
     scope: "admin",
     iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + MAX_AGE_SECONDS,
     nonce: nonce ?? crypto.randomBytes(16).toString("hex"),
   }
 
   const payloadJson = JSON.stringify(payload)
   const payloadB64 = base64UrlEncode(payloadJson)
-  const sig = crypto.createHmac("sha256", secret).update(payloadJson).digest("hex")
+  
+  // HMAC-SHA256 for integrity
+  const hmac = crypto.createHmac("sha256", secret)
+  hmac.update(payloadB64)
+  const signature = base64UrlEncode(hmac.digest())
 
-  return `${payloadB64}.${sig}`
+  return `${payloadB64}.${signature}`
 }
 
 export function verifyAdminSession(token: string | undefined | null): boolean {
@@ -78,18 +83,31 @@ export function verifyAdminSession(token: string | undefined | null): boolean {
 
   const parts = token.split(".")
   if (parts.length !== 2) return false
-  const [payloadB64, sigHex] = parts
+  const [payloadB64, signature] = parts
 
   try {
-    const payloadJson = base64UrlDecodeToString(payloadB64)
-    const expectedSig = crypto.createHmac("sha256", secret).update(payloadJson).digest("hex")
-    if (!timingSafeEqual(expectedSig, sigHex)) return false
+    // 1. Verify Signature (Integrity)
+    const hmac = crypto.createHmac("sha256", secret)
+    hmac.update(payloadB64)
+    const expectedSignature = base64UrlEncode(hmac.digest())
+    
+    if (!timingSafeEqual(signature, expectedSignature)) {
+      return false
+    }
 
-    const payload = JSON.parse(payloadJson) as { scope?: string; iat?: number }
+    // 2. Verify Payload (Validity)
+    const payloadJson = base64UrlDecodeToString(payloadB64)
+    const payload = JSON.parse(payloadJson) as { scope?: string; exp?: number }
+    
     if (payload.scope !== "admin") return false
-    const iat = typeof payload.iat === "number" ? payload.iat : 0
-    const ageSeconds = Math.floor(Date.now() / 1000) - iat
-    return ageSeconds >= 0 && ageSeconds <= MAX_AGE_SECONDS
+    
+    // 3. Check Expiration
+    const now = Math.floor(Date.now() / 1000)
+    if (typeof payload.exp !== "number" || now > payload.exp) {
+      return false
+    }
+
+    return true
   } catch {
     return false
   }

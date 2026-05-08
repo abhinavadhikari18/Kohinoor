@@ -26,17 +26,17 @@ const raleway = Raleway({
 })
 
 export const metadata: Metadata = {
-  title: 'Kohinoor Restaurant | Where Peace, Nature & Love Meet',
-  description: 'Experience the finest dining at Kohinoor Restaurant - a diamond in culinary excellence. Private cabins, serene lake views, famous Sekuwa corner, and cozy rooms starting at Rs 500.',
-  keywords: 'Kohinoor Restaurant, fine dining, private cabins, Sekuwa, romantic dining, nature restaurant, Nepal restaurant',
+  title: 'Best Romantic Restaurant in Bhairahawa, Butwal & Kotihawa | Kohinoor Restaurant',
+  description: 'Experience the finest dining at Kohinoor Restaurant in Bhairahawa, Butwal & Kotihawa. Famous Sekuwa corner, romantic private cabins, and cheapest cozy rooms starting at just Rs 500. Perfect for couples and birthday celebrations near Lumbini.',
+  keywords: 'Kohinoor Restaurant, best restaurant in Bhairahawa, romantic restaurant Butwal, Rs 500 room Bhairahawa, cheapest room Butwal, affordable room Kotihawa, romantic cabins Bhairahawa, chicken sekuwa Bhairahawa, buff sekuwa Butwal, pork sekuwa Kotihawa, peaceful restaurant Bhairahawa, boating restaurant Kotihawa, cottage stay Bhairahawa, birthday party restaurant Butwal, best restaurant for occasions Kotihawa, nature friendly restaurant near Lumbini',
   icons: {
     icon: '/favicon.jpg',
     apple: '/favicon.jpg',
   },
   openGraph: {
-    title: 'Kohinoor Restaurant | Where Peace, Nature & Love Meet',
-    description: 'Experience the finest dining at Kohinoor Restaurant - a diamond in culinary excellence.',
-    url: 'https://kohinoorrestaurant.com', // Replace with actual URL if known, but keeping generic for now or user can provide
+    title: 'Best Romantic Restaurant in Bhairahawa, Butwal & Kotihawa | Kohinoor Restaurant',
+    description: 'Experience the finest dining at Kohinoor Restaurant. Romantic private cabins, famous Sekuwa corner, and cozy rooms starting at Rs 500.',
+    url: 'https://kohinoorrestaurant.com',
     siteName: 'Kohinoor Restaurant',
     images: [
       {
@@ -51,8 +51,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Kohinoor Restaurant | Where Peace, Nature & Love Meet',
-    description: 'Experience the finest dining at Kohinoor Restaurant - a diamond in culinary excellence.',
+    title: 'Best Romantic Restaurant in Bhairahawa, Butwal & Kotihawa | Kohinoor Restaurant',
+    description: 'Experience the finest dining at Kohinoor Restaurant. Romantic private cabins, famous Sekuwa, and rooms starting at Rs 500.',
     images: ['/favicon.jpg'],
   },
 }
@@ -65,6 +65,7 @@ export const viewport: Viewport = {
 
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from 'sonner'
+import SeoJsonLd from '@/components/seo-json-ld'
 
 export default function RootLayout({
   children,
@@ -74,6 +75,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${playfair.variable} ${lato.variable} ${raleway.variable} bg-background`}>
       <body className="font-serif antialiased overflow-x-hidden">
+        <SeoJsonLd />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

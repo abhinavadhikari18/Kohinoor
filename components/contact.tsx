@@ -128,7 +128,7 @@ export default function Contact() {
             Get In Touch
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            We&apos;d love to hear from you. Reach out for reservations or inquiries.
+            Book your romantic dinner, birthday celebration, or affordable Rs 500 room stay at Kohinoor Restaurant in Bhairahawa, Butwal & Kotihawa.
           </p>
         </div>
 

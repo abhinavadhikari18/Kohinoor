@@ -5,6 +5,7 @@ import Gallery from "@/components/gallery"
 import MenuSection from "@/components/menu-section"
 import About from "@/components/about"
 import Contact from "@/components/contact"
+import FAQ from "@/components/faq"
 import Footer from "@/components/footer"
 import SparklingDiamonds from "@/components/sparkling-diamonds"
 import MobileBottomBar from "@/components/mobile-bottom-bar"
@@ -28,6 +29,7 @@ export default async function Home() {
         <Gallery images={galleryData.images} />
         <MenuSection tabs={menuData.tabs} />
         <About />
+        <FAQ />
         <Contact />
         <Footer />
         <MobileBottomBar />

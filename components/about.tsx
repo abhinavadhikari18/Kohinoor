@@ -220,24 +220,23 @@ export default function About() {
           {/* Text Side */}
           <div className="about-text-container">
             <h3 className="font-serif text-3xl font-bold text-foreground mb-6">
-              A Diamond in Culinary Excellence
+              A Nature-Friendly Destination Near Lumbini
             </h3>
             <div className="space-y-4 text-muted-foreground leading-relaxed about-text">
               <p>
                 Welcome to <span className="text-amber-600 font-semibold">Kohinoor Restaurant</span>, 
-                a gem nestled in nature&apos;s embrace. Named after the legendary diamond, we strive to 
-                offer an experience that&apos;s equally precious and unforgettable.
+                the best romantic restaurant in Bhairahawa, Butwal, and Kotihawa. Nestled near the sacred 
+                birthplace of Buddha, Lumbini, we offer a serene escape where nature and culinary excellence meet.
               </p>
               <p>
-                Our establishment combines the warmth of traditional Nepali hospitality with modern 
-                comforts. Whether you&apos;re seeking a romantic dinner in our private cabins, a family 
-                gathering by the lake, or simply a peaceful escape from the city, Kohinoor offers 
-                the perfect setting.
+                Our establishment is perfect for couples seeking privacy in our <span className="text-amber-600">romantic cabins</span> 
+                or anyone looking for the <span className="text-amber-600">cheapest room stay at Rs 500</span> in the region. 
+                We specialize in creating memorable moments for birthday parties, anniversaries, and special occasions.
               </p>
               <p>
-                From our famous Sekuwa corner to cozy overnight rooms, from boating on our 
-                serene lake to hookah lounges under the stars - every moment at Kohinoor is crafted 
-                to create lasting memories.
+                From our famous <span className="text-amber-600">Chicken, Buff, and Pork Sekuwa</span> to peaceful boating on our 
+                private lake, Kohinoor provides a unique blend of adventure and relaxation that you won&apos;t find 
+                anywhere else in Butwal or Bhairahawa.
               </p>
             </div>
 

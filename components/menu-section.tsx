@@ -176,22 +176,23 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
         </div>
 
         {/* Menu Content */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 menu-container">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 menu-container" itemScope itemType="https://schema.org/Menu">
           {activeMenu.map((category) => (
             <div
               key={category.name}
               className="menu-category group bg-card/60 dark:bg-card/40 backdrop-blur-md rounded-3xl p-6 lg:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-border/40 hover:border-primary/20 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] transform-style-3d tilt-card interactive-touch"
+              itemProp="hasMenuSection" itemScope itemType="https://schema.org/MenuSection"
             >
               <div className="tilt-inner transform-style-3d h-full">
-                <h3 className="menu-font text-2xl font-semibold text-foreground mb-6 pb-4 border-b border-border/50 flex items-center justify-between translate-z-50">
+                <h3 className="menu-font text-2xl font-semibold text-foreground mb-6 pb-4 border-b border-border/50 flex items-center justify-between translate-z-50" itemProp="name">
                   <span>{category.name}</span>
                   <span className="w-8 h-px bg-primary/30 group-hover:w-12 transition-all duration-500" />
                 </h3>
                 <div className="space-y-6 transform-style-3d">
                   {category.items.map((item) => (
-                    <div key={item.name} className="group/item transform-style-3d translate-z-20">
+                    <div key={item.name} className="group/item transform-style-3d translate-z-20" itemProp="hasMenuItem" itemScope itemType="https://schema.org/MenuItem">
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1 sm:gap-2">
-                        <span className="menu-font text-[17px] text-foreground/90 group-hover/item:text-primary transition-colors duration-300">
+                        <span className="menu-font text-[17px] text-foreground/90 group-hover/item:text-primary transition-colors duration-300" itemProp="name">
                           {item.name}
                         </span>
                         <div className="hidden sm:block flex-1 border-b border-dotted border-foreground/20 mx-2 mb-1" />
@@ -200,24 +201,29 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
                           {item.vegPrice && item.nonVegPrice ? (
                             <div className="flex items-center sm:items-end leading-tight gap-3 sm:gap-0">
                               <span className="flex items-center gap-3">
-                                <span className="flex items-center gap-1.5">
+                                <span className="flex items-center gap-1.5" itemProp="offers" itemScope itemType="https://schema.org/Offer">
                                   <VegIcon />
-                                  <span className="text-green-600 dark:text-green-500">{item.vegPrice}</span>
+                                  <span className="text-green-600 dark:text-green-500" itemProp="price">{item.vegPrice}</span>
+                                  <meta itemProp="priceCurrency" content="NPR" />
                                 </span>
                                 <span className="text-foreground/20 font-light">|</span>
-                                <span className="flex items-center gap-1.5">
+                                <span className="flex items-center gap-1.5" itemProp="offers" itemScope itemType="https://schema.org/Offer">
                                   <NonVegIcon />
-                                  <span className="text-red-600 dark:text-red-500">{item.nonVegPrice}</span>
+                                  <span className="text-red-600 dark:text-red-500" itemProp="price">{item.nonVegPrice}</span>
+                                  <meta itemProp="priceCurrency" content="NPR" />
                                 </span>
                               </span>
                             </div>
                           ) : (
-                            `Rs ${item.price ?? "-"}`
+                            <span itemProp="offers" itemScope itemType="https://schema.org/Offer">
+                              Rs <span itemProp="price">{item.price ?? "-"}</span>
+                              <meta itemProp="priceCurrency" content="NPR" />
+                            </span>
                           )}
                         </span>
                       </div>
                       {item.description ? (
-                        <p className="text-sm text-muted-foreground mt-1.5 desc-font font-light leading-relaxed max-w-[95%] sm:max-w-[85%]">
+                        <p className="text-sm text-muted-foreground mt-1.5 desc-font font-light leading-relaxed max-w-[95%] sm:max-w-[85%]" itemProp="description">
                           {item.description}
                         </p>
                       ) : null}

@@ -13,29 +13,29 @@ if (typeof window !== "undefined") {
 }
 
 const mainHighlight = {
-  title: "Cozy Room",
-  subtitle: "Just Rs 500",
-  description: "Experience comfort in our beautifully furnished rooms with all modern amenities. Perfect for a peaceful overnight stay.",
+  title: "Cheapest Cozy Room",
+  subtitle: "Starting at Rs 500",
+  description: "Experience the most affordable and peaceful room stay in Bhairahawa and Butwal. Perfect for couples seeking a quiet overnight escape.",
   image: "bedroom1.jpg",
   icon: BedDouble,
 }
 
 const semiHighlights = [
   {
-    title: "Free Private Cabins",
-    description: "Enjoy intimate moments in our complimentary private cabins surrounded by nature.",
+    title: "Romantic Private Cabins",
+    description: "Our complimentary private cabins in Kotihawa offer the perfect setting for romantic dining and birthday celebrations.",
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cabin2-R0016rsTLy5HRs9rNsXLSYOpfvF07k.jpg",
     icon: Crown,
   },
   {
     title: "Famous Sekuwa Corner",
-    description: "Savor our signature Sekuwa, grilled to perfection with authentic Nepali spices.",
+    description: "Tase the best Chicken, Buff, and Pork Sekuwa in Bhairahawa, grilled to perfection with authentic Nepali spices.",
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/bar-YpqqsjZipzBQzh64D0eHgHZhcLpvIv.jpg",
     icon: Flame,
   },
   {
-    title: "Hookah Bar Lounge",
-    description: "Unwind in our stylish hookah bar lounge with cozy seating and a relaxed evening vibe.",
+    title: "Peaceful Boating Experience",
+    description: "Unwind at our lakeside restaurant with boating facilities, perfect for a peaceful evening in Kotihawa.",
     image: "bar.jpg",
     icon: Martini,
   },

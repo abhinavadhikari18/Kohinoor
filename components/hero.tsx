@@ -220,6 +220,9 @@ export default function Hero() {
 
         {/* Restaurant Name */}
         <div className="parallax-layer-2 transform-style-3d">
+          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-amber-200 mb-2 parallax-layer-2-mouse translate-z-20">
+            Best Romantic Restaurant in Bhairahawa, Butwal & Kotihawa
+          </h2>
           <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-3 md:mb-4 tracking-wider parallax-layer-2-mouse leading-tight translate-z-20">
             <span className="bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
               KOHINOOR
@@ -229,7 +232,7 @@ export default function Hero() {
         
         <div className="parallax-layer-1 transform-style-3d">
           <p className="text-xl md:text-2xl text-amber-100/90 font-medium tracking-widest mb-6 parallax-layer-1-mouse translate-z-10">
-            RESTAURANT
+            RESTAURANT & COZY ROOMS @ Rs 500
           </p>
         </div>
 
