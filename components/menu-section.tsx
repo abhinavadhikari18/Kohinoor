@@ -148,6 +148,18 @@ export default function MenuSection({ tabs }: MenuSectionProps) {
           <p className="desc-font text-muted-foreground text-lg max-w-2xl mx-auto font-light tracking-wide">
             A symphony of flavors crafted with passion and tradition.
           </p>
+
+          {/* Menu Legend */}
+          <div className="flex items-center justify-center gap-6 mt-8 testimonial-header">
+            <div className="flex items-center gap-2.5 px-4 py-2 bg-green-500/5 dark:bg-green-500/10 rounded-full border border-green-600/10 dark:border-green-500/20 shadow-sm transition-all hover:shadow-md">
+              <VegIcon />
+              <span className="text-xs font-bold text-green-700 dark:text-green-500 uppercase tracking-[0.1em]">Pure Veg</span>
+            </div>
+            <div className="flex items-center gap-2.5 px-4 py-2 bg-red-500/5 dark:bg-red-500/10 rounded-full border border-red-600/10 dark:border-red-500/20 shadow-sm transition-all hover:shadow-md">
+              <NonVegIcon />
+              <span className="text-xs font-bold text-red-700 dark:text-red-500 uppercase tracking-[0.1em]">Non Veg</span>
+            </div>
+          </div>
         </div>
 
         {/* Menu Tabs */}
