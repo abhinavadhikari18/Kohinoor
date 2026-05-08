@@ -219,11 +219,11 @@ export default function Hero() {
         </div>
 
         {/* Restaurant Name */}
-        <div className="parallax-layer-2 transform-style-3d max-w-[95vw] md:max-w-3xl mx-auto">
-          <h2 className="font-serif text-[10px] xs:text-xs sm:text-base md:text-lg lg:text-xl font-medium text-amber-200/90 mb-2 md:mb-3 uppercase tracking-[0.15em] md:tracking-[0.2em] parallax-layer-2-mouse translate-z-20 px-2">
+        <div className="parallax-layer-2 transform-style-3d max-w-[95vw] md:max-w-4xl mx-auto">
+          <h2 className="font-serif text-xs sm:text-base md:text-lg lg:text-xl font-medium text-amber-200/90 mb-3 md:mb-4 uppercase tracking-[0.12em] sm:tracking-[0.15em] md:tracking-[0.2em] parallax-layer-2-mouse translate-z-20 px-4">
             Best Romantic Restaurant in Bhairahawa, Butwal & Kotihawa
           </h2>
-          <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-2 md:mb-4 tracking-wider parallax-layer-2-mouse leading-[1.1] md:leading-none translate-z-20">
+          <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white mb-4 md:mb-6 tracking-tight sm:tracking-normal md:tracking-wider parallax-layer-2-mouse leading-[0.95] sm:leading-[1.1] md:leading-none translate-z-20">
             <span className="bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
               KOHINOOR
             </span>
@@ -231,16 +231,16 @@ export default function Hero() {
         </div>
         
         <div className="parallax-layer-1 transform-style-3d">
-          <p className="text-base sm:text-xl md:text-2xl text-amber-100/90 font-medium tracking-[0.1em] md:tracking-widest mb-4 md:mb-6 parallax-layer-1-mouse translate-z-10">
+          <p className="text-lg sm:text-xl md:text-2xl text-amber-100/90 font-medium tracking-[0.05em] sm:tracking-[0.1em] md:tracking-widest mb-6 md:mb-8 parallax-layer-1-mouse translate-z-10">
             RESTAURANT & COZY ROOMS @ Rs 500
           </p>
         </div>
 
         {/* Tagline */}
         <div className="parallax-layer-1 transform-style-3d">
-          <div className="relative parallax-layer-1-mouse px-4 translate-z-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/20 to-transparent blur-sm" />
-            <p className="relative text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light italic tracking-wide">
+          <div className="relative parallax-layer-1-mouse px-6 translate-z-10">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/10 to-transparent blur-md" />
+            <p className="relative text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 font-light italic tracking-wide leading-relaxed">
               &quot;Where Peace, Nature & Love Meet&quot;
             </p>
           </div>
