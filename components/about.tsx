@@ -188,13 +188,13 @@ export default function About() {
               </p>
               <p>
                 Our establishment is perfect for couples seeking privacy in our <span className="text-amber-600">romantic cabins</span>
-                <br />or anyone looking for the <span className="text-amber-600">cheapest room stay at Rs 500</span> in the region.
-                We specialize in creating memorable moments for birthday parties, anniversaries, and special occasions.
+                <p>or anyone looking for the <span className="text-amber-600">cheapest room stay at Rs 500</span> in the region.
+                We specialize in creating memorable moments for birthday parties, anniversaries, and special occasions.</p>
               </p>
               <p>
-                From our famous <span className="text-amber-600">Chicken, Buff, and Pork Sekuwa</span>  <br /> to peaceful boating on our
+                From our famous <span className="text-amber-600">Chicken, Buff, and Pork Sekuwa</span>  <p> to peaceful boating on our
                 private lake, Kohinoor provides a unique blend of adventure and relaxation that you won&apos;t find
-                anywhere else in Butwal or Bhairahawa.
+                anywhere else in Butwal or Bhairahawa.</p>
               </p>
             </div>
 
